@@ -1,12 +1,8 @@
 // MAKE IT SING
-$(()=>{init();});
-
-init = () => {
 
 //	alert("hello ass");
 
 
-console.log(stdout);
 
 
 	vic.set_volume(3);
@@ -22,4 +18,3 @@ console.log(stdout);
 		else vic.set_volume(0);
 	};
 	pitched();
-}
