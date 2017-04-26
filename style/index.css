@@ -3,6 +3,10 @@ html {
 	color: #dd4444;
 }
 
+#monitor {
+	width: 512px;
+	height: 512px;
+}
 
 #dummy {
 	font-family:monospace;

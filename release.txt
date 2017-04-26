@@ -1,4 +1,7 @@
 
-0.0.3
+0.0.9
+basic vic screen simulations
+lost noise generator (bad buffer?)
 
+0.0.3
 basic demo of vic chip audio emulation

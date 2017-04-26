@@ -1,8 +1,6 @@
 
 
-// INITIALIZE VIC CHIP INTERFACE
-
-var stdout = document.getElementById('dummy');
+// INITIALIZE VIC CHIP AUDIO INTERFACE
 
 var audio = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -13,23 +11,23 @@ vic.set_volume = function(value) {
 	var vol = 0;
 	if (value > 15) vol = 15;
 	if (value <= 0) vol = 0;
-	else vol = value / 15; 
+	else vol = (value / 15) * 0.5; 
 	vic.vol.gain.value = vol;
-	document.getElementById('vol').innerHTML = `${value} ${vol}`;
 }
 
 vic.set_voice = function(voice, value)	{
-	if (!(value && 128)) vic[voice].stop();
-	else {
-		var p;
-		var i = value - 128;
-		if (i == 127) p = (vic[voice].clock[vic.video_standard] / -1);
-		else p = vic[voice].clock[vic.video_standard] / (127 - i);
-		vic[voice].frequency.value = p;
-		// show in debugger
-		var out = `${i} ${p}`;
-		document.getElementById(voice).innerHTML = out;
+	if (!(value && 128)) {
+		vic[voice].stop();
+		return 0;
 	}
+	var p;
+	var i = value - 128;
+	if (i == 127) p = (vic[voice].clock[vic.video_standard] / -1);
+	else p = vic[voice].clock[vic.video_standard] / (127 - i);
+	vic[voice].frequency.value = p;
+	// show in debugger
+	var out = `${i} ${p}`;
+	return p;
 }
 
 // in milliseconds
@@ -79,7 +77,7 @@ vic.sopr.start();
 vic.sopr.connect(vic.vol);
 
 // nois coming soon! :)
-vic.nois_buffer_size = 512;
+vic.nois_buffer_size = 256;
 vic.nois = audio.createScriptProcessor(vic.nois_buffer_size, 1, 1);
 vic.nois.frequency = {value:0};
 vic.nois.delta = {
@@ -96,7 +94,7 @@ vic.nois.onaudioprocess = function(e) {
 	var output_data = output_buffer.getChannelData(0);
 	for (var i=0; i < vic.nois_buffer_size; i++) {
 		if (vic.nois.delta.counter == 0) {
-			vic.nois.delta.pos=(Math.random()*4)-2;
+			vic.nois.delta.pos=(Math.random()*2)-1;
 			vic.nois.delta.counter = Math.floor(audio.sampleRate / vic.nois.frequency.value);
 		}
 		output_data[i] = vic.nois.delta.pos;
