@@ -25,12 +25,12 @@ var frame_count = 0;
 var frame = function() {
 	window.setTimeout(frame, vic.framerate[vic.video_standard]);
 	frame_count++;
+	if (frame_count % 2 == 0) fill_screen();
 	if (ii < 256 && (frame_count % 8 == 0)) pitched();
 	if (ii == 256) {
 		vic.set_volume(0);
 		video.plot_str(0, 12, ` VOL 0 `, 1);
 	}
-	if (frame_count % 2 == 0) fill_screen();
 	video.plot_str(0, 0, ' V I X X E N 2 0 ', 6);
 	video.plot_str(0, 15, ` FRAME ${frame_count} `, 2);
 }
