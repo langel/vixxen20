@@ -1,4 +1,8 @@
 
+0.1.8
+rebuilt audio synthesis from scratch
+chrome oscillator bug forces portemento
+
 0.0.9
 basic vic screen simulations
 lost noise generator (bad buffer?)

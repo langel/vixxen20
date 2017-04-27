@@ -13,7 +13,7 @@ monitor.style.height = y_max;
 
 var video = {
 	screen: monitor.getContext('2d'),
-	pixel_mul: 4,
+	pixel_mul: 2,
 
 	colors: [
 		'000000',
@@ -72,28 +72,3 @@ var video = {
 	}
 }
 
-var fill_color = 0;
-
-
-fill_screen = function() {
-	var max_x = Math.floor(x_max / video.pixel_mul);
-	var max_y = Math.floor(y_max / video.pixel_mul);
-	for (y=0; y<max_y; y++) {
-		for (x=0; x<max_x; x++) {
-			video.plot_pixel(x, y, fill_color % 15) 
-			fill_color++;
-		}
-	}
-}
-
-fill_screen();
-
-character_rom_test = function() {
-	var char_count = 0;
-	for (y=0; y<16; y++) {
-		for (x=0; x<16; x++) {
-			video.plot_char(x, y, char_count, 1);
-			char_count++;
-		}
-	}
-}

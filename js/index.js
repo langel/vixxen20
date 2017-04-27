@@ -2,40 +2,97 @@
 
 //	alert("hello ass");
 
-
-
-vic.set_volume(3);
-video.plot_str(0, 12, ` VOL 3 `, 1);
-
-var ii = 128;
-var r;
-var pitched = function() {
-	ii++;
-	r = vic.set_voice('bass', ii);
-	video.plot_str(0, 3, ` BASS ${ii} ${r} `, 1);
-	r = vic.set_voice('alto', ii);
-	video.plot_str(0, 5, ` ALTO ${ii} ${r} `, 1);
-	r = vic.set_voice('sopr', ii);
-	video.plot_str(0, 7, ` SOPR ${ii} ${r} `, 1);
-	r = vic.set_voice('nois', ii);
-	video.plot_str(0, 9, ` NOIS ${ii} ${r} `, 1);
+pattern_data = {
+	length: 16,
+	bass: [
+		200,
+		200,
+		200,
+		200,
+		129,
+		129,
+		129,
+		129,
+		129,
+		129,
+		129,
+		128,
+		0,
+		0,
+		0,
+		0,
+	],
+	nois: [
+		140,
+		129,
+		0,
+		0,
+		255,
+		0,
+		254,
+		0,
+		200,
+		220,
+		0,
+		0,
+		255,
+		0,
+		254,
+		0
+	]
 };
 
-var frame_count = 0;
-var frame = function() {
-	window.setTimeout(frame, vic.framerate[vic.video_standard]);
-	frame_count++;
-	if (frame_count % 2 == 0) fill_screen();
-	if (ii < 256 && (frame_count % 8 == 0)) pitched();
-	if (ii == 256) {
-		vic.set_volume(0);
-		video.plot_str(0, 12, ` VOL 0 `, 1);
-	}
-	video.plot_str(0, 0, ' V I X X E N 2 0 ', 6);
-	video.plot_str(0, 15, ` FRAME ${frame_count} `, 2);
-}
 
+
+var pattern_index = 0;
+var frame_counter = 0;
+frame = function() {
+	window.setTimeout(frame, vic.framerate[vic.framemode]);
+	// fill_screen();
+	if (frame_counter % 5 == 0) {
+		vic.set_voice_value(0, pattern_data.bass[pattern_index]);
+		vic.set_voice_value(3, pattern_data.nois[pattern_index]);
+		//console.log(pattern_data.nois[pattern_index]);
+		pattern_index++;
+		if (pattern_index == pattern_data.length) pattern_index = 0;
+	}
+	video.plot_str(0, 5, ' BASS ' + ('  ' + vic.voices[0].value).slice(-3) + ' ', 1);
+	video.plot_str(0, 6, ' NUZZ ' + ('  ' + vic.voices[3].value).slice(-3) + ' ', 1);
+	video.plot_str(0, 10, ` FRAME ${frame_counter} `, 2);
+	frame_counter++;
+};
 
 window.onload = function() {
+	vic.init();
+	video.plot_str(0, 0, ' V I X X E N   2 0 ', 6);
+	vic.set_volume(10);
+	video.plot_str(0, 12, ` VOL 10 `, 1);
 	frame();
 };
+
+var fill_color = 0;
+
+
+fill_screen = function() {
+	var max_x = Math.floor(x_max / video.pixel_mul);
+	var max_y = Math.floor(y_max / video.pixel_mul);
+	for (y=0; y<max_y; y++) {
+		for (x=0; x<max_x; x++) {
+			video.plot_pixel(x, y, fill_color % 15) 
+			fill_color++;
+		}
+	}
+}
+
+fill_screen();
+
+character_rom_test = function() {
+	var char_count = 0;
+	for (y=0; y<16; y++) {
+		for (x=0; x<16; x++) {
+			video.plot_char(x, y, char_count, 1);
+			char_count++;
+		}
+	}
+}
+
