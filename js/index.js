@@ -20,7 +20,43 @@ pattern_data = {
 		0,
 		0,
 		0,
+		0
+	],
+	alto: [
 		0,
+		0,
+		0,
+		0,
+		200,
+		0,
+		200,
+		0,
+		200,
+		0,
+		0,
+		0,
+		200,
+		0,
+		200,
+		0
+	],
+	sopr: [
+		128,
+		0,
+		255,
+		0,
+		200,
+		0,
+		255,
+		0,
+		200,
+		0,
+		255,
+		0,
+		255,
+		0,
+		0,
+		255
 	],
 	nois: [
 		140,
@@ -51,13 +87,16 @@ frame = function() {
 	// fill_screen();
 	if (frame_counter % 5 == 0) {
 		vic.set_voice_value(0, pattern_data.bass[pattern_index]);
+		vic.set_voice_value(1, pattern_data.alto[pattern_index]);
+		vic.set_voice_value(2, pattern_data.sopr[pattern_index]);
 		vic.set_voice_value(3, pattern_data.nois[pattern_index]);
-		//console.log(pattern_data.nois[pattern_index]);
 		pattern_index++;
 		if (pattern_index == pattern_data.length) pattern_index = 0;
 	}
 	video.plot_str(0, 5, ' BASS ' + ('  ' + vic.voices[0].value).slice(-3) + ' ', 1);
-	video.plot_str(0, 6, ' NUZZ ' + ('  ' + vic.voices[3].value).slice(-3) + ' ', 1);
+	video.plot_str(0, 6, ' ALTO ' + ('  ' + vic.voices[1].value).slice(-3) + ' ', 1);
+	video.plot_str(0, 7, ' SOPR ' + ('  ' + vic.voices[2].value).slice(-3) + ' ', 1);
+	video.plot_str(0, 8, ' NUZZ ' + ('  ' + vic.voices[3].value).slice(-3) + ' ', 1);
 	video.plot_str(0, 10, ` FRAME ${frame_counter} `, 2);
 	frame_counter++;
 };
