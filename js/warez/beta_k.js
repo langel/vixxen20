@@ -4,14 +4,49 @@
 
 var beta_k = {
 
+	/*
+	 * parameters
+	 */
+
+	frame_counter: 0,
+	frame_rate: 5,
+	pattern_index: 0,
+
+	inputs: [{
+		name: 'framerate',
+		on_update: function(value) {
+			beta_k.frame_rate = value;
+		},
+		type: 'byte',
+		value: 5,
+		value_min: 1,
+		value_max: 255,
+		x: 20,
+		y: 18
+	},{
+		name: 'volume',
+		on_update: function(value) {
+			vic.set_volume(value);
+		},
+		type: 'byte',
+		value: 0,
+		value_min: 0,
+		value_max: 15,
+		x: 20,
+		y: 20
+	}],
+	/*
+	 * methods
+	 */
+
 	init: function() {
+		vixxen.inputs.init(beta_k.inputs);
 		beta_k.frame();
 	},
 
-	frame_counter: 0,
-
 	frame: function() {
 		window.setTimeout(beta_k.frame, vic.get_frame_ms());
+		vixxen.inputs.frame();
 		vic.plot_str(35, 1, vic.video_mode.toUpperCase()+' ', 6);
 		if (pause) {
 			vic.set_voice_value(0, 0);
@@ -21,7 +56,7 @@ var beta_k = {
 			vic.plot_str(0, 14, ' P A U S E D ', 1);
 			return;
 		}
-		if (beta_k.frame_counter % 5 == 0) {
+		if (beta_k.frame_counter % beta_k.frame_rate == 0) {
 			vic.set_voice_value(0, pattern_data.bass[beta_k.pattern_index]);
 			vic.set_voice_value(1, pattern_data.alto[beta_k.pattern_index]);
 			vic.set_voice_value(2, pattern_data.sopr[beta_k.pattern_index]);
@@ -36,9 +71,7 @@ var beta_k = {
 		vic.plot_str(0, 10, ` FRAME ${beta_k.frame_counter} `, 2);
 		vic.plot_str(0, 14, ' PLAYING    ', 1);
 		beta_k.frame_counter++;
-	},
-
-	pattern_index: 0
+	}
 
 }
 

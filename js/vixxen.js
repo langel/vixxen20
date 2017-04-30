@@ -67,6 +67,36 @@ var vixxen = {
 		}, 100);
 	},
 
+	inputs: {
+		blur: function(input_index) {
+			var input = vixxen.inputs.data[input_index];
+			vic.plot_str(input.x, input.y, ' ' + input.value, 1);
+		},
+		focus: function(input_index) {
+			var input = vixxen.inputs.data[input_index];
+			vic.plot_str(input.x, input.y, ' ' + input.value, 5);
+		},
+		frame: function() {
+		},
+		index: 0,
+		init: function(inputs) {
+			vixxen.inputs.data = inputs;
+			vixxen.inputs.index = 0;
+			for (var i = 0; i < inputs.length; i++) {
+				vixxen.inputs.blur(i);
+			}
+			vixxen.inputs.focus(vixxen.inputs.index);
+		},
+		next: function() {
+			vixxen.inputs.blur(vixxen.inputs.index);
+			vixxen.inputs.index++;
+			if (vixxen.inputs.index >= vixxen.inputs.data.length) {
+				vixxen.inputs.index = 0;
+			}
+			vixxen.inputs.focus(vixxen.inputs.index);
+		}
+	},
+
 	screen: {
 
 		clear: function() {
@@ -106,6 +136,7 @@ var pause = false;
  * hell yeah keyboard shortcuts like a real tracker
  */
 document.body.onkeydown = function (e) {
+	vic.plot_str(24, 25, 'KEY PRESSED ' + e.keyCode + ' ', 1);
 	if (e.keyCode === 0 || e.keyCode === 32) {
 		e.preventDefault();
 		console.log('Space pressed');
@@ -116,6 +147,10 @@ document.body.onkeydown = function (e) {
 		console.log('enter pressed');
 		if (vic.video_mode == 'ntsc') vic.video_mode = 'pal';
 		else vic.video_mode = 'ntsc';
+	}
+	if (e.keyCode === 9) {
+		e.preventDefault();
+		vixxen.inputs.next();
 	}
 };
 
