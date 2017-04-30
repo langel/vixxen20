@@ -34,6 +34,7 @@ var vic = {
 	screen_pixel_mul: 3,
 	screen_char_x: 40,
 	screen_char_y: 30,
+	screen_ram: new Array(2048).fill({petscii:0, color:1}),
 	screen_x: null,
 	screen_y: null,
 
@@ -102,14 +103,20 @@ var vic = {
 
 		// initialize the Video Interface Chip video
 		vic.set_border_color(vic.color_border);
+		vic.screen_ram.fill({petscii:0,color:vic.color_fg}),
 		vic._screen_refresh();
 	},
 
-	color_hex(color) {
+	color_hex: function(color) {
 		return `#${vic.colors[color]}`;
 	},
 
+	get_frame_ms: function() {
+		return vic.framerate[vic.video_mode];
+	},
+
 	plot_char: function(x, y, petscii, color) {
+		vic.screen_ram[y * vic.screen_char_x + x] = {petscii:petscii,color:color};
 		var char_start = (petscii + 256) * 8;
 		var char_x = x * 8;
 		var char_y = y * 8;
@@ -194,21 +201,30 @@ var vic = {
 	_plot_pixel: function(x, y, color) {
 		color = vic.color_hex(color);
 		var mul = vic.screen_pixel_mul;
-		//console.log(x*mul + ' ' + y*mul + ' ' + color);
 		vic.screen.fillStyle = color;
 		vic.screen.fillRect(x * mul, y * mul, mul, mul);
 	},
 
 	_screen_refresh: function() {
+		// set correct window dimensions
 		var w = vic.screen_pixel_mul * vic.screen_char_x * 8;
 		video.setAttribute('width', w);
 		video.style.width = video.screen_x = w;
 		var h = vic.screen_pixel_mul * vic.screen_char_y * 8;
 		video.setAttribute('height', h);
 		video.style.height = video.screen_y = h;
+		// wipe the background
 		vic.screen.fillStyle = vic.color_hex(vic.color_bg);
 		vic.screen.fillRect(0, 0, w, h);
-		console.log(w+' '+h);
+		// redraw screen ram
+		var i = 0;
+		for (var y = 0; y < vic.screen_char_y; y++){
+			for (var x = 0; x < vic.screen_char_x; x++) {
+				var char_data = vic.screen_ram[i]
+				vic.plot_char(x, y, char_data.petscii, char_data.color);
+				i++;
+			}
+		}
 	}
 };
 
