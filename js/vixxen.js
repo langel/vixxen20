@@ -70,11 +70,11 @@ var vixxen = {
 	inputs: {
 		blur: function(input_index) {
 			var input = vixxen.inputs.data[input_index];
-			vic.plot_str(input.x, input.y, ' ' + input.value, 1);
+			vic.plot_str(input.x, input.y, input.label + input.value, 1);
 		},
 		focus: function(input_index) {
 			var input = vixxen.inputs.data[input_index];
-			vic.plot_str(input.x, input.y, ' ' + input.value, 5);
+			vic.plot_str_inv(input.x, input.y, input.label + input.value, 5);
 		},
 		frame: function() {
 		},
@@ -120,7 +120,13 @@ var vixxen = {
 				}
 				vic.screen_ram = new_ram;
 				delete(new_ram);
-				vic._screen_refresh();
+				// cut and paste the kept section of the screen
+				var clipboard = vic.screen.getImageData(0, 8 * vic.screen_pixel_mul, vic.screen_char_x * 8 * vic.screen_pixel_mul, (vic.screen_char_y - 1) * 8 * vic.screen_pixel_mul);
+				// wipe the background
+				vic.screen.fillStyle = vic.color_hex(vic.color_bg);
+				vic.screen.fillRect(0, 0, vic.screen_char_x * 8 * vic.screen_pixel_mul, vic.screen_char_y * 8 * vic.screen_pixel_mul);
+				// paste that shit in there
+				vic.screen.putImageData(clipboard, 0 , 0);
 			}
 		}
 	}
@@ -136,7 +142,7 @@ var pause = false;
  * hell yeah keyboard shortcuts like a real tracker
  */
 document.body.onkeydown = function (e) {
-	vic.plot_str(24, 25, 'KEY PRESSED ' + e.keyCode + ' ', 1);
+	vic.plot_str(24, 28, 'KEY PRESSED ' + e.keyCode + ' ', 2);
 	if (e.keyCode === 0 || e.keyCode === 32) {
 		e.preventDefault();
 		console.log('Space pressed');

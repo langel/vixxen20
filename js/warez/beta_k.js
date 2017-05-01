@@ -13,7 +13,7 @@ var beta_k = {
 	pattern_index: 0,
 
 	inputs: [{
-		name: 'framerate',
+		label: 'SPEED  ',
 		on_update: function(value) {
 			beta_k.frame_rate = value;
 		},
@@ -24,7 +24,7 @@ var beta_k = {
 		x: 20,
 		y: 18
 	},{
-		name: 'volume',
+		label: 'VOLUME ',
 		on_update: function(value) {
 			vic.set_volume(value);
 		},
@@ -68,9 +68,9 @@ var beta_k = {
 		vic.plot_str(0, 6, ' TENO ' + ('  ' + vic.voices[1].value).slice(-3) + ' ', 1);
 		vic.plot_str(0, 7, ' SOPR ' + ('  ' + vic.voices[2].value).slice(-3) + ' ', 1);
 		vic.plot_str(0, 8, ' NUZZ ' + ('  ' + vic.voices[3].value).slice(-3) + ' ', 1);
-		vic.plot_str(0, 10, ` FRAME ${beta_k.frame_counter} `, 2);
 		vic.plot_str(0, 14, ' PLAYING    ', 1);
 		beta_k.frame_counter++;
+		vic.plot_str(0, 28, ` FRAME ${beta_k.frame_counter} `, 2);
 	}
 
 }
