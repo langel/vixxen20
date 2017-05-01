@@ -2,7 +2,6 @@
 
 var vixxen = {
 
-
 	cursor: {
 
 		blink_rate: 30,
@@ -29,6 +28,22 @@ var vixxen = {
 			}
 		}
 	},
+
+  display: {
+    // return hex string from integer
+    hex: function(n) {
+      return ('0' + n.toString(16).toUpperCase()).slice(-2);
+    },
+    // return integer from hex string
+    num: function(n) {
+      return parseInt(n, 16);
+    },
+    // return padded string for right alignment
+    // XXX this probably doesn't need to exist
+    pad: function(str, len, pad) {
+      return str.toString(10).padStart(len, pad);
+    }
+  },
 
 	init: function() {
 		// wut
@@ -58,8 +73,6 @@ var vixxen = {
 					vic.set_voice_value(3, 0);
 					vixxen.screen.clear();
 					vic.plot_str(0, 1, ' V I X X E N   2 0 ', 5);
-					vic.set_volume(10);
-					vic.plot_str(0, 12, ` VOL 10 `, 1);
 					beta_k.init();
 				}
 			};
@@ -109,6 +122,15 @@ var vixxen = {
 		},
 
 		empty_char: {petscii:32, color:vic.color_fg},
+
+    get_str: function(x, y, length) {
+      var start = x + y * vic.screen_char_x;
+      var string = '';
+      for (var i = 0; i < length; i++) {
+        string += String.fromCharCode(vic.screen_ram[start + i].petscii); 
+      }
+      return string;
+    },
 
 		scroll_much: 1,
 
