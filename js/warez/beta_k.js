@@ -85,9 +85,10 @@ var beta_k = {
 	 */
 
 	init: function() {
-    vic.set_volume(10);
+		vic.set_volume(10);
 		vixxen.inputs.init(beta_k.inputs);
-    beta_k.pattern.draw(pattern_data);
+		beta_k.pattern.draw(pattern_data);
+		vic.plot_str(0, 1, ' BETA-K ON VIXXEN20 ', 5);
 		beta_k.frame();
 	},
 
@@ -119,23 +120,27 @@ var beta_k = {
 			vic.set_voice_value(1, 0);
 			vic.set_voice_value(2, 0);
 			vic.set_voice_value(3, 0);
-			vic.plot_str(30, 14, ' P A U S E D ', 1);
+			vic.plot_str(30, 14, ' PAUSED   ', 1);
 			return;
 		}
 		if (beta_k.frame_counter % beta_k.frame_rate == 0) {
-      beta_k.pattern.row_dehighlight(beta_k.pattern_index);
+			beta_k.pattern.row_dehighlight(beta_k.pattern_index);
 			vic.set_voice_value(0, pattern_data.v0[beta_k.pattern_index]);
 			vic.set_voice_value(1, pattern_data.v1[beta_k.pattern_index]);
 			vic.set_voice_value(2, pattern_data.v2[beta_k.pattern_index]);
 			vic.set_voice_value(3, pattern_data.v3[beta_k.pattern_index]);
 			beta_k.pattern_index++;
-      beta_k.pattern.row_highlight(beta_k.pattern_index);
 			if (beta_k.pattern_index == pattern_data.length) beta_k.pattern_index = 0;
+      	beta_k.pattern.row_highlight(beta_k.pattern_index);
 		}
-		vic.plot_str(30, 8, ' ALTO ' + vixxen.display.hex(vic.voices[0].value), 1);
-		vic.plot_str(30, 9, ' TENO ' + vixxen.display.hex(vic.voices[1].value), 1);
-		vic.plot_str(30, 10, ' SOPR ' + vixxen.display.hex(vic.voices[2].value), 1);
-		vic.plot_str(30, 11, ' NUZZ ' + vixxen.display.hex(vic.voices[3].value), 1);
+		var display = (vic.voices[0].value & 128) ? vixxen.display.hex(vic.voices[0].value) : '  ';
+		vic.plot_str(30, 8, ' ALTO ' + display, 1);
+		var display = (vic.voices[1].value & 128) ? vixxen.display.hex(vic.voices[1].value) : '  ';
+		vic.plot_str(30, 9, ' TENO ' + display, 1);
+		var display = (vic.voices[2].value & 128) ? vixxen.display.hex(vic.voices[2].value) : '  ';
+		vic.plot_str(30, 10, ' SOPR ' + display, 1);
+		var display = (vic.voices[3].value & 128) ? vixxen.display.hex(vic.voices[3].value) : '  ';
+		vic.plot_str(30, 11, ' NUZZ ' + display, 1);
 		vic.plot_str(30, 14, ' PLAYING    ', 1);
 		beta_k.frame_counter++;
 		vic.plot_str(0, 28, ` FRAME ${beta_k.frame_counter} `, 2);
