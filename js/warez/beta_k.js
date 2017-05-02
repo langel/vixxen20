@@ -1,6 +1,51 @@
 // MAKE IT SING
 
+/*
+ * VIC20 Song Data Schema
 
+  16 bytes : "title"
+  16 bytes : "artist"
+  16 bytes : "copy"
+  1 byte : base volume and video standard
+    bit 7 set is NTSC (unset PAL)
+    bits 3-0 volume
+  1 byte : base speed
+  6 song order objects for the 4 voices, speed, and volume
+  n bytes channel pattern objects and tables
+
+  track pattern order object
+    1 byte : order length - max of 127
+      bit 7 : sets track loop to true
+      bits 6-0 : order length 
+      value x00 means the track is inactive
+    n bytes : pattern numbers in order
+
+  pattern object
+    1 byte : pattern length
+    n bytes - pattern column data
+      value x00 is note off
+      values x01-x7f length of repeat
+      values x80-xff note value
+
+  volume table object
+    1 byte - length of table (row count >> 1)
+    n bytes - dual volume values
+      values are max 4 bits in size (x00-x0f)
+      bits 7-4 even row volume value
+      bits 3-0 odd row volume value
+
+  On init the player needs to scan the song data and save pointers in the 
+  zero (and maybe 1st) page for order lists and pattern start addresses.
+
+  3583 bytes free ~= 14 pages (in the 4 bit number range)
+  ...set aside about 1k for the play routine...
+  2.5k = 10 pages (still in the 4 bit number range)
+
+  Given that pattern addresses require hi and lo bytes the player may
+  require two bytes per pattern. If using a single page for these pointers
+  then the max number of patterns would be 128. Handling patterns and
+  volume tables might be interesting...
+*/
 
 var beta_k = {
 
