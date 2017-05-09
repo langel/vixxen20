@@ -29,21 +29,21 @@ var vixxen = {
 		}
 	},
 
-  display: {
-    // return hex string from integer
-    hex: function(n) {
-      return ('0' + n.toString(16).toUpperCase()).slice(-2);
-    },
-    // return integer from hex string
-    num: function(n) {
-      return parseInt(n, 16);
-    },
-    // return padded string for right alignment
-    // XXX this probably doesn't need to exist
-    pad: function(str, len, pad) {
-      return str.toString(10).padStart(len, pad);
-    }
-  },
+	display: {
+		// return hex string from integer
+		hex: function(n) {
+			return ('0' + n.toString(16).toUpperCase()).slice(-2);
+		},
+		// return integer from hex string
+		num: function(n) {
+			return parseInt(n, 16);
+		},
+		// return padded string for right alignment
+		// XXX this probably doesn't need to exist
+		pad: function(str, len, pad) {
+			return str.toString(10).padStart(len, pad);
+		}
+	},
 
 	init: function() {
 		// wut
@@ -90,7 +90,10 @@ var vixxen = {
 			vic.plot_str_inv(input.x, input.y, input.label + input.value, 5);
 		},
 		frame: function() {
+			
 		},
+		frame_count: 0,
+		frame_key_repeat: 10,
 		index: 0,
 		init: function(inputs) {
 			vixxen.inputs.data = inputs;
@@ -110,6 +113,8 @@ var vixxen = {
 		}
 	},
 
+	key_state: new Array(256).fill(false),
+
 	screen: {
 
 		clear: function() {
@@ -123,14 +128,14 @@ var vixxen = {
 
 		empty_char: {petscii:32, color:vic.color_fg},
 
-    get_str: function(x, y, length) {
-      var start = x + y * vic.screen_char_x;
-      var string = '';
-      for (var i = 0; i < length; i++) {
-        string += String.fromCharCode(vic.screen_ram[start + i].petscii); 
-      }
-      return string;
-    },
+		get_str: function(x, y, length) {
+			var start = x + y * vic.screen_char_x;
+			var string = '';
+			for (var i = 0; i < length; i++) {
+				string += String.fromCharCode(vic.screen_ram[start + i].petscii); 
+			}
+			return string;
+		},
 
 		scroll_much: 1,
 
@@ -163,7 +168,8 @@ var pause = false;
 /*
  * hell yeah keyboard shortcuts like a real tracker
  */
-document.body.onkeydown = function (e) {
+document.body.onkeydown = function(e) {
+	vixxen.key_state[e.keyCode] = true;
 	vic.plot_str(24, 28, 'KEY PRESSED ' + e.keyCode + ' ', 2);
 	if (e.keyCode === 0 || e.keyCode === 32) {
 		e.preventDefault();
@@ -180,6 +186,10 @@ document.body.onkeydown = function (e) {
 		e.preventDefault();
 		vixxen.inputs.next();
 	}
+};
+
+document.body.onkeyup = function(e) {
+	vixxen.key_state[e.keyCode] = false;
 };
 
 var fill_color = 0;
