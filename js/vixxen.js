@@ -73,6 +73,8 @@ var vixxen = {
 					vic.set_voice_value(3, 0);
 					vixxen.screen.clear();
 					vic.plot_str(0, 1, ' V I X X E N   2 0 ', 5);
+					// XXX loading beta-k manually
+					//vixxen.load('beta_k');
 					beta_k.init();
 				}
 			};
@@ -90,7 +92,14 @@ var vixxen = {
 			vic.plot_str_inv(input.x, input.y, input.label + input.value, 5);
 		},
 		frame: function() {
-			
+			// handle key actions on inputs
+			if (vixxen.inputs.frame_count == 0) {
+			}
+			// handle key repeat timings
+			vixxen.inputs.frame_count++;
+			if (vixxen.inputs.frame_count == vixxen.inputs.frame_key_repeat) {
+				vixxen.inputs.frame_count = 0;
+			}
 		},
 		frame_count: 0,
 		frame_key_repeat: 10,

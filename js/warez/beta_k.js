@@ -107,24 +107,24 @@ var beta_k = {
 		beta_k.frame();
 	},
 
-  pattern: {
-    draw: function(pattern) {
-      for (var i = 0; i < 16; i++) {
-        vic.plot_str(2, 6 + i, vixxen.display.pad(pattern.v0[i], 3, ' '), 1);
-        vic.plot_str(7, 6 + i, vixxen.display.pad(pattern.v1[i], 3, ' '), 1);
-        vic.plot_str(12, 6 + i, vixxen.display.pad(pattern.v2[i], 3, ' '), 1);
-        vic.plot_str(17, 6 + i, vixxen.display.pad(pattern.v3[i], 3, ' '), 1);
-      }
-    },
-    row_dehighlight: function(row_id) {
-      var text = vixxen.screen.get_str(2, 6 + row_id, 20);
-      vic.plot_str(2, 6 + row_id, text, 1);
-    },
-    row_highlight: function(row_id) {
-      var text = vixxen.screen.get_str(2, 6 + row_id, 20);
-      vic.plot_str(2, 6 + row_id, text, 2);
-    },
-  },
+	pattern: {
+		draw: function(pattern) {
+			for (var i = 0; i < 16; i++) {
+				vic.plot_str(2, 6 + i, vixxen.display.pad(pattern.v0[i], 3, ' '), 1);
+				vic.plot_str(7, 6 + i, vixxen.display.pad(pattern.v1[i], 3, ' '), 1);
+				vic.plot_str(12, 6 + i, vixxen.display.pad(pattern.v2[i], 3, ' '), 1);
+				vic.plot_str(17, 6 + i, vixxen.display.pad(pattern.v3[i], 3, ' '), 1);
+			}
+		},
+		row_dehighlight: function(row_id) {
+			var text = vixxen.screen.get_str(2, 6 + row_id, 20);
+			vic.plot_str(2, 6 + row_id, text, 1);
+		},
+		row_highlight: function(row_id) {
+			var text = vixxen.screen.get_str(2, 6 + row_id, 20);
+			vic.plot_str(2, 6 + row_id, text, 2);
+		},
+	},
 
 	frame: function() {
 		window.setTimeout(beta_k.frame, vic.get_frame_ms());
