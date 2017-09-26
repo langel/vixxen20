@@ -45,6 +45,25 @@ var vixxen = {
 		}
 	},
 
+
+  frame: {
+    hooks: [],
+    hook_add: function(hook) {
+      vixxen.frame.hooks.push(hook);
+    },
+    hook_remove: function(hook) {
+      var i = vixxen.frame.hooks.indexOf(hook);
+      if (i >= 0) vixxen.frame.hooks.splice(i, 1);
+    },
+    main: function() {
+		  window.setTimeout(vixxen.frame.main, vic.get_frame_ms());
+      vixxen.frame.hooks.forEach((hook) => {
+        eval(hook+'()');
+      });
+    }
+  },
+
+
 	init: function() {
 		// wut
 		vic.init();
@@ -79,8 +98,10 @@ var vixxen = {
 				}
 			};
 			bootscroll();
+      vixxen.frame.main();
 		}, 100);
 	},
+
 
 	inputs: {
 		blur: function(input_index) {
@@ -122,7 +143,9 @@ var vixxen = {
 		}
 	},
 
+
 	key_state: new Array(256).fill(false),
+
 
 	screen: {
 

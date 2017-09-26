@@ -104,7 +104,7 @@ var beta_k = {
 		vixxen.inputs.init(beta_k.inputs);
 		beta_k.pattern.draw(pattern_data);
 		vic.plot_str(0, 1, ' BETA-K ON VIXXEN20 ', 5);
-		beta_k.frame();
+    vixxen.frame.hook_add('beta_k.frame');
 	},
 
 	pattern: {
@@ -127,8 +127,6 @@ var beta_k = {
 	},
 
 	frame: function() {
-		window.setTimeout(beta_k.frame, vic.get_frame_ms());
-		vixxen.inputs.frame();
 		vic.plot_str(35, 1, vic.video_mode.toUpperCase()+' ', 6);
 		if (pause) {
 			vic.set_voice_value(0, 0);
