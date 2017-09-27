@@ -104,7 +104,10 @@ var beta_k = {
 		vixxen.inputs.init(beta_k.inputs);
 		beta_k.pattern.draw(pattern_data);
 		vic.plot_str(0, 1, ' BETA-K ON VIXXEN20 ', 5);
-    vixxen.frame.hook_add('beta_k.frame');
+    vixxen.frame.hook_add({
+      object: 'beta_k',
+      method: 'frame'
+    });
 	},
 
 	pattern: {
@@ -144,7 +147,7 @@ var beta_k = {
 			vic.set_voice_value(3, pattern_data.v3[beta_k.pattern_index]);
 			beta_k.pattern_index++;
 			if (beta_k.pattern_index == pattern_data.length) beta_k.pattern_index = 0;
-      	beta_k.pattern.row_highlight(beta_k.pattern_index);
+     	beta_k.pattern.row_highlight(beta_k.pattern_index);
 		}
 		var display = (vic.voices[0].value & 128) ? vixxen.display.hex(vic.voices[0].value) : '  ';
 		vic.plot_str(30, 8, ' ALTO ' + display, 1);

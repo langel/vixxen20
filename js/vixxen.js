@@ -58,7 +58,7 @@ var vixxen = {
     main: function() {
 		  window.setTimeout(vixxen.frame.main, vic.get_frame_ms());
       vixxen.frame.hooks.forEach((hook) => {
-        eval(hook+'()');
+        window[hook.object][hook.method]();
       });
     }
   },
