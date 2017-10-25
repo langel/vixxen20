@@ -184,9 +184,12 @@ var vic = {
 				// make sure voices are switched on
 				if (vic.voices[v].value & 128) {
 					if (vic.voices[v].delta_counter <= 0) {
-						var pitch = vic.voices[v].value - 128;
-						if (pitch > 127) pitch = 129;
-						freq = vic.voices[v].clock[vic.video_mode] / (127 - pitch);
+						var pitch = vic.voices[v].value;
+            /*  what's more correct?
+                the Programmer's Referenc Guide or this link?
+                http://www.zimmers.net/anonftp/pub/cbm/documents/chipdata/VIC-I.txt
+            */
+						freq = vic.voices[v].clock[vic.video_mode] / (128 - ((pitch) & 127));
 						// handle sqaures
 						if (v != 3) {
 							vic.voices[v].delta_counter = audio.sampleRate / freq / 2;
