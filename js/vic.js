@@ -185,11 +185,36 @@ var vic = {
 				if (vic.voices[v].value & 128) {
 					if (vic.voices[v].delta_counter <= 0) {
 						var pitch = vic.voices[v].value;
-            /*  what's more correct?
-                the Programmer's Referenc Guide or this link?
-                http://www.zimmers.net/anonftp/pub/cbm/documents/chipdata/VIC-I.txt
-            */
-						freq = vic.voices[v].clock[vic.video_mode] / (128 - ((pitch) & 127));
+						/* 
+							 Programmer's Reference Guide on Sound --
+
+								  Frequency = Clock / (127-X)
+
+								  X is the number from 0 to 127 that is put into the frequency
+								register. If X is 127, then use -1 for X in the formula. The value of
+								Clock comes from the following table:
+								 +----------+-----------------+-----------------+
+								 | Register |  NTSC (US TV's) |  PAL (European) |
+								 +----------+-----------------+-----------------+
+								 |  36874   |       3995      |       4329      |
+								 |  36875   |       7990      |       8659      |
+								 |  36876   |      15980      |      17320      |
+								 |  36877   |      31960      |      34640      |
+								 +----------+-----------------+-----------------+
+
+
+							VIC-I Doc by Marko Mäkelä / Frequency Formulas by Levente Hársfalvi --
+
+								 N: bass enable,    R: freq f=Phi2/256/(128-(($900a+1)&127))
+								 O: alto enable,    S: freq f=Phi2/128/(128-(($900b+1)&127))
+								 P: soprano enable, T: freq f=Phi2/64/(128-(($900c+1)&127))
+								 Q: noise enable,   U: freq f=Phi2/32/(128-(($900d+1)&127))
+								 * PAL:  Phi2=4433618/4 Hz
+								 * NTSC: Phi2=14318181/14 Hz
+						*/
+						//if (pitch == 255) pitch--;
+						//freq = vic.voices[v].clock[vic.video_mode] / (128 - (pitch++ & 127));
+						freq = vic.voices[v].clock[vic.video_mode] / (128 - (pitch & 127));
 						// handle sqaures
 						if (v != 3) {
 							vic.voices[v].delta_counter = audio.sampleRate / freq / 2;
