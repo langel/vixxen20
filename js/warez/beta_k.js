@@ -128,10 +128,14 @@ var beta_k = {
 	pattern: {
 		draw: function(pattern) {
 			for (var i = 0; i < 16; i++) {
-				vic.plot_str(2, 6 + i, vixxen.display.pad(pattern.v0[i], 3, ' '), 1);
-				vic.plot_str(7, 6 + i, vixxen.display.pad(pattern.v1[i], 3, ' '), 1);
-				vic.plot_str(12, 6 + i, vixxen.display.pad(pattern.v2[i], 3, ' '), 1);
-				vic.plot_str(17, 6 + i, vixxen.display.pad(pattern.v3[i], 3, ' '), 1);
+				var value;
+				for (var c = 0; c < 4; c++) { 
+					value = pattern['v'+c][i];
+					if (i > 0 && value == pattern['v'+c][i-1]) value = '   ';
+					if (value === 0) value = 'OFF';
+					var x_pos = ((c) ? c*5 : 0) + 2;
+					vic.plot_str(x_pos, 6 + i, vixxen.display.pad(value, 3, ' '), 1);
+				}
 			}
 		},
 		row_dehighlight: function(row_id) {
@@ -223,27 +227,27 @@ pattern_data = {
 	v2: [
 		128,
 		0,
-		255,
+		155,
 		0,
 		200,
 		0,
-		255,
+		155,
 		0,
 		200,
 		0,
-		255,
+		155,
 		0,
-		255,
+		155,
 		0,
 		0,
-		255
+		155
 	],
 	v3: [
 		140,
 		129,
 		0,
 		0,
-		255,
+		155,
 		0,
 		254,
 		0,
@@ -251,7 +255,7 @@ pattern_data = {
 		220,
 		0,
 		0,
-		255,
+		155,
 		0,
 		254,
 		0
