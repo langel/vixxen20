@@ -72,42 +72,57 @@ var beta_k = {
 
 	pattern_index: 0,
 
-	inputs: [{
-		label: 'SPEED  ',
-		on_update: function(value) {
-			beta_k.frame_rate = value;
-		},
-		type: 'byte',
-		value: 5,
-		value_min: 1,
-		value_max: 255,
-		x: 30,
-		y: 3
-	},{
-		label: 'VOLUME ',
-		on_update: function(value) {
-			vic.set_volume(value);
-		},
-		type: 'byte',
-		value: 0,
-		value_min: 0,
-		value_max: 15,
-		x: 30,
-		y: 4
-	}],
+	inputs: {
+		fields: [{
+			label: 'SPEED  ',
+			on_update: function() {
+				beta_k.frame_rate = this.value;
+			},
+			type: 'range',
+			value: 5,
+			value_min: 1,
+			value_max: 99,
+			x: 30,
+			y: 3
+		},{
+			label: 'VOLUME ',
+			on_update: function() {
+				vic.set_volume(this.value);
+			},
+			type: 'range',
+			value: 7,
+			value_min: 0,
+			value_max: 15,
+			x: 30,
+			y: 4
+		}],
+		
+		global_keys: [{
+			key: 13,
+			on_update: function() {
+				if (vic.video_mode == 'ntsc') vic.video_mode = 'pal';
+				else vic.video_mode = 'ntsc';
+			}
+		},{
+			key: 32,
+			on_update: function() {
+				beta_k.pause = !beta_k.pause;
+			}
+		}],
+	},
 	/*
 	 * methods
 	 */
 
 	init: function() {
 		vic.set_volume(10);
-		vixxen.inputs.init(beta_k.inputs);
+		inputs.init(beta_k.inputs);
 		beta_k.pattern.draw(pattern_data);
 		vic.plot_str(0, 1, ' BETA-K ON VIXXEN20 ', 5);
-    vixxen.frame.hook_add({
-      object: 'beta_k',
-      method: 'frame'
-    });
+		vixxen.frame.hook_add({
+			object: 'beta_k',
+			method: 'frame'
+		});
 	},
 
 	pattern: {
@@ -131,7 +146,7 @@ var beta_k = {
 
 	frame: function() {
 		vic.plot_str(35, 1, vic.video_mode.toUpperCase()+' ', 6);
-		if (pause) {
+		if (beta_k.pause) {
 			vic.set_voice_value(0, 0);
 			vic.set_voice_value(1, 0);
 			vic.set_voice_value(2, 0);
@@ -141,13 +156,13 @@ var beta_k = {
 		}
 		if (beta_k.frame_counter % beta_k.frame_rate == 0) {
 			beta_k.pattern.row_dehighlight(beta_k.pattern_index);
+			beta_k.pattern_index++;
+			if (beta_k.pattern_index == pattern_data.length) beta_k.pattern_index = 0;
+     		beta_k.pattern.row_highlight(beta_k.pattern_index);
 			vic.set_voice_value(0, pattern_data.v0[beta_k.pattern_index]);
 			vic.set_voice_value(1, pattern_data.v1[beta_k.pattern_index]);
 			vic.set_voice_value(2, pattern_data.v2[beta_k.pattern_index]);
 			vic.set_voice_value(3, pattern_data.v3[beta_k.pattern_index]);
-			beta_k.pattern_index++;
-			if (beta_k.pattern_index == pattern_data.length) beta_k.pattern_index = 0;
-     	beta_k.pattern.row_highlight(beta_k.pattern_index);
 		}
 		var display = (vic.voices[0].value & 128) ? vixxen.display.hex(vic.voices[0].value) : '  ';
 		vic.plot_str(30, 8, ' ALTO ' + display, 1);
@@ -160,7 +175,9 @@ var beta_k = {
 		vic.plot_str(30, 14, ' PLAYING    ', 1);
 		beta_k.frame_counter++;
 		vic.plot_str(0, 28, ` FRAME ${beta_k.frame_counter} `, 2);
-	}
+	},
+
+	pause: false,
 
 }
 

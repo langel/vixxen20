@@ -56,8 +56,8 @@ var vixxen = {
       if (i >= 0) vixxen.frame.hooks.splice(i, 1);
     },
     main: function() {
-		  window.setTimeout(vixxen.frame.main, vic.get_frame_ms());
-      vixxen.frame.hooks.forEach((hook) => {
+	 	window.setTimeout(vixxen.frame.main, vic.get_frame_ms());
+		vixxen.frame.hooks.forEach((hook) => {
         window[hook.object][hook.method]();
       });
     }
@@ -101,51 +101,6 @@ var vixxen = {
       vixxen.frame.main();
 		}, 100);
 	},
-
-
-	inputs: {
-		blur: function(input_index) {
-			var input = vixxen.inputs.data[input_index];
-			vic.plot_str(input.x, input.y, input.label + input.value, 1);
-		},
-		focus: function(input_index) {
-			var input = vixxen.inputs.data[input_index];
-			vic.plot_str_inv(input.x, input.y, input.label + input.value, 5);
-		},
-		frame: function() {
-			// handle key actions on inputs
-			if (vixxen.inputs.frame_count == 0) {
-			}
-			// handle key repeat timings
-			vixxen.inputs.frame_count++;
-			if (vixxen.inputs.frame_count == vixxen.inputs.frame_key_repeat) {
-				vixxen.inputs.frame_count = 0;
-			}
-		},
-		frame_count: 0,
-		frame_key_repeat: 10,
-		index: 0,
-		init: function(inputs) {
-			vixxen.inputs.data = inputs;
-			vixxen.inputs.index = 0;
-			for (var i = 0; i < inputs.length; i++) {
-				vixxen.inputs.blur(i);
-			}
-			vixxen.inputs.focus(vixxen.inputs.index);
-		},
-		next: function() {
-			vixxen.inputs.blur(vixxen.inputs.index);
-			vixxen.inputs.index++;
-			if (vixxen.inputs.index >= vixxen.inputs.data.length) {
-				vixxen.inputs.index = 0;
-			}
-			vixxen.inputs.focus(vixxen.inputs.index);
-		}
-	},
-
-
-	key_state: new Array(256).fill(false),
-
 
 	screen: {
 
@@ -193,35 +148,6 @@ var vixxen = {
 
 window.onload = function() {
 	vixxen.init();
-};
-
-var pause = false;
-
-/*
- * hell yeah keyboard shortcuts like a real tracker
- */
-document.body.onkeydown = function(e) {
-	vixxen.key_state[e.keyCode] = true;
-	vic.plot_str(24, 28, 'KEY PRESSED ' + e.keyCode + ' ', 2);
-	if (e.keyCode === 0 || e.keyCode === 32) {
-		e.preventDefault();
-		console.log('Space pressed');
-		pause = !pause;
-	}
-	if (e.keyCode === 13) {
-		e.preventDefault();
-		console.log('enter pressed');
-		if (vic.video_mode == 'ntsc') vic.video_mode = 'pal';
-		else vic.video_mode = 'ntsc';
-	}
-	if (e.keyCode === 9) {
-		e.preventDefault();
-		vixxen.inputs.next();
-	}
-};
-
-document.body.onkeyup = function(e) {
-	vixxen.key_state[e.keyCode] = false;
 };
 
 var fill_color = 0;

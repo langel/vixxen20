@@ -1,2 +1,2 @@
 # vixxen20
-cross platform music tracker for commodore vic20
+This software is a Commodore VIC 20 simulation environment. This platform focuses on the development of exporting tools and also prototyping of VIC 20 software in the higher language of javascript before commiting oneself to 6502 assembly. Eventually this vixxen will be ported to electron as a desktop app for Windows, OSX and Linux.
