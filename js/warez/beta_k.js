@@ -71,14 +71,100 @@ var beta_k = {
 	],
 
 	pattern_index: 0,
+	pause: false,
 
 	inputs: {
 		fields: [{
+			label: 'PATTERN EDITOR',
+			type: 'custom',
+			cursor_forward: function() {
+				if (this.row == 15) this.row = 0;
+				else this.row++;
+			},
+			on_key: function(key) {
+				inputs.blur(this);
+				var note = beta_k.note_keycodes.indexOf(parseInt(key, 10));
+				// enter note value
+				if (note >= 0) {
+					var note_value = beta_k.note_values[note];
+					var old_value = patterns.data[this.channel][this.row];
+					patterns.data[this.channel][this.row] = note_value;
+					var note_name = beta_k.note_names[note % 12];
+					var octave = Math.floor(note / 12) + 1;
+					this.patterns_display[this.channel][this.row] = note_name + octave;
+					this.cursor_forward();
+					var r = this.row;
+					while (patterns.data[this.channel][r] == old_value && r < 16) {
+						patterns.data[this.channel][r] = note_value;
+						this.patterns_display[this.channel][r] = '   ';
+						r++;
+					}
+					beta_k.pattern.draw_channel(this.channel, this.patterns_display[this.channel]);
+				}
+				// enter note off with ` or 1 
+				else if (key == 49 || key == 192) {
+					var old_value = patterns.data[this.channel][this.row];
+					patterns.data[this.channel][this.row] = 0;
+					this.patterns_display[this.channel][this.row] = 'OFF';
+					this.cursor_forward();
+					var r = this.row;
+					while (patterns.data[this.channel][r] == old_value && r < 16) {
+						patterns.data[this.channel][r] = 0;
+						this.patterns_display[this.channel][r] = '   ';
+						r++;
+					}
+					beta_k.pattern.draw_channel(this.channel, this.patterns_display[this.channel]);
+				}
+				// move cursor
+				else if (key == KEY_ARROW_UP) {
+					if (this.row == 0) this.row = 15;
+					else this.row--;
+				}
+				else if (key == KEY_ARROW_RIGHT) {
+					if (this.channel == 3) this.channel = 0;
+					else this.channel++;
+				}
+				else if (key == KEY_ARROW_DOWN) {
+					this.cursor_forward();
+				}
+				else if (key == KEY_ARROW_LEFT) {
+					if (this.channel == 0) this.channel = 3;
+					else this.channel--;
+				}
+				else if (key == KEY_PAGE_UP) {
+					this.row -= 4;
+					if (this.row < 0) this.row += 16;
+				}
+				else if (key == KEY_PAGE_DOWN) {
+					this.row += 4;
+					if (this.row > 15) this.row -= 16;
+				}
+				vic.plot_str(24, 26, this.channel + ' ' + this.row + '  ', 2);
+			},
+			on_update: function() {
+				this.display = this.patterns_display[this.channel][this.row];
+				var cell_pos = beta_k.pattern.get_cell_position(this.channel, this.row);
+				this.x = cell_pos.x;
+				this.y = cell_pos.y;
+			},
+			patterns_display: [
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			],
+			channel: 0,
+			pattern: 0,
+			row: 0,
+			x: 3,
+			y: 10,
+		},{
 			label: 'SPEED  ',
+			type: 'range',
 			on_update: function() {
 				beta_k.frame_rate = this.value;
+				this.display = this.label + vixxen.display.pad(this.value, 2, ' ');
 			},
-			type: 'range',
 			value: 5,
 			value_min: 1,
 			value_max: 99,
@@ -86,11 +172,12 @@ var beta_k = {
 			y: 3
 		},{
 			label: 'VOLUME ',
+			type: 'range',
 			on_update: function() {
 				vic.set_volume(this.value);
+				this.display = this.label + vixxen.display.pad(this.value, 2, ' ');
 			},
-			type: 'range',
-			value: 7,
+			value: 1,
 			value_min: 0,
 			value_max: 15,
 			x: 30,
@@ -117,7 +204,7 @@ var beta_k = {
 	init: function() {
 		vic.set_volume(10);
 		inputs.init(beta_k.inputs);
-		beta_k.pattern.draw(pattern_data);
+		beta_k.pattern.draw_all_channels(patterns);
 		vic.plot_str(0, 1, ' BETA-K ON VIXXEN20 ', 5);
 		vixxen.frame.hook_add({
 			object: 'beta_k',
@@ -126,17 +213,30 @@ var beta_k = {
 	},
 
 	pattern: {
-		draw: function(pattern) {
-			for (var i = 0; i < 16; i++) {
-				var value;
-				for (var c = 0; c < 4; c++) { 
-					value = pattern['v'+c][i];
-					if (i > 0 && value == pattern['v'+c][i-1]) value = '   ';
-					if (value === 0) value = 'OFF';
-					var x_pos = ((c) ? c*5 : 0) + 2;
-					vic.plot_str(x_pos, 6 + i, vixxen.display.pad(value, 3, ' '), 1);
-				}
+		x_origin: 2,
+		y_origin: 6,
+		draw_all_channels: function(pattern) {
+			for (var c = 0; c < 4; c++) { 
+				beta_k.pattern.draw_channel(c, pattern.data[c]);
 			}
+		},
+		draw_channel: function(channel, pattern) {
+			for (var i = 0; i < 16; i++) {
+				var value = pattern[i];
+				if (i > 0 && value == pattern[i-1]) value = '   ';
+				if (value === 0) value = 'OFF';
+				var cell_pos = this.get_cell_position(channel, i);
+				vic.plot_str(cell_pos.x, cell_pos.y, value, 1);
+			}
+		},
+		get_cell_position: function(channel, row) {
+			channel++;
+			x = channel * 5 - 5 + this.x_origin;
+			y = row + this.y_origin;
+			return { x : x, y : y };
+		},
+		get_cell_value: function(pattern, row) {
+			return patterns.data[pattern][row];
 		},
 		row_dehighlight: function(row_id) {
 			var text = vixxen.screen.get_str(2, 6 + row_id, 20);
@@ -161,12 +261,11 @@ var beta_k = {
 		if (beta_k.frame_counter % beta_k.frame_rate == 0) {
 			beta_k.pattern.row_dehighlight(beta_k.pattern_index);
 			beta_k.pattern_index++;
-			if (beta_k.pattern_index == pattern_data.length) beta_k.pattern_index = 0;
+			if (beta_k.pattern_index == patterns.length) beta_k.pattern_index = 0;
      		beta_k.pattern.row_highlight(beta_k.pattern_index);
-			vic.set_voice_value(0, pattern_data.v0[beta_k.pattern_index]);
-			vic.set_voice_value(1, pattern_data.v1[beta_k.pattern_index]);
-			vic.set_voice_value(2, pattern_data.v2[beta_k.pattern_index]);
-			vic.set_voice_value(3, pattern_data.v3[beta_k.pattern_index]);
+			for (i = 0; i < 4; i++) {
+				vic.set_voice_value(i, patterns.data[i][beta_k.pattern_index]);
+			}
 		}
 		var display = (vic.voices[0].value & 128) ? vixxen.display.hex(vic.voices[0].value) : '  ';
 		vic.plot_str(30, 8, ' ALTO ' + display, 1);
@@ -181,14 +280,12 @@ var beta_k = {
 		vic.plot_str(0, 28, ` FRAME ${beta_k.frame_counter} `, 2);
 	},
 
-	pause: false,
-
 }
 
 
-pattern_data = {
+patterns = {
 	length: 16,
-	v0: [
+	data:	[[
 		200,
 		200,
 		200,
@@ -205,8 +302,7 @@ pattern_data = {
 		0,
 		0,
 		0
-	],
-	v1: [
+	],	[
 		0,
 		0,
 		0,
@@ -223,8 +319,7 @@ pattern_data = {
 		0,
 		200,
 		0
-	],
-	v2: [
+	],	[
 		128,
 		0,
 		155,
@@ -241,8 +336,7 @@ pattern_data = {
 		0,
 		0,
 		155
-	],
-	v3: [
+	],	[
 		140,
 		129,
 		0,
@@ -259,6 +353,6 @@ pattern_data = {
 		0,
 		254,
 		0
-	]
+	]]
 };
 

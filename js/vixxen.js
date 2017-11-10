@@ -39,7 +39,6 @@ var vixxen = {
 			return parseInt(n, 16);
 		},
 		// return padded string for right alignment
-		// XXX this probably doesn't need to exist
 		pad: function(str, len, pad) {
 			return str.toString(10).padStart(len, pad);
 		}
