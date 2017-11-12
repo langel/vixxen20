@@ -31,9 +31,12 @@ var vic = {
 	},
 
 	screen: video.getContext('2d'),
-	screen_pixel_mul: 3,
+	screen_pixel_mul_x: 2,
+	screen_pixel_mul_y: 2,
 	screen_char_x: 40,
+	screen_char_default: 22,
 	screen_char_y: 30,
+	screen_char_default: 23,
 	screen_ram: new Array(2048).fill({petscii:0, color:1}),
 	screen_x: null,
 	screen_y: null,
@@ -104,6 +107,11 @@ var vic = {
 		// initialize the Video Interface Chip video
 		vic.set_border_color(vic.color_border);
 		vic.screen_ram.fill({petscii:0,color:vic.color_fg}),
+		// setup screen resize handling
+		window.addEventListener("resize", function() {
+			console.log('shit');
+			vic._screen_refresh();
+		});
 		vic._screen_refresh();
 	},
 
@@ -238,17 +246,26 @@ var vic = {
 	
 	_plot_pixel: function(x, y, color) {
 		color = vic.color_hex(color);
-		var mul = vic.screen_pixel_mul;
+		var xmul = vic.screen_pixel_mul_x;
+		var ymul = vic.screen_pixel_mul_y;
 		vic.screen.fillStyle = color;
-		vic.screen.fillRect(x * mul, y * mul, mul, mul);
+		vic.screen.fillRect(x * xmul, y * ymul, xmul, ymul);
 	},
 
 	_screen_refresh: function() {
 		// set correct window dimensions
-		var w = vic.screen_pixel_mul * vic.screen_char_x * 8;
+		var width = window.innerWidth;
+		var height = window.innerHeight;
+		var pixel_width = vic.screen_char_x * 8;
+		var pixel_height = vic.screen_char_y * 8;
+		vic.screen_pixel_mul_x = Math.floor(width / pixel_width);
+		if (vic.screen_pixel_mul_x < 1) vic.screen_pixel_mul_x = 1;
+		vic.screen_pixel_mul_y = Math.floor(height / pixel_height);
+		if (vic.screen_pixel_mul_y < 1) vic.screen_pixel_mul_y = 1;
+		var w = vic.screen_pixel_mul_x * vic.screen_char_x * 8;
 		video.setAttribute('width', w);
 		video.style.width = video.screen_x = w;
-		var h = vic.screen_pixel_mul * vic.screen_char_y * 8;
+		var h = vic.screen_pixel_mul_y * vic.screen_char_y * 8;
 		video.setAttribute('height', h);
 		video.style.height = video.screen_y = h;
 		// wipe the background
@@ -263,6 +280,7 @@ var vic = {
 				i++;
 			}
 		}
+		console.log('VIC DEGAUSSED [mul_x:' + vic.screen_pixel_mul_x + ', mul_y:' + vic.screen_pixel_mul_y + ']');
 	}
 };
 

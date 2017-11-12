@@ -46,22 +46,22 @@ var vixxen = {
 	},
 
 
-  frame: {
-    hooks: [],
-    hook_add: function(hook) {
-      vixxen.frame.hooks.push(hook);
-    },
-    hook_remove: function(hook) {
-      var i = vixxen.frame.hooks.indexOf(hook);
-      if (i >= 0) vixxen.frame.hooks.splice(i, 1);
-    },
-    main: function() {
-	 	window.setTimeout(vixxen.frame.main, vic.get_frame_ms());
-		vixxen.frame.hooks.forEach((hook) => {
-        window[hook.object][hook.method]();
-      });
-    }
-  },
+	frame: {
+		hooks: [],
+		hook_add: function(hook) {
+			vixxen.frame.hooks.push(hook);
+		},
+		hook_remove: function(hook) {
+			var i = vixxen.frame.hooks.indexOf(hook);
+			if (i >= 0) vixxen.frame.hooks.splice(i, 1);
+		},
+		main: function() {
+			window.setTimeout(vixxen.frame.main, vic.get_frame_ms());
+			vixxen.frame.hooks.forEach((hook) => {
+				window[hook.object][hook.method]();
+			});
+		}
+	},
 
 
 	init: function() {
@@ -135,10 +135,10 @@ var vixxen = {
 				vic.screen_ram = new_ram;
 				delete(new_ram);
 				// cut and paste the kept section of the screen
-				var clipboard = vic.screen.getImageData(0, 8 * vic.screen_pixel_mul, vic.screen_char_x * 8 * vic.screen_pixel_mul, (vic.screen_char_y - 1) * 8 * vic.screen_pixel_mul);
+				var clipboard = vic.screen.getImageData(0, 8 * vic.screen_pixel_mul_x, vic.screen_char_x * 8 * vic.screen_pixel_mul_x, (vic.screen_char_y - 1) * 8 * vic.screen_pixel_mul_y);
 				// wipe the background
 				vic.screen.fillStyle = vic.color_hex(vic.color_bg);
-				vic.screen.fillRect(0, 0, vic.screen_char_x * 8 * vic.screen_pixel_mul, vic.screen_char_y * 8 * vic.screen_pixel_mul);
+				vic.screen.fillRect(0, 0, vic.screen_char_x * 8 * vic.screen_pixel_mul_x, vic.screen_char_y * 8 * vic.screen_pixel_mul_y);
 				// paste that shit in there
 				vic.screen.putImageData(clipboard, 0 , 0);
 			}
