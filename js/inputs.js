@@ -74,6 +74,9 @@ var inputs = {
 			}
 		}
 	},
+	get_current_field: function() {
+		return this.fields[this.field_index];
+	},
 
 
 	field_index: 0,

@@ -69,6 +69,7 @@ var beta_k = {
 		// top row
 		81,50,87,51,69,82,53,84,54,89,55,85,73,57,79.48,80
 	],
+	note_specials: ['OFF','---','NXT','END'],
 
 	pattern_index: 0,
 	pause: false,
@@ -81,39 +82,54 @@ var beta_k = {
 				if (this.row == 15) this.row = 0;
 				else this.row++;
 			},
+			draw_channel: function(channel, pattern) {
+				var i;
+				for (var i = 0; i < 16; i++) {
+					var value = pattern[i];
+					var cell_pos = this.get_cell_position(channel, i);
+					vic.plot_str(cell_pos.x, cell_pos.y, value, 1);
+				}
+			},
+			get_cell_position: function(channel, row) {
+				channel++;
+				var x = channel * 4 - 4 + this.x_origin;
+				var y = row + this.y_origin;
+				return { x : x, y : y };
+			},
 			on_key: function(key) {
 				inputs.blur(this);
-				var note = beta_k.note_keycodes.indexOf(parseInt(key, 10));
+				var note;
 				// enter note value
-				if (note >= 0) {
-					var note_value = beta_k.note_values[note];
-					var old_value = patterns.data[this.channel][this.row];
-					patterns.data[this.channel][this.row] = note_value;
-					var note_name = beta_k.note_names[note % 12];
-					var octave = Math.floor(note / 12) + 1;
-					this.patterns_display[this.channel][this.row] = note_name + octave;
-					this.cursor_forward();
-					var r = this.row;
-					while (patterns.data[this.channel][r] == old_value && r < 16) {
-						patterns.data[this.channel][r] = note_value;
-						this.patterns_display[this.channel][r] = '   ';
-						r++;
-					}
-					beta_k.pattern.draw_channel(this.channel, this.patterns_display[this.channel]);
+				if (beta_k.note_keycodes.indexOf(parseInt(key, 10)) !== -1) {
+					note = beta_k.note_keycodes.indexOf(parseInt(key, 10));
+					this.display = beta_k.note_names[note%12];
+					this.display += Math.floor(note / 12) + 1 + this.channel;
+					note = beta_k.note_values[note];
 				}
 				// enter note off with ` or 1 
 				else if (key == 49 || key == 192) {
-					var old_value = patterns.data[this.channel][this.row];
-					patterns.data[this.channel][this.row] = 0;
-					this.patterns_display[this.channel][this.row] = 'OFF';
+					note = 0;
+					this.display = beta_k.note_specials[note];
+				}
+				// clear note value with DEL
+				else if (key == 46) {
+					note = 1;
+					this.display = beta_k.note_specials[note];
+				}
+				if (typeof note !== 'undefined') {
+					console.log(note + ' ' + this.display);
+					var song = beta_k.song;
+					var old_value = song.patterns[this.channel][this.row];
+					song.patterns[this.channel][this.row] = note;
+					this.patterns_display[this.channel][this.row] = this.display;
 					this.cursor_forward();
 					var r = this.row;
-					while (patterns.data[this.channel][r] == old_value && r < 16) {
-						patterns.data[this.channel][r] = 0;
-						this.patterns_display[this.channel][r] = '   ';
+					while (song.patterns[this.channel][r] === old_value && r < 16) {
+						song.patterns[this.channel][r] = 1;
+						this.patterns_display[this.channel][r] = beta_k.note_specials[1];
 						r++;
 					}
-					beta_k.pattern.draw_channel(this.channel, this.patterns_display[this.channel]);
+					this.draw_channel(this.channel, this.patterns_display[this.channel]);
 				}
 				// move cursor
 				else if (key == KEY_ARROW_UP) {
@@ -141,9 +157,25 @@ var beta_k = {
 				}
 				vic.plot_str(24, 26, this.channel + ' ' + this.row + '  ', 2);
 			},
+			on_load: function(channel, pattern) {
+				var i;
+				for (i = 0; i < 16; i++) {
+					var note = pattern[i];
+					var display;
+					if (note >= 128) {
+						if (beta_k.note_values.indexOf(note)) {
+							beta_k.note_names[beta_k.note_values.indexOf(note) % 12];
+						}
+						else display = note;
+					}
+					else display = beta_k.note_specials[note];
+					this.patterns_display[channel][i] = display;
+				}
+				this.draw_channel(channel, this.patterns_display[this.channel]);
+			},
 			on_update: function() {
 				this.display = this.patterns_display[this.channel][this.row];
-				var cell_pos = beta_k.pattern.get_cell_position(this.channel, this.row);
+				var cell_pos = this.get_cell_position(this.channel, this.row);
 				this.x = cell_pos.x;
 				this.y = cell_pos.y;
 			},
@@ -156,6 +188,9 @@ var beta_k = {
 			channel: 0,
 			pattern: 0,
 			row: 0,
+			value: '---',
+			x_origin: 2,
+			y_origin: 6,
 			x: 3,
 			y: 10,
 		},{
@@ -202,10 +237,15 @@ var beta_k = {
 	 */
 
 	init: function() {
-		vic.set_volume(10);
-		inputs.init(beta_k.inputs);
-		beta_k.pattern.draw_all_channels(patterns);
 		vic.plot_str(0, 1, ' BETA-K ON VIXXEN20 ', 5);
+		inputs.init(beta_k.inputs);
+		var pattern_editor = inputs.get_current_field();
+		this.song = JSON.parse(JSON.stringify(this.new_song));
+		var i;
+		for (i = 0; i < 4; i++) {
+			pattern_editor.on_load(i, this.song.patterns[i]);
+		};
+		vic.set_volume(10);
 		vixxen.frame.hook_add({
 			object: 'beta_k',
 			method: 'frame'
@@ -213,28 +253,6 @@ var beta_k = {
 	},
 
 	pattern: {
-		x_origin: 2,
-		y_origin: 6,
-		draw_all_channels: function(pattern) {
-			for (var c = 0; c < 4; c++) { 
-				beta_k.pattern.draw_channel(c, pattern.data[c]);
-			}
-		},
-		draw_channel: function(channel, pattern) {
-			for (var i = 0; i < 16; i++) {
-				var value = pattern[i];
-				if (i > 0 && value == pattern[i-1]) value = '   ';
-				if (value === 0) value = 'OFF';
-				var cell_pos = this.get_cell_position(channel, i);
-				vic.plot_str(cell_pos.x, cell_pos.y, value, 1);
-			}
-		},
-		get_cell_position: function(channel, row) {
-			channel++;
-			x = channel * 5 - 5 + this.x_origin;
-			y = row + this.y_origin;
-			return { x : x, y : y };
-		},
 		get_cell_value: function(pattern, row) {
 			return patterns.data[pattern][row];
 		},
@@ -261,10 +279,18 @@ var beta_k = {
 		if (beta_k.frame_counter % beta_k.frame_rate == 0) {
 			beta_k.pattern.row_dehighlight(beta_k.pattern_index);
 			beta_k.pattern_index++;
-			if (beta_k.pattern_index == patterns.length) beta_k.pattern_index = 0;
+			if (beta_k.pattern_index >= this.song.pattern_length) beta_k.pattern_index = 0;
      		beta_k.pattern.row_highlight(beta_k.pattern_index);
+			var i;
 			for (i = 0; i < 4; i++) {
-				vic.set_voice_value(i, patterns.data[i][beta_k.pattern_index]);
+				var value = this.song.patterns[i][beta_k.pattern_index];
+				if (value >= 128) {
+					vic.set_voice_value(i, this.song.patterns[i][beta_k.pattern_index]);
+				}
+				// XXX HANDLE ALL THE SPECIAL NOTES
+				if (value == 0) {
+					vic.set_voice_value(0);
+				}
 			}
 		}
 		var display = (vic.voices[0].value & 128) ? vixxen.display.hex(vic.voices[0].value) : '  ';
@@ -278,6 +304,33 @@ var beta_k = {
 		vic.plot_str(30, 14, ' PLAYING    ', 1);
 		beta_k.frame_counter++;
 		vic.plot_str(0, 28, ` FRAME ${beta_k.frame_counter} `, 2);
+	},
+
+	song: 'load a song dummy',
+	new_pattern: [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+	new_song: {
+		title: 'TITLE',
+		artist: 'ARTIST',
+		pattern_length: 16,
+		patterns: [
+			[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+			[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+			[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+			[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+		],
+		list: [[0,1,2,3]],
+	},
+	play_position: {
+		list: 0,
+		row: 0,
+		increase: function() {
+			this.row++;
+			if (this.row >= 16) {
+				this.row = 0;
+				this.list++;
+				if (this.list >= beta_k.song.list.length) this.list = 0;
+			}
+		},
 	},
 
 }

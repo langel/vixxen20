@@ -40,7 +40,8 @@ var vixxen = {
 		},
 		// return padded string for right alignment
 		pad: function(str, len, pad) {
-			return str.toString(10).padStart(len, pad);
+			if (typeof str !== 'string') str = str.toString(10);
+			return str.padStart(len, pad);
 		}
 	},
 
