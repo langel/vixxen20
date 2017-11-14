@@ -107,6 +107,7 @@ var vic = {
 		// initialize the Video Interface Chip video
 		vic.set_border_color(vic.color_border);
 		vic.screen_ram.fill({petscii:0,color:vic.color_fg}),
+
 		// setup screen resize handling
 		window.addEventListener("resize", function() {
 			console.log('shit');

@@ -3,48 +3,35 @@
 /*
  * VIC20 Song Data Schema
 
-  16 bytes : "title"
-  16 bytes : "artist"
-  16 bytes : "copy"
-  1 byte : base volume and video standard
-    bit 7 set is NTSC (unset PAL)
-    bits 3-0 volume
-  1 byte : base speed
-  6 song order objects for the 4 voices, speed, and volume
-  n bytes channel pattern objects and tables
 
-  track pattern order object
-    1 byte : order length - max of 127
-      bit 7 : sets track loop to true
-      bits 6-0 : order length 
-      value x00 means the track is inactive
-    n bytes : pattern numbers in order
+	BETA-K MEMORY MAP
 
-  pattern object
-    1 byte : pattern length
-    n bytes - pattern column data
-      value x00 is note off
-      values x01-x7f length of repeat
-      values x80-xff note value
+	1000-1DFF	complete program space address
 
-  volume table object
-    1 byte - length of table (row count >> 1)
-    n bytes - dual volume values
-      values are max 4 bits in size (x00-x0f)
-      bits 7-4 even row volume value
-      bits 3-0 odd row volume value
+	1000-10xx	BASIC SYS call to start program
+	10XX-13AF	~928 bytes for player
+	13B0-13BF	16 char string	'title'
+	13C0-13CF	16 char string	'artist'
+	13D0-13DF	16 char string	'copyright/info'
+	13E0-13EF	16 row speed table
+	13F0-13FF	16 row volume table
+	1400-1BFF	128 16 row patterns
+	1C00-1DFF	128 rows pattern order list
+					4 bytes per row for all 4 channels
 
-  On init the player needs to scan the song data and save pointers in the 
-  zero (and maybe 1st) page for order lists and pattern start addresses.
-
-  3583 bytes free ~= 14 pages (in the 4 bit number range)
-  ...set aside about 1k for the play routine...
-  2.5k = 10 pages (still in the 4 bit number range)
-
-  Given that pattern addresses require hi and lo bytes the player may
-  require two bytes per pattern. If using a single page for these pointers
-  then the max number of patterns would be 128. Handling patterns and
-  volume tables might be interesting...
+	pattern object - 16 bytes each
+		value h80-hFF	pitch value
+		value h00	do nothing
+		value h01	note OFF
+		value h02	jump to next song row
+		value h03	end playback
+		// XXX ...potential effects...
+		// depends on space restraints of player
+		value h1x	pitch slide up by x per frame
+		value h2x	pitch slide down by x per frame
+		value h3x	pitch slide up by x per row
+		value h4x	pitch slide down by x per row
+		...etc.
 */
 
 var beta_k = {
@@ -258,11 +245,11 @@ var beta_k = {
 		},
 		row_dehighlight: function(row_id) {
 			var text = vixxen.screen.get_str(2, 6 + row_id, 20);
-			vic.plot_str(2, 6 + row_id, text, 1);
+			vic.plot_str(beta_k.inputs.fields[0].origin_x, beta_k.inputs.fields[0].origin_y + row_id, text, 1);
 		},
 		row_highlight: function(row_id) {
 			var text = vixxen.screen.get_str(2, 6 + row_id, 20);
-			vic.plot_str(2, 6 + row_id, text, 2);
+			vic.plot_str(beta_k.inputs.fields[0].origin_x, beta_k.inputs.fields[0].origin_y + row_id, text, 2);
 		},
 	},
 
