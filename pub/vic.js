@@ -110,10 +110,9 @@ var vic = {
 
 		// setup screen resize handling
 		window.addEventListener("resize", function() {
-			console.log('shit');
-			vic._screen_refresh();
+			vic._screen_resize();
 		});
-		vic._screen_refresh();
+		vic._screen_resize();
 	},
 
 	color_hex: function(color) {
@@ -254,15 +253,6 @@ var vic = {
 	},
 
 	_screen_refresh: function() {
-		// set correct window dimensions
-		var width = window.innerWidth;
-		var height = window.innerHeight;
-		var pixel_width = vic.screen_char_x * 8;
-		var pixel_height = vic.screen_char_y * 8;
-		vic.screen_pixel_mul_x = Math.floor(width / pixel_width);
-		if (vic.screen_pixel_mul_x < 1) vic.screen_pixel_mul_x = 1;
-		vic.screen_pixel_mul_y = Math.floor(height / pixel_height);
-		if (vic.screen_pixel_mul_y < 1) vic.screen_pixel_mul_y = 1;
 		var w = vic.screen_pixel_mul_x * vic.screen_char_x * 8;
 		video.setAttribute('width', w);
 		video.style.width = video.screen_x = w;
@@ -281,7 +271,21 @@ var vic = {
 				i++;
 			}
 		}
+	},
+
+	_screen_resize: function() {
+		// set correct window dimensions
+		var width = window.innerWidth;
+		var height = window.innerHeight;
+		var pixel_width = vic.screen_char_x * 8;
+		var pixel_height = vic.screen_char_y * 8;
+		vic.screen_pixel_mul_x = Math.floor(width / pixel_width);
+		if (vic.screen_pixel_mul_x < 1) vic.screen_pixel_mul_x = 1;
+		vic.screen_pixel_mul_y = Math.floor(height / pixel_height);
+		if (vic.screen_pixel_mul_y < 1) vic.screen_pixel_mul_y = 1;
 		console.log('VIC DEGAUSSED [mul_x:' + vic.screen_pixel_mul_x + ', mul_y:' + vic.screen_pixel_mul_y + ']');
-	}
+		vic._screen_refresh();
+	},
+
 };
 

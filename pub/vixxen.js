@@ -71,16 +71,17 @@ var vixxen = {
 
 	load: function(ware) {
 		if (typeof window[ware] === 'undefined') {
+			console.log('LOADING ' + ware);
 			var waretag = document.createElement('script');
 			waretag.setAttribute("type", "text/javascript");
 			waretag.setAttribute("src", 'warez/' + ware + '/main.js');
-			console.log(waretag);
 			document.getElementsByTagName("head")[0].appendChild(waretag);
 			setTimeout(function() {
 				window[ware].init();
-			}, 1000);
+			}, 250);
 		}
 		else window[ware].init();
+		console.log('RUNNING ' + ware);
 	},
 
 	init: function() {
@@ -94,7 +95,7 @@ var vixxen = {
 	screen: {
 
 		clear: function() {
-			console.log('clearing screen');
+			console.log('CLR');
 			vixxen.cursor.pos = 0;
 			for (var i = 0; i < vic.screen_ram.length; i++) {
 				vic.screen_ram[i] = vixxen.screen.empty_char;
@@ -102,7 +103,10 @@ var vixxen = {
 			vic._screen_refresh();
 		},
 
-		empty_char: {petscii:32, color:vic.color_fg},
+		empty_char: {
+			petscii:32, 
+			color:vic.color_fg
+		},
 
 		get_str: function(x, y, length) {
 			var start = x + y * vic.screen_char_x;

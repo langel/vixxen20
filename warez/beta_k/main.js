@@ -23,8 +23,8 @@
 		value h80-hFF	pitch value
 		value h00	do nothing
 		value h01	note OFF
-		value h02	jump to next song row
-		value h03	end playback
+		value h02	jump to NXT song row
+		value h03	END playback
 		// XXX ...potential effects...
 		// depends on space restraints of player
 		value h1x	pitch slide up by x per frame
@@ -224,6 +224,7 @@ var beta_k = {
 	 */
 
 	init: function() {
+		vixxen.screen.clear();
 		vic.plot_str(0, 1, ' BETA-K ON VIXXEN20 ', 5);
 		inputs.init(beta_k.inputs);
 		var pattern_editor = inputs.get_current_field();

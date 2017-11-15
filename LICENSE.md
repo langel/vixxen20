@@ -2,7 +2,7 @@
 
 > Version 1.1, December 2016
 
-> Copyright (C) 2017 Langel Bookbinder aka puke7
+> Copyright (C) 2017 Langel Janson L. Bookbinder Esq. IX aka puke7
 
 Everyone is permitted to copy and distribute verbatim or modified
 copies of this license document.
