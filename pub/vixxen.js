@@ -2,6 +2,8 @@
 
 var vixxen = {
 
+	autoload: 'booter',
+
 	cursor: {
 
 		blink_rate: 30,
@@ -55,7 +57,11 @@ var vixxen = {
 			var i = vixxen.frame.hooks.indexOf(hook);
 			if (i >= 0) vixxen.frame.hooks.splice(i, 1);
 		},
+		hook_remove_all: function() {
+			vixxen.frame.hooks = [];
+		},
 		main: function() {
+			// allow loop speed to be changed by NTSC/PAL setting
 			window.setTimeout(vixxen.frame.main, vic.get_frame_ms());
 			vixxen.frame.hooks.forEach((hook) => {
 				window[hook.object][hook.method]();
@@ -63,43 +69,26 @@ var vixxen = {
 		}
 	},
 
+	load: function(ware) {
+		if (typeof window[ware] === 'undefined') {
+			var waretag = document.createElement('script');
+			waretag.setAttribute("type", "text/javascript");
+			waretag.setAttribute("src", 'warez/' + ware + '/main.js');
+			console.log(waretag);
+			document.getElementsByTagName("head")[0].appendChild(waretag);
+			setTimeout(function() {
+				window[ware].init();
+			}, 1000);
+		}
+		else window[ware].init();
+	},
 
 	init: function() {
 		// wut
 		vic.init();
+		this.frame.main();
 		// escalate boot process
-		setTimeout(function() {
-			vixxen.screen.clear();
-			vic.set_volume(3);
-			var boot_counter = 0;
-			var bootscroll = function() {
-				if (boot_counter < 128) {
-					var print_color = boot_counter % 7 + 1;
-					vixxen.cursor.print('VIXXEN20 ', print_color);
-					vixxen.cursor.print(String.fromCharCode(Math.floor(Math.random()*32)), print_color);
-					vixxen.cursor.print(String.fromCharCode(Math.floor(Math.random()*32)+96) + ' ', print_color);
-					boot_counter++;
-					vic.set_voice_value(0, boot_counter + 128);
-					vic.set_voice_value(1, boot_counter + 128);
-					vic.set_voice_value(2, boot_counter + 128);
-					vic.set_voice_value(3, boot_counter + 128);
-					setTimeout(bootscroll, vic.get_frame_ms); 
-				}
-				else {
-					vic.set_voice_value(0, 0);
-					vic.set_voice_value(1, 0);
-					vic.set_voice_value(2, 0);
-					vic.set_voice_value(3, 0);
-					vixxen.screen.clear();
-					vic.plot_str(0, 1, ' V I X X E N   2 0 ', 5);
-					// XXX loading beta-k manually
-					//vixxen.load('beta_k');
-					beta_k.init();
-				}
-			};
-			bootscroll();
-      vixxen.frame.main();
-		}, 100);
+		this.load(this.autoload);
 	},
 
 	screen: {
