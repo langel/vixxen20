@@ -245,12 +245,16 @@ var beta_k = {
 			return patterns.data[pattern][row];
 		},
 		row_dehighlight: function(row_id) {
-			var text = vixxen.screen.get_str(2, 6 + row_id, 20);
-			vic.plot_str(beta_k.inputs.fields[0].origin_x, beta_k.inputs.fields[0].origin_y + row_id, text, 1);
+			var x = beta_k.inputs.fields[0].x_origin; 
+			var y = beta_k.inputs.fields[0].y_origin; 
+			var text = vixxen.screen.get_str(x, y + row_id, 20);
+			vic.plot_str(x, y + row_id, text, 1);
 		},
 		row_highlight: function(row_id) {
-			var text = vixxen.screen.get_str(2, 6 + row_id, 20);
-			vic.plot_str(beta_k.inputs.fields[0].origin_x, beta_k.inputs.fields[0].origin_y + row_id, text, 2);
+			var x = beta_k.inputs.fields[0].x_origin; 
+			var y = beta_k.inputs.fields[0].y_origin; 
+			var text = vixxen.screen.get_str(x, y + row_id, 20);
+			vic.plot_str(x, y + row_id, text, 2);
 		},
 	},
 
