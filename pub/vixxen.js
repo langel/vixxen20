@@ -107,6 +107,15 @@ var vixxen = {
 			petscii:32, 
 			color:vic.color_fg
 		},
+		
+		get_ram: function(x, y, length) {
+			var start = x + y * vic.screen_char_x;
+			var ram = [];
+			for (var i = 0; i < length; i++) {
+				ram.push(vic.screen_ram[start + i]); 
+			}
+			return ram;
+		},
 
 		get_str: function(x, y, length) {
 			var start = x + y * vic.screen_char_x;
@@ -135,7 +144,14 @@ var vixxen = {
 				// paste that shit in there
 				vic.screen.putImageData(clipboard, 0 , 0);
 			}
-		}
+		},
+
+		set_ram: function(x, y, ram) {
+			for (var i = 0; i < ram.length; i++) {
+				vic.plot_char(x, y + 1, ram[i].petscii, ram[i].color);
+			}
+			return ram;
+		},
 	}
 }
 

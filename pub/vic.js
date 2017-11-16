@@ -119,6 +119,10 @@ var vic = {
 		return `#${vic.colors[color]}`;
 	},
 
+	get_char: function(x, y) {
+		return vic.screen_ram[y * vic.screen_char_x + x];
+	},
+
 	get_frame_ms: function() {
 		return vic.framerate[vic.video_mode];
 	},

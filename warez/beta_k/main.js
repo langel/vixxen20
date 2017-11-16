@@ -111,7 +111,7 @@ var beta_k = {
 					this.patterns_display[this.channel][this.row] = this.display;
 					this.cursor_forward();
 					var r = this.row;
-					while (song.patterns[this.channel][r] === old_value && r < 16) {
+					while ((song.patterns[this.channel][r] === old_value || song.patterns[this.channel][r] === note) && r < 16) {
 						song.patterns[this.channel][r] = 1;
 						this.patterns_display[this.channel][r] = beta_k.note_specials[1];
 						r++;
@@ -241,20 +241,26 @@ var beta_k = {
 	},
 
 	pattern: {
-		get_cell_value: function(pattern, row) {
-			return patterns.data[pattern][row];
-		},
+		row_ram: [],
 		row_dehighlight: function(row_id) {
 			var x = beta_k.inputs.fields[0].x_origin; 
 			var y = beta_k.inputs.fields[0].y_origin; 
-			var text = vixxen.screen.get_str(x, y + row_id, 20);
-			vic.plot_str(x, y + row_id, text, 1);
+			var i;
+			beta_k.pattern.row_ram.forEach(function (c, i) {
+				vic.plot_char(x + i, y + row_id, c.petscii, c.color);
+			});
 		},
 		row_highlight: function(row_id) {
 			var x = beta_k.inputs.fields[0].x_origin; 
 			var y = beta_k.inputs.fields[0].y_origin; 
-			var text = vixxen.screen.get_str(x, y + row_id, 20);
-			vic.plot_str(x, y + row_id, text, 2);
+			beta_k.pattern.row_ram = [];
+			var i;
+			for (i = 0; i < 15; i++) {
+				var c = vic.get_char(x + i, y + row_id);
+				beta_k.pattern.row_ram.push(Object.assign({}, c));
+				if (c.petscii < 128) c.petscii += 128;
+				vic.plot_char(x + i, y + row_id, c.petscii, 7);
+			}
 		},
 	},
 
@@ -281,7 +287,7 @@ var beta_k = {
 				}
 				// XXX HANDLE ALL THE SPECIAL NOTES
 				if (value == 0) {
-					vic.set_voice_value(0);
+					vic.set_voice_value(i, 0);
 				}
 			}
 		}
