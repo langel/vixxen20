@@ -70,18 +70,22 @@ var vixxen = {
 	},
 
 	load: function(ware) {
-		if (typeof window[ware] === 'undefined') {
+		vixxen._attach_js('warez/' + ware + '/main');
+		setTimeout(function() {
 			console.log('LOADING ' + ware);
-			var waretag = document.createElement('script');
-			waretag.setAttribute("type", "text/javascript");
-			waretag.setAttribute("src", 'warez/' + ware + '/main.js');
-			document.getElementsByTagName("head")[0].appendChild(waretag);
+			//console.log(window[ware].includes.isArray());
+			var includes = window[ware].includes;
+			if (typeof includes !== 'undefined' && includes.constructor === Array) {
+				includes.forEach(function(lib) {
+					vixxen._attach_js('warez/' +ware + '/' + lib);
+					console.log('INCLUDING ' + lib);
+				});
+			}
 			setTimeout(function() {
+				console.log('RUNNING ' + ware);
 				window[ware].init();
 			}, 250);
-		}
-		else window[ware].init();
-		console.log('RUNNING ' + ware);
+		}, 250);
 	},
 
 	init: function() {
@@ -152,6 +156,15 @@ var vixxen = {
 			}
 			return ram;
 		},
+	},
+
+	_attach_js(file) {
+		if (typeof window[file] === 'undefined') {
+			var filetag = document.createElement('script');
+			filetag.setAttribute("type", "text/javascript");
+			filetag.setAttribute("src", file + '.js');
+			document.getElementsByTagName("head")[0].appendChild(filetag);
+		}
 	}
 }
 

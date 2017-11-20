@@ -91,8 +91,8 @@ var inputs = {
 		for (var i = 0; i < this.fields.length; i++) {
 			if (typeof this.fields[i].on_update === 'function') {
 				this.fields[i].on_update();
-				this.blur(this.fields[i]);
 			}
+			this.blur(this.fields[i]);
 		}
 		this.update(this.fields[this.field_index]);
 		vixxen.frame.hook_add({
