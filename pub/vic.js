@@ -226,6 +226,61 @@ var vic = {
 								 * PAL:  Phi2=4433618/4 Hz
 								 * NTSC: Phi2=14318181/14 Hz
 						*/
+						/*
+							RIPPED FROM VICE
+
+							src/vic20/vic20sound.c
+
+    for (j = 0; j < 3; j++) {
+        int chspeed = "\4\3\2"[j];
+
+        if (snd.ch[j].ctr > cycles) {
+            snd.accum += snd.ch[j].out * cycles;
+            snd.ch[j].ctr -= cycles;
+        } else {
+            for (i = cycles; i; i--) {
+                snd.ch[j].ctr--;
+                if (snd.ch[j].ctr <= 0) {
+                    int a = (~snd.ch[j].reg) & 127;
+                    a = a ? a : 128;
+                    snd.ch[j].ctr += a << chspeed;
+                    if (snd.ch[j].reg & 128) {
+                        unsigned char shift = snd.ch[j].shift;
+                        shift = ((shift << 1) | ((shift & 128) >> 7)) ^ 1;
+                        snd.ch[j].shift = shift;
+                        snd.ch[j].out = shift & 1;
+                    } else {
+                        snd.ch[j].shift <<= 1;
+                        snd.ch[j].out = 0;
+                    }
+                }
+                snd.accum += snd.ch[j].out;
+            }
+        }
+    }
+
+    if (snd.ch[3].ctr > cycles) {
+        snd.accum += snd.ch[3].out * cycles;
+        snd.ch[3].ctr -= cycles;
+    } else {
+        for (i = cycles; i; i--) {
+            snd.ch[3].ctr--;
+            if (snd.ch[3].ctr <= 0) {
+                int a = (~snd.ch[3].reg) & 127;
+                a = a ? a : 128;
+                snd.ch[3].ctr += a << 4;
+                if (snd.ch[3].reg & 128) {
+					 	// noisepattern is an array full of seemingly random bytes
+                    snd.ch[3].out = (noisepattern[(snd.noisectr >> 3) & 1023] >> (snd.noisectr & 7)) & 1;
+                } else {
+                    snd.ch[3].out = 0;
+                }
+                snd.noisectr++;
+            }
+            snd.accum += snd.ch[3].out;
+        }
+    }
+						*/
 						//if (pitch == 255) pitch--;
 						//freq = vic.voices[v].clock[vic.video_mode] / (128 - (pitch++ & 127));
 						freq = vic.voices[v].clock[vic.video_mode] / (128 - (pitch & 127));
