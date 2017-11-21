@@ -44,24 +44,9 @@ var beta_k = {
 	frame_rate: 5,
 
 	includes: [
-		'pattern_editor',
+		'pattern_grid',
 	],
 	
-	note_values : [
-		131,140,145,151,158,161,166,173,178,181,185,189,
-		192,197,200,203,206,208,211,214,216,218,220,222,
-		224,226,227,229,231,232,233,234,236,237,238,239,
-		240,241
-	],
-	note_names : ['C ','C#','D ','D#','E ','F ','F#','G ','G#','A ','A#','B '],
-	note_keycodes : [
-		// bottom row
-		90,83,88,68,67,86,71,66,72,78,74,77,
-		// top row
-		81,50,87,51,69,82,53,84,54,89,55,85,73,57,79.48,80
-	],
-	note_specials: ['OFF','---','NXT','END'],
-
 	pattern_index: 0,
 	pause: false,
 
@@ -113,40 +98,16 @@ var beta_k = {
 		vixxen.screen.clear();
 		vic.plot_str(0, 1, ' BETA-K ON VIXXEN20 ', 5);
 		this.song = JSON.parse(JSON.stringify(this.new_song));
-		this.inputs.fields.unshift(beta_k_pattern_editor);
+		this.inputs.fields.unshift(beta_k_pattern_grid);
 		var i;
 		for (i = 0; i < 4; i++) {
-			beta_k_pattern_editor.on_load(i, this.song.patterns[i]);
+			beta_k_pattern_grid.on_load(i, this.song.patterns[i]);
 		};
 		inputs.init(this.inputs);
 		vixxen.frame.hook_add({
 			object: 'beta_k',
 			method: 'frame'
 		});
-	},
-
-	pattern: {
-		row_ram: [],
-		row_dehighlight: function(row_id) {
-			var x = beta_k.inputs.fields[0].x_origin; 
-			var y = beta_k.inputs.fields[0].y_origin; 
-			var i;
-			beta_k.pattern.row_ram.forEach(function (c, i) {
-				vic.plot_char(x + i, y + row_id, c.petscii, c.color);
-			});
-		},
-		row_highlight: function(row_id) {
-			var x = beta_k.inputs.fields[0].x_origin; 
-			var y = beta_k.inputs.fields[0].y_origin; 
-			beta_k.pattern.row_ram = [];
-			var i;
-			for (i = 0; i < 15; i++) {
-				var c = vic.get_char(x + i, y + row_id);
-				beta_k.pattern.row_ram.push(Object.assign({}, c));
-				//if (c.petscii < 128) c.petscii += 128;
-				vic.plot_char(x + i, y + row_id, c.petscii, 2);
-			}
-		},
 	},
 
 	frame: function() {
@@ -160,21 +121,7 @@ var beta_k = {
 			return;
 		}
 		if (beta_k.frame_counter % beta_k.frame_rate == 0) {
-			beta_k.pattern.row_dehighlight(beta_k.pattern_index);
-			beta_k.pattern_index++;
-			if (beta_k.pattern_index >= this.song.pattern_length) beta_k.pattern_index = 0;
-     		beta_k.pattern.row_highlight(beta_k.pattern_index);
-			var i;
-			for (i = 0; i < 4; i++) {
-				var value = this.song.patterns[i][beta_k.pattern_index];
-				if (value >= 128) {
-					vic.set_voice_value(i, this.song.patterns[i][beta_k.pattern_index]);
-				}
-				// XXX HANDLE ALL THE SPECIAL NOTES
-				if (value == 0) {
-					vic.set_voice_value(i, 0);
-				}
-			}
+			beta_k_pattern_grid.play_next_row();
 		}
 		var display = (vic.voices[0].value & 128) ? vixxen.display.hex(vic.voices[0].value) : '  ';
 		vic.plot_str(30, 8, ' ALTO ' + display, 1);
@@ -190,16 +137,16 @@ var beta_k = {
 	},
 
 	song: 'load a song dummy',
-	new_pattern: [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+	new_pattern: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 	new_song: {
 		title: 'TITLE',
 		artist: 'ARTIST',
 		pattern_length: 16,
 		patterns: [
-			[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-			[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-			[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-			[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+			[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 		],
 		list: [[0,1,2,3]],
 	},
