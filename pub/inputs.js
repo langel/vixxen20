@@ -3,15 +3,24 @@
  * hell yeah keyboard shortcuts like a real tracker
  */
 document.body.onkeydown = function(e) {
+	// f5 to the future
 	if (e.keyCode != 116) e.preventDefault();
-	if (typeof inputs.key_state[e.keyCode] === 'undefined') inputs.key_state[e.keyCode] = 0;
+	if (typeof inputs.key_state[e.keyCode] === 'undefined') {
+		inputs.key_state[e.keyCode] = 0;
+		if (e.keyCode == KEY_SHIFT) inputs.mod.shift = true;
+		if (e.keyCode == KEY_CONTROL) inputs.mod.control = true;
+	}
 	vic.plot_str(24, 28, 'KEY PRESSED ' + e.keyCode + ' ', 2);
 };
 
 document.body.onkeyup = function(e) {
+	if (e.keyCode == KEY_SHIFT) inputs.mod.shift = false;
+	if (e.keyCode == KEY_CONTROL) inputs.mod.control = false;
 	delete inputs.key_state[e.keyCode];
 };
 
+const KEY_SHIFT = 16;
+const KEY_CONTROL = 91;
 const KEY_PAGE_UP = 33;
 const KEY_PAGE_DOWN = 34;
 const KEY_ARROW_LEFT = 37;
@@ -20,6 +29,12 @@ const KEY_ARROW_RIGHT = 39;
 const KEY_ARROW_DOWN = 40;
 
 var inputs = {
+
+	mod: {
+		shift: false,
+		control: false,
+	},
+
 	blur: function(field) {
 		vic.plot_str(field.x, field.y, field.display, 1);
 	},

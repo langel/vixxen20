@@ -59,14 +59,24 @@ var beta_k_pattern_grid = {
 			this.display += Math.floor(note / 12) + 1 + this.channel;
 			note = this.note_values[note];
 		}
-		// enter note off with ` or 1 
-		else if (key == 49 || key == 192) {
+		// '---' clear note value with DEL or BACKSPACE
+		else if (key == 46 || key == 8) {
+			note = 0;
+			this.display = this.note_specials[note];
+		}
+		// 'OFF' enter note off with 1
+		else if (key == 49) {
 			note = 1;
 			this.display = this.note_specials[note];
 		}
-		// clear note value with DEL
-		else if (key == 46) {
-			note = 0;
+		// 'NXT' enter note off with ` 
+		else if (inputs.mod.shift && key == 192) {
+			note = 2;
+			this.display = this.note_specials[note];
+		}
+		// 'END' enter note off with ~ 
+		else if (key == 192) {
+			note = 3;
 			this.display = this.note_specials[note];
 		}
 		if (typeof note !== 'undefined') {
