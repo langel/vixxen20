@@ -136,6 +136,12 @@ var beta_k = {
 		vic.plot_str(0, 28, ` FRAME ${beta_k.frame_counter} `, 2);
 	},
 
+	play_song: function() {
+	},
+
+	play_loop: function() {
+	},
+
 	song: 'load a song dummy',
 	new_pattern: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 	new_song: {
