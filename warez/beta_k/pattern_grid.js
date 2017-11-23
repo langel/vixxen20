@@ -170,6 +170,8 @@ var beta_k_pattern_grid = {
 			}
 			// END SONG
 			if (value == 3) {
+				this.row_dehighlight(this.play_position);
+				beta_k.song_stop();
 			}
 		}
 	},

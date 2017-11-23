@@ -158,7 +158,14 @@ var vixxen = {
 		},
 	},
 
-	_attach_js(file) {
+	silent: function() {
+		vic.set_voice_value(0, 0);
+		vic.set_voice_value(1, 0);
+		vic.set_voice_value(2, 0);
+		vic.set_voice_value(3, 0);
+	},
+
+	_attach_js: function(file) {
 		if (typeof window[file] === 'undefined') {
 			var filetag = document.createElement('script');
 			filetag.setAttribute("type", "text/javascript");

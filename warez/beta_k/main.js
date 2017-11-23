@@ -87,6 +87,8 @@ var beta_k = {
 			key: 32,
 			on_update: function() {
 				beta_k.pause = !beta_k.pause;
+				if (beta_k.pause == true) beta_k.song_pause();
+				else beta_k.song_play();
 			}
 		}],
 	},
@@ -112,34 +114,49 @@ var beta_k = {
 
 	frame: function() {
 		vic.plot_str(35, 1, vic.video_mode.toUpperCase()+' ', 6);
-		if (beta_k.pause) {
-			vic.set_voice_value(0, 0);
-			vic.set_voice_value(1, 0);
-			vic.set_voice_value(2, 0);
-			vic.set_voice_value(3, 0);
-			vic.plot_str(30, 14, ' PAUSED   ', 1);
-			return;
+		if (beta_k.pause !== true) {
+			if (beta_k.frame_counter % beta_k.frame_rate == 0) {
+				beta_k_pattern_grid.play_next_row();
+			}
+			var display = (vic.voices[0].value & 128) ? vixxen.display.hex(vic.voices[0].value) : '  ';
+			vic.plot_str(30, 8, ' ALTO ' + display, 1);
+			var display = (vic.voices[1].value & 128) ? vixxen.display.hex(vic.voices[1].value) : '  ';
+			vic.plot_str(30, 9, ' TENO ' + display, 1);
+			var display = (vic.voices[2].value & 128) ? vixxen.display.hex(vic.voices[2].value) : '  ';
+			vic.plot_str(30, 10, ' SOPR ' + display, 1);
+			var display = (vic.voices[3].value & 128) ? vixxen.display.hex(vic.voices[3].value) : '  ';
+			vic.plot_str(30, 11, ' NUZZ ' + display, 1);
 		}
-		if (beta_k.frame_counter % beta_k.frame_rate == 0) {
-			beta_k_pattern_grid.play_next_row();
-		}
-		var display = (vic.voices[0].value & 128) ? vixxen.display.hex(vic.voices[0].value) : '  ';
-		vic.plot_str(30, 8, ' ALTO ' + display, 1);
-		var display = (vic.voices[1].value & 128) ? vixxen.display.hex(vic.voices[1].value) : '  ';
-		vic.plot_str(30, 9, ' TENO ' + display, 1);
-		var display = (vic.voices[2].value & 128) ? vixxen.display.hex(vic.voices[2].value) : '  ';
-		vic.plot_str(30, 10, ' SOPR ' + display, 1);
-		var display = (vic.voices[3].value & 128) ? vixxen.display.hex(vic.voices[3].value) : '  ';
-		vic.plot_str(30, 11, ' NUZZ ' + display, 1);
-		vic.plot_str(30, 14, ' PLAYING    ', 1);
 		beta_k.frame_counter++;
 		vic.plot_str(0, 28, ` FRAME ${beta_k.frame_counter} `, 2);
 	},
 
-	play_song: function() {
+	play_status: function(status) {
+		vic.plot_str(30, 14, ` ${status}   `, 1);
 	},
 
-	play_loop: function() {
+	song_pause: function() {
+		beta_k.pause = true;
+		vixxen.silent();	
+		this.play_status('PAUSED');
+		return;
+	},
+
+	song_play: function() {
+		beta_k.pause = false;
+		this.play_status('PLAYING');
+	},
+
+	song_play_pattern: function() {
+		beta_k.pause = false;
+		this.play_status('PLAYING');
+	},
+
+	song_stop: function() {
+		beta_k.pause = true;
+		vixxen.silent();	
+		beta_k_pattern_grid.play_position = 0;
+		this.play_status('STOPPED');
 	},
 
 	song: 'load a song dummy',
