@@ -2,7 +2,8 @@
 
 var vixxen = {
 
-	autoload: 'booter',
+	//autoload: 'booter',
+	autoload: 'beta_k',
 
 	cursor: {
 

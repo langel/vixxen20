@@ -13,6 +13,9 @@ var vic = {
 
 	audio_buffer_size: 1024,
 
+	char_rom_block: 1,
+	char_rom_block_size: 2048,
+
 	colors: [
 		'000000', 'ffffff', 'b61f21',	'4df0ff',
 		'b43fff', '44e237', '1a34ff', 'dcd71b',
@@ -129,7 +132,7 @@ var vic = {
 
 	plot_char: function(x, y, petscii, color) {
 		vic.screen_ram[y * vic.screen_char_x + x] = {petscii:petscii,color:color};
-		var char_start = (petscii + 256) * 8;
+		var char_start = vic.char_rom_block * vic.char_rom_block_size + petscii * 8;
 		var char_x = x * 8;
 		var char_y = y * 8;
 		for (var y=0; y<8; y++) {
@@ -168,6 +171,11 @@ var vic = {
 	set_border_color: function(color) {
 		vic.color_border = color;
 		document.documentElement.style.background = vic.color_hex(color);
+	},
+
+	set_char_rom_block(block) {
+		vic.char_rom_block = block;
+		vic._screen_refresh();
 	},
 
 	set_voice_value: function(voice_id, value) {

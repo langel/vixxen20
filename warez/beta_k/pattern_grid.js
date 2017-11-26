@@ -6,6 +6,23 @@ var beta_k_pattern_grid = {
 
 	type: 'custom',
 
+	channel: 0,
+	pattern: 0,
+	row: 0,
+	display: '---',
+	value: 0,
+	x_origin: 2,
+	y_origin: 9,
+	x: 3,
+	y: 10,
+	
+	patterns_display: [
+		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	],
+
 	note_values : [
 		131,140,145,151,158,161,166,173,178,181,185,189,
 		192,197,200,203,206,208,211,214,216,218,220,222,
@@ -36,7 +53,6 @@ var beta_k_pattern_grid = {
 	},
 
 	draw_channel: function(channel, pattern) {
-		var i;
 		for (var i = 0; i < 16; i++) {
 			this.draw_cell(channel, i, pattern, 1);
 		}
@@ -121,8 +137,7 @@ var beta_k_pattern_grid = {
 	},
 
 	on_load: function(channel, pattern) {
-		var i;
-		for (i = 0; i < 16; i++) {
+		for (var i = 0; i < 16; i++) {
 			var note = pattern[i];
 			var display;
 			if (note >= 128) {
@@ -149,9 +164,8 @@ var beta_k_pattern_grid = {
 		this.play_position++;
 		if (this.play_position >= 16) this.play_position = 0;
 		this.row_highlight(this.play_position);
-		var i;
 		// act on pattern row data
-		for (i = 0; i < 4; i++) {
+		for (var i = 0; i < 4; i++) {
 			var value = beta_k.song.patterns[i][this.play_position];
 			// PITCH DATA
 			if (value >= 128) {
@@ -179,32 +193,16 @@ var beta_k_pattern_grid = {
 	play_position: 0,
 
 	row_dehighlight: function(row_id) {
-		var i; for (i = 0; i < 4; i++) {
+		for (var i = 0; i < 4; i++) {
 			this.draw_cell(i, this.play_position, this.patterns_display[i], 1);
 		}
 		inputs.focus(this);
 	},
 
 	row_highlight: function(row_id) {
-		var i; for (i = 0; i < 4; i++) {
+		for (var i = 0; i < 4; i++) {
 			this.draw_cell(i, this.play_position, this.patterns_display[i], 2);
 		}
 	},
 
-	patterns_display: [
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	],
-
-	channel: 0,
-	pattern: 0,
-	row: 0,
-	display: '---',
-	value: 0,
-	x_origin: 2,
-	y_origin: 6,
-	x: 3,
-	y: 10,
 }

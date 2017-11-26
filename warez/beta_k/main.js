@@ -34,6 +34,24 @@
 		...etc.
 */
 
+
+var new_pattern = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+
+var new_song = {
+	title: 'Title',
+	artist: 'Artist',
+	copy_info: 'Copy Info',
+	pattern_length: 16,
+	patterns: [
+		new_pattern,
+		new_pattern,
+		new_pattern,
+		new_pattern,
+	],
+	list: [[0,1,2,3]],
+};
+
+
 var beta_k = {
 
 	/*
@@ -75,15 +93,43 @@ var beta_k = {
 			value_max: 15,
 			x: 30,
 			y: 4
-		}],
+		},
+		{
+			label: 'TITLE',
+			type: 'string',
+			on_update: function() {
+				beta_k.song.title = this.value;
+			},
+			value: new_song.title,
+			length: 16,
+			x: 2,
+			y: 3,
+		},
+		{
+			label: 'ARTIST',
+			type: 'string',
+			on_update: function() {
+				beta_k.song.artist = this.value;
+			},
+			value: new_song.artist,
+			length: 16,
+			x: 2,
+			y: 5,
+		},
+		{
+			label: 'COPY INFO',
+			type: 'string',
+			on_update: function() {
+				beta_k.song.copy_info = this.value;
+			},
+			value: new_song.copy_info,
+			length: 16,
+			x: 2,
+			y: 7,
+		},
+		],
 		
 		global_keys: [{
-			key: 13,
-			on_update: function() {
-				if (vic.video_mode == 'ntsc') vic.video_mode = 'pal';
-				else vic.video_mode = 'ntsc';
-			}
-		},{
 			key: 32,
 			on_update: function() {
 				beta_k.pause = !beta_k.pause;
@@ -99,7 +145,7 @@ var beta_k = {
 	init: function() {
 		vixxen.screen.clear();
 		vic.plot_str(0, 1, ' BETA-K ON VIXXEN20 ', 5);
-		this.song = JSON.parse(JSON.stringify(this.new_song));
+		this.song = JSON.parse(JSON.stringify(new_song));
 		this.inputs.fields.unshift(beta_k_pattern_grid);
 		var i;
 		for (i = 0; i < 4; i++) {
@@ -160,19 +206,6 @@ var beta_k = {
 	},
 
 	song: 'load a song dummy',
-	new_pattern: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	new_song: {
-		title: 'TITLE',
-		artist: 'ARTIST',
-		pattern_length: 16,
-		patterns: [
-			[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		],
-		list: [[0,1,2,3]],
-	},
 	play_position: {
 		list: 0,
 		row: 0,
