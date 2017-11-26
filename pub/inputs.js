@@ -76,6 +76,9 @@ var inputs = {
 						this.update(field);
 					}
 				}
+				// string
+				if (field.type === 'string') {
+				}
 				// handle defined global keys
 				for (global_key in this.global_keys) {
 					if (this.global_keys[global_key].key == key) {
