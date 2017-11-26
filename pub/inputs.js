@@ -3,14 +3,13 @@
  * hell yeah keyboard shortcuts like a real tracker
  */
 document.body.onkeydown = function(e) {
-	// f5 to the future
-	if (e.keyCode != 116) e.preventDefault();
+	e.preventDefault();
 	if (typeof inputs.key_state[e.keyCode] === 'undefined') {
 		if (e.keyCode == KEY_SHIFT) inputs.mod.shift = true;
 		else if (e.keyCode == KEY_COMMAND || e.keyCode == KEY_CONTROL) inputs.mod.control = true;
 		else inputs.key_state[e.keyCode] = 0;
 	}
-	vic.plot_str(24, 28, 'KEY PRESSED ' + e.keyCode + ' ', 2);
+	vixxen.plot_str(24, 28, 'KEY PRESSED ' + e.keyCode + ' ', 2);
 };
 
 document.body.onkeyup = function(e) {
@@ -38,11 +37,11 @@ var inputs = {
 
 	blur: function(field) {
 		var display = inputs.get_field_display(field);
-		vic.plot_str(field.x, field.y, display, 1);
+		vixxen.plot_str(field.x, field.y, display, 1);
 	},
 	focus: function(field) {
 		var display = inputs.get_field_display(field);
-		vic.plot_str_inv(field.x, field.y, display, 5);
+		vixxen.plot_str_inv(field.x, field.y, display, 5);
 	},
 	frame: function() {
 		// handle keyboard field

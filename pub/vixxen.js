@@ -5,6 +5,22 @@ var vixxen = {
 	//autoload: 'booter',
 	autoload: 'beta_k',
 
+	ascii2petscii: function(string) {
+		var new_string = '';
+		for (var i = 0; i < string.length; i++) {
+			var a = string[i].charCodeAt();
+			var p;
+			if (a < 32) p = a + 96;
+			else if (a < 96) p = a;
+			else if (a < 128) p = a - 96;
+			else if (a < 160) p = a + 96;
+			else if (a < 224) p = a;
+			else if (a < 256) p = a - 96;
+			new_string += String.fromCodePoint(p);
+		}
+		return new_string;
+	},
+
 	cursor: {
 
 		blink_rate: 30,
@@ -95,6 +111,22 @@ var vixxen = {
 		this.frame.main();
 		// escalate boot process
 		this.load(this.autoload);
+	},
+	
+	plot_str: function(x, y, string, color) {
+		string = this.ascii2petscii(string.toString());
+		for (var i = 0; i < string.length; i++) {
+			vic.plot_char(x+i, y, string.charCodeAt(i), color);
+		}
+	},
+
+	plot_str_inv: function(x, y, string, color) {
+		string = string.toString();
+		var new_string = '';
+		for (var i = 0; i < string.length; i++) {
+			new_string += String.fromCodePoint(parseInt(string.charCodeAt(i)) + 128);
+		}
+		vixxen.plot_str(x, y, new_string, color);
 	},
 
 	screen: {

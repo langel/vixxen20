@@ -12,7 +12,7 @@ var beta_k_pattern_grid = {
 	display: '---',
 	value: 0,
 	x_origin: 2,
-	y_origin: 9,
+	y_origin: 10,
 	x: 3,
 	y: 10,
 	
@@ -49,7 +49,7 @@ var beta_k_pattern_grid = {
 	draw_cell: function(channel, row, pattern, color) {
 		var value = pattern[row];
 		var cell_pos = this.get_cell_position(channel, row);
-		vic.plot_str(cell_pos.x, cell_pos.y, value, color);
+		vixxen.plot_str(cell_pos.x, cell_pos.y, value, color);
 	},
 
 	draw_channel: function(channel, pattern) {
@@ -133,7 +133,6 @@ var beta_k_pattern_grid = {
 			this.row += 4;
 			if (this.row > 15) this.row -= 16;
 		}
-		vic.plot_str(24, 26, this.channel + ' ' + this.row + '  ', 2);
 	},
 
 	on_load: function(channel, pattern) {

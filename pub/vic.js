@@ -148,22 +148,6 @@ var vic = {
 		}
 	},
 
-	plot_str: function(x, y, string, color) {
-		string = string.toString();
-		for (var i = 0; i < string.length; i++) {
-			vic.plot_char(x+i, y, string.charCodeAt(i), color);
-		}
-	},
-
-	plot_str_inv: function(x, y, string, color) {
-		string = string.toString();
-		var new_string = '';
-		for (var i = 0; i < string.length; i++) {
-			new_string += String.fromCodePoint(parseInt(string.charCodeAt(i)) + 128);
-		}
-		vic.plot_str(x, y, new_string, color);
-	},
-
 	set_bg_color: function(color) {
 		vic.color_bg = color;
 	},

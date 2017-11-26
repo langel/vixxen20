@@ -38,7 +38,7 @@
 var new_pattern = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 
 var new_song = {
-	title: 'Title',
+	title: 'Title 6789abcdef',
 	artist: 'Artist',
 	copy_info: 'Copy Info',
 	pattern_length: 16,
@@ -66,7 +66,7 @@ var beta_k = {
 	],
 	
 	pattern_index: 0,
-	pause: false,
+	pause: true,
 
 	inputs: {
 		fields: [{
@@ -79,7 +79,7 @@ var beta_k = {
 			value: 5,
 			value_min: 1,
 			value_max: 99,
-			x: 30,
+			x: 20,
 			y: 3
 		},{
 			label: 'VOLUME ',
@@ -91,7 +91,7 @@ var beta_k = {
 			value: 1,
 			value_min: 0,
 			value_max: 15,
-			x: 30,
+			x: 20,
 			y: 4
 		},
 		{
@@ -114,7 +114,7 @@ var beta_k = {
 			value: new_song.artist,
 			length: 16,
 			x: 2,
-			y: 5,
+			y: 4,
 		},
 		{
 			label: 'COPY INFO',
@@ -125,7 +125,7 @@ var beta_k = {
 			value: new_song.copy_info,
 			length: 16,
 			x: 2,
-			y: 7,
+			y: 5,
 		},
 		],
 		
@@ -144,8 +144,9 @@ var beta_k = {
 
 	init: function() {
 		vixxen.screen.clear();
-		vic.plot_str(0, 1, ' BETA-K ON VIXXEN20 ', 5);
-		this.song = JSON.parse(JSON.stringify(new_song));
+		vixxen.plot_str(0, 1, ' BETA-K ON VIXXEN20 ', 5);
+		vixxen.plot_str(2, 8, 'ch1 ch2 ch3 ch4  SongonG0NGg  SPD VOL', 1);
+		this.song = this.song_new();
 		this.inputs.fields.unshift(beta_k_pattern_grid);
 		var i;
 		for (i = 0; i < 4; i++) {
@@ -156,29 +157,30 @@ var beta_k = {
 			object: 'beta_k',
 			method: 'frame'
 		});
+		this.song_play_pattern();
 	},
 
 	frame: function() {
-		vic.plot_str(35, 1, vic.video_mode.toUpperCase()+' ', 6);
+		vixxen.plot_str(35, 1, vic.video_mode.toUpperCase()+' ', 6);
 		if (beta_k.pause !== true) {
 			if (beta_k.frame_counter % beta_k.frame_rate == 0) {
 				beta_k_pattern_grid.play_next_row();
 			}
-			var display = (vic.voices[0].value & 128) ? vixxen.display.hex(vic.voices[0].value) : '  ';
-			vic.plot_str(30, 8, ' ALTO ' + display, 1);
-			var display = (vic.voices[1].value & 128) ? vixxen.display.hex(vic.voices[1].value) : '  ';
-			vic.plot_str(30, 9, ' TENO ' + display, 1);
-			var display = (vic.voices[2].value & 128) ? vixxen.display.hex(vic.voices[2].value) : '  ';
-			vic.plot_str(30, 10, ' SOPR ' + display, 1);
-			var display = (vic.voices[3].value & 128) ? vixxen.display.hex(vic.voices[3].value) : '  ';
-			vic.plot_str(30, 11, ' NUZZ ' + display, 1);
+			vixxen.plot_str(30, 3, ' ALTO ' + vixxen.display.hex(vic.voices[0].value), 1);
+			vixxen.plot_str(30, 4, ' TENR ' + vixxen.display.hex(vic.voices[1].value), 1);
+			vixxen.plot_str(30, 5, ' SOPR ' + vixxen.display.hex(vic.voices[2].value), 1);
+			vixxen.plot_str(30, 6, ' NUZZ ' + vixxen.display.hex(vic.voices[3].value), 1);
 		}
 		beta_k.frame_counter++;
-		vic.plot_str(0, 28, ` FRAME ${beta_k.frame_counter} `, 2);
+		vixxen.plot_str(0, 28, ` FRAME ${beta_k.frame_counter} `, 2);
 	},
 
 	play_status: function(status) {
-		vic.plot_str(30, 14, ` ${status}   `, 1);
+		vixxen.plot_str(22, 1, ` ${status}   `, 1);
+	},
+
+	song_new: function() {
+		return JSON.parse(JSON.stringify(new_song));
 	},
 
 	song_pause: function() {

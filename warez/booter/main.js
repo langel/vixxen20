@@ -36,7 +36,7 @@ var booter = {
 			vic.set_voice_value(2, 0);
 			vic.set_voice_value(3, 0);
 			vixxen.screen.clear();
-			vic.plot_str(11, 11, 'V I X X E N   2 0 ', 5);
+			vixxen.plot_str(11, 11, 'V I X X E N   2 0 ', 5);
 
 
 			// XXX menu should be launched here
