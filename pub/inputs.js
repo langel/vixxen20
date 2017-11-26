@@ -5,28 +5,44 @@
 document.body.onkeydown = function(e) {
 	e.preventDefault();
 	if (typeof inputs.key_state[e.keyCode] === 'undefined') {
-		if (e.keyCode == KEY_SHIFT) inputs.mod.shift = true;
-		else if (e.keyCode == KEY_COMMAND || e.keyCode == KEY_CONTROL) inputs.mod.control = true;
-		else inputs.key_state[e.keyCode] = 0;
+		if (e.keyCode == SPKEY.SHIFT) inputs.mod.shift = true;
+		else if (e.keyCode == SPKEY.COMMAND || e.keyCode == SPKEY.CONTROL) inputs.mod.control = true;
+		else inputs.key_state[e.keyCode] = {
+			frames: 0,
+			input: e.key,
+			code: e.keyCode,
+		};
 	}
 	vixxen.plot_str(24, 28, 'KEY PRESSED ' + e.keyCode + ' ', 2);
 };
 
 document.body.onkeyup = function(e) {
-	if (e.keyCode == KEY_SHIFT) inputs.mod.shift = false;
-	else if (e.keyCode == KEY_COMMAND || e.keyCode == KEY_CONTROL) inputs.mod.control = false;
+	if (e.keyCode == SPKEY.SHIFT) inputs.mod.shift = false;
+	else if (e.keyCode == SPKEY.COMMAND || e.keyCode == SPKEY.CONTROL) inputs.mod.control = false;
 	else delete inputs.key_state[e.keyCode];
 };
 
-const KEY_SHIFT = 16;
-const KEY_COMMAND = 91;
-const KEY_CONTROL = 17;
-const KEY_PAGE_UP = 33;
-const KEY_PAGE_DOWN = 34;
-const KEY_ARROW_LEFT = 37;
-const KEY_ARROW_UP = 38;
-const KEY_ARROW_RIGHT = 39;
-const KEY_ARROW_DOWN = 40;
+const SPKEY = {
+	ALT: 18,
+	ARROW_DOWN: 40,
+	ARROW_LEFT: 37,
+	ARROW_RIGHT: 39,
+	ARROW_UP: 38,
+	CAPSLOCK: 20,
+	COMMAND: 91,
+	CONTROL: 17,
+	BACKSPACE: 8,
+	DELETE: 46,
+	END: 35,
+	ENTER: 13,
+	ESCAPE: 27,
+	HOME: 36,
+	INSERT: 45,
+	PAGE_DOWN: 34,
+	PAGE_UP: 33,
+	SHIFT: 16,
+	TAB: 9,
+};
 
 var inputs = {
 
@@ -54,25 +70,27 @@ var inputs = {
 	frame: function() {
 		// handle keyboard field
 		var field = this.fields[this.field_index];
-		for (key in this.key_state) {
+		for (index in this.key_state) {
 
 			// key repeat handling
+			var key = this.key_state[index].code;
 			var trigger = false;
-			var frame_count = this.key_state[key];
+			var frame_count = this.key_state[index].frames;
 			if (frame_count == 0 || frame_count == this.key_repeat_threshold) trigger = true;
 			if (frame_count > this.key_repeat_threshold) {
 				frame_count -= this.key_repeat_threshold;
 				if (frame_count % this.key_repeat_rate == 0) trigger = true;
 			}
-			this.key_state[key]++;
-			if (this.key_state[key] >= this.frame_key_repeat) {
-				this.key_state[key] = 0;
+			this.key_state[index].frames++;
+			if (this.key_state[index].frames >= this.frame_key_repeat) {
+				this.key_state[index].frames = 0;
 			}
 
 			if (trigger) {
 				// modify key token
 				if (inputs.mod.shift) key = 'SHIFT_' + key;
 				if (inputs.mod.control) key = 'CONTROL_' + key;
+				this.key_state[index].label = key;
 
 				// GLOBAL KEY HANDLING
 				for (global_key in this.global_keys) {
@@ -84,7 +102,7 @@ var inputs = {
 				// FIELD HANDLING
 				if (typeof inputs.types[field.type] !== 'undefined') {
 					var value = field.value;
-					inputs.types[field.type].on_key(field, key);
+					inputs.types[field.type].on_key(field, this.key_state[index]);
 					if (value != field.value) this.update(field);
 				}
 			}
@@ -114,6 +132,11 @@ var inputs = {
 		this.fields = inputs.fields;
 		for (var i = 0; i < this.fields.length; i++) {
 			this.fields[i].index = i;
+			// run input type init
+			if (typeof this.types[this.fields[i].type].init === 'function') {
+				this.types[this.fields[i].type].init(this.fields[i]);
+			}
+			// run field on_update
 			if (typeof this.fields[i].on_update === 'function') {
 				this.fields[i].on_update();
 			}
@@ -124,6 +147,11 @@ var inputs = {
 			object: 'inputs',
 			method: 'frame'
 		});
+	},
+
+	is_special_key: function(key) {
+		for (var k in SPKEY) if (key.code == SPKEY[k]) return true;
+		return false;
 	},
 
 	next: function() {

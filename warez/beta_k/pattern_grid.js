@@ -66,6 +66,7 @@ var beta_k_pattern_grid = {
 	},
 	
 	on_key: function(key) {
+		var key = key.code;
 		inputs.blur(this);
 		var note;
 		// enter note value
@@ -113,26 +114,26 @@ var beta_k_pattern_grid = {
 			this.draw_channel(this.channel, this.patterns_display[this.channel]);
 		}
 		// move cursor
-		else if (key == KEY_ARROW_UP) {
+		else if (key == SPKEY.ARROW_UP) {
 			if (this.row == 0) this.row = 15;
 			else this.row--;
 		}
-		else if (key == KEY_ARROW_RIGHT) {
+		else if (key == SPKEY.ARROW_RIGHT) {
 			if (this.channel == 3) this.channel = 0;
 			else this.channel++;
 		}
-		else if (key == KEY_ARROW_DOWN) {
+		else if (key == SPKEY.ARROW_DOWN) {
 			this.cursor_forward();
 		}
-		else if (key == KEY_ARROW_LEFT) {
+		else if (key == SPKEY.ARROW_LEFT) {
 			if (this.channel == 0) this.channel = 3;
 			else this.channel--;
 		}
-		else if (key == KEY_PAGE_UP) {
+		else if (key == SPKEY.PAGE_UP) {
 			this.row -= 4;
 			if (this.row < 0) this.row += 16;
 		}
-		else if (key == KEY_PAGE_DOWN) {
+		else if (key == SPKEY.PAGE_DOWN) {
 			this.row += 4;
 			if (this.row > 15) this.row -= 16;
 		}
