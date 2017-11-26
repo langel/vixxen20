@@ -10,6 +10,7 @@ document.body.onkeydown = function(e) {
 		if (e.keyCode == KEY_SHIFT) inputs.mod.shift = true;
 		if (e.keyCode == KEY_CONTROL) inputs.mod.control = true;
 	}
+	console.log(e);
 	vic.plot_str(24, 28, 'KEY PRESSED ' + e.keyCode + ' ', 2);
 };
 

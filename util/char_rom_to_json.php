@@ -7,22 +7,22 @@ $handle = fopen($filename, "r");
 $contents = fread($handle, $filesize);
 fclose($handle);
 
-echo strlen($contents);
-
-$data = [];
+echo('Converting '.(strlen($contents)/8)." characters\n");
 
 $output = "var char_rom = [\n";
-$c = 0;
+$c = $ascii = 0;
 for ($i=0; $i<$filesize; $i++) {
-	$output .= ord(substr($contents, $i, 1)).', ';
+	if ($c == 0) $output .= '// '.$ascii."\n";
+	$output .= '0b'.sprintf('%08b', ord(substr($contents, $i, 1))).",\n";
 	$c++;
 	if ($c == 8) {
 		$output .= "\n";
 		$c = 0;
+		$ascii++;
 	}
 }
+$output .= '];';
 
-echo(json_encode($data));
 $fp = fopen('char_rom.js', 'w');
 fwrite($fp, $output);
 fclose($fp);
