@@ -86,6 +86,14 @@ var vixxen = {
 		}
 	},
 
+	init: function() {
+		// wut
+		vic.init();
+		this.frame.main();
+		// escalate boot process
+		this.load(this.autoload);
+	},
+	
 	load: function(ware) {
 		vixxen._attach_js('warez/' + ware + '/main');
 		setTimeout(function() {
@@ -105,14 +113,6 @@ var vixxen = {
 		}, 250);
 	},
 
-	init: function() {
-		// wut
-		vic.init();
-		this.frame.main();
-		// escalate boot process
-		this.load(this.autoload);
-	},
-	
 	plot_str: function(x, y, string, color) {
 		string = this.ascii2petscii(string.toString());
 		for (var i = 0; i < string.length; i++) {

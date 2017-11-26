@@ -136,6 +136,7 @@ var beta_k_pattern_grid = {
 			this.row += 4;
 			if (this.row > 15) this.row -= 16;
 		}
+		inputs.update(this);
 	},
 
 	on_load: function(channel, pattern) {

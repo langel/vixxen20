@@ -35,6 +35,7 @@ var inputs = {
 	key_repeat_threshold: 10,
 	key_repeat_rate: 3,
 	key_state: {},
+	types: {},
 
 	mod: {
 		shift: false,
@@ -49,6 +50,7 @@ var inputs = {
 		var display = inputs.get_field_display(field);
 		vixxen.plot_str_inv(field.x, field.y, display, 5);
 	},
+
 	frame: function() {
 		// handle keyboard field
 		var field = this.fields[this.field_index];
@@ -73,7 +75,6 @@ var inputs = {
 				if (inputs.mod.control) key = 'CONTROL_' + key;
 
 				// GLOBAL KEY HANDLING
-
 				for (global_key in this.global_keys) {
 					if (this.global_keys[global_key].key == key) {
 						this.global_keys[global_key].on_update();
@@ -81,29 +82,11 @@ var inputs = {
 				}
 
 				// FIELD HANDLING
-
-				// anything goes for custom fields
-				if (field.type === 'custom') {
-					field.on_key(key);
-					this.update(field);
+				if (typeof inputs.types[field.type] !== 'undefined') {
+					var value = field.value;
+					inputs.types[field.type].on_key(field, key);
+					if (value != field.value) this.update(field);
 				}
-				// up and down for range fields
-				if (field.type === 'range') {
-					if (key == KEY_ARROW_UP) {
-						field.value++;
-						if (field.value > field.value_max) field.value = field.value_max;
-						this.update(field);
-					}
-					if (key == KEY_ARROW_DOWN) {
-						field.value--;
-						if (field.value < field.value_min) field.value = field.value_min;
-						this.update(field);
-					}
-				}
-				// string
-				if (field.type === 'string') {
-				}
-
 			}
 		}
 	},
@@ -125,48 +108,6 @@ var inputs = {
 		return (typeof field.display === 'undefined') ? field.value : field.display;
 	},
 
-	global_keys: [{
-		// tab
-		// move to next input
-		key: 9,
-		on_update: function() {
-			inputs.next();
-		},
-	},{
-		// shift tab
-		// widdershins to previous input
-		key: 'SHIFT_9',
-		on_update: function() {
-			inputs.previous();
-		},
-	},{
-		// control tab 
-		// toggle video refresh rate
-		key: 'CONTROL_192',
-		on_update: function() {	
-			if (vic.video_mode == 'ntsc') vic.video_mode = 'pal';
-			else vic.video_mode = 'ntsc';
-			console.log('VIDEO MODE ' + vic.video_mode);
-		},
-	},{
-		// control capslock 
-		// toggle through character sets
-		key: 'CONTROL_20',
-		on_update: function() {	
-			var block = vic.char_rom_block;
-			block++;
-			if ((block+1) * vic.char_rom_block_size > char_rom.length) block = 0;
-			vic.set_char_rom_block(block);
-			console.log('CHAR ROM BLOCK ' + block);
-		},
-	},{
-		// control escape
-		// reboot vixxen20
-		key: 'CONTROL_SHIFT_220',
-		on_update: function() {
-			location.reload();
-		},
-	}],
 
 	init: function(inputs) {
 		this.global_keys = this.global_keys.concat(inputs.global_keys);
