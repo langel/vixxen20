@@ -30,6 +30,12 @@ const KEY_ARROW_DOWN = 40;
 
 var inputs = {
 
+	field_index: 0,
+	fields: [],
+	key_repeat_threshold: 10,
+	key_repeat_rate: 3,
+	key_state: {},
+
 	mod: {
 		shift: false,
 		control: false,
@@ -106,13 +112,18 @@ var inputs = {
 		return this.fields[this.field_index];
 	},
 
+	get_field_by_label: function(label) {
+		var output = false;
+		this.fields.forEach(function(field) {
+			if (field.label == label) output = field;
+		});
+		if (!output) console.log(`FAILed to find input field "${label}"`);
+		else return output;
+	},
+
 	get_field_display: function(field) {
 		return (typeof field.display === 'undefined') ? field.value : field.display;
 	},
-
-
-	field_index: 0,
-	fields: [],
 
 	global_keys: [{
 		// tab
@@ -157,13 +168,11 @@ var inputs = {
 		},
 	}],
 
-	key_repeat_threshold: 10,
-	key_repeat_rate: 3,
-
 	init: function(inputs) {
 		this.global_keys = this.global_keys.concat(inputs.global_keys);
 		this.fields = inputs.fields;
 		for (var i = 0; i < this.fields.length; i++) {
+			this.fields[i].index = i;
 			if (typeof this.fields[i].on_update === 'function') {
 				this.fields[i].on_update();
 			}
@@ -175,8 +184,6 @@ var inputs = {
 			method: 'frame'
 		});
 	},
-
-	key_state: {},
 
 	next: function() {
 		this.blur(this.fields[this.field_index]);
@@ -194,6 +201,16 @@ var inputs = {
 			this.field_index = this.fields.length - 1;
 		}
 		this.focus(this.fields[this.field_index]);
+	},
+
+	set_value: function(field_name, value) {
+		var field = this.get_field_by_label(field_name);
+		field.value = value;
+		if (this.field_index == field.index) this.update(field);
+		else {
+			field.on_update();
+			this.blur(field);
+		}
 	},
 
 	update: function(field) {

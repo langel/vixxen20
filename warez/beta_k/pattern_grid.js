@@ -71,8 +71,11 @@ var beta_k_pattern_grid = {
 		// enter note value
 		if (this.note_keycodes.indexOf(parseInt(key, 10)) !== -1) {
 			note = this.note_keycodes.indexOf(parseInt(key, 10));
+			if (beta_k.octave > 0) {
+				note += beta_k.octave * 12;
+			}
 			this.display = this.note_names[note%12];
-			this.display += Math.floor(note / 12) + 1 + this.channel;
+			this.display += Math.floor(note / 12) + this.channel;
 			note = this.note_values[note];
 		}
 		// '---' clear note value with DEL or BACKSPACE
