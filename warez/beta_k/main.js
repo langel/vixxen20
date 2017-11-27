@@ -38,7 +38,7 @@
 var new_pattern = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 
 var new_song = {
-	title: 'Title 6789abcdef',
+	title: 'Title',
 	artist: 'Artist',
 	copy_info: 'Copy Info',
 	pattern_length: 16,
