@@ -142,6 +142,7 @@ var inputs = {
 		for (var i = 0; i < this.fields.length; i++) {
 			this.fields[i].index = i;
 			// run input type init
+			console.log(this.types[this.fields[i].type]);
 			if (typeof this.types[this.fields[i].type].init === 'function') {
 				this.types[this.fields[i].type].init(this.fields[i]);
 			}

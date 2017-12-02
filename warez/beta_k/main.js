@@ -63,6 +63,7 @@ var beta_k = {
 
 	includes: [
 		'pattern_grid',
+		'speed_grid',
 	],
 	
 	octave: 0,
@@ -172,6 +173,8 @@ var beta_k = {
 		vixxen.plot_str(2, 8, 'ch1 ch2 ch3 ch4  SongonG0NGg  SPD VOL', 1);
 		this.song = this.song_new();
 		this.inputs.fields.unshift(beta_k_pattern_grid);
+		this.inputs.fields.unshift(beta_k_speed_grid);
+		console.log(this.inputs);
 		var i;
 		for (i = 0; i < 4; i++) {
 			beta_k_pattern_grid.on_load(i, this.song.patterns[i]);

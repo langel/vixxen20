@@ -16,33 +16,33 @@ inputs.types.grid = {
 	},
 
 	draw_all: function(field) {
-		for (var x = field.width; x > 0; x--) {
+		for (var x = field.width-1; x >= 0; x--) {
 			this.draw_column(field, x);
 		}
 	},
 
 	draw_cell: function(field) {
-		field.display = field.data[field.x][field.y];
+		field.display = field.data[field.cell.x][field.cell.y];
+		field.x = (field.cell.x == 0) ? field.origin_x : field.origin_x + field.cell.x * (field.cell_width + field.cell_margin);
+		field.y = field.origin_y + field.cell.y;
 		inputs.blur(field);
-		field.x = x;
-		field.y = y;
 	},
 
 	draw_column: function(field, x) {
-		field.x = x;
-		for (var y = field.height; y > 0; y--) {
-			field.y = y;
+		field.cell.x = x;
+		for (var y = field.height-1; y >= 0; y--) {
+			field.cell.y = y;
 			field.display = field.data[x][y];
-			this.draw_cell();
+			this.draw_cell(field);
 		}
 	},
 
 	draw_row: function(field, y) {
 		field.y = y;
-		for (var x = field.width; x > 0; x--) {
+		for (var x = field.width-1; x >= 0; x--) {
 			field.x = x;
 			field.display = field.data[x][y];
-			this.draw_cell();
+			this.draw_cell(field);
 		}
 	},
 
@@ -59,10 +59,10 @@ inputs.types.grid = {
 		field.data = [];
 		for (var x = field.width; x > 0; x--) {
 			var column = [];
-			for (var y = field.heigth; y > 0; y--) {
-				column.push(field.cell_value_default);
+			for (var y = field.height; y > 0; y--) {
+				column.push(field.cell_value);
 			}
-			field.data.push[column];
+			field.data.push(column);
 		}
 		field.cell = {
 			x: 0,
@@ -74,6 +74,16 @@ inputs.types.grid = {
 	},
 
 	on_key: function(field, key) {
+		if (key.code == SPKEY.ARROW_DOWN) {
+			this.draw_cell(field);
+			field.cell.y++;
+			if (field.cell.y == field.height) field.cell.y = 0;
+			field.value = field.data[field.cell.x][field.cell.y];
+			this.draw_cell(field);
+			inputs.focus(field);
+		}
+		else if (key.code == SPKEY.ARROW_UP) {
+		}
 	},
 
 	row_dehighlight: function(field, row) {
