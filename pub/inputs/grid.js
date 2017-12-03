@@ -1,17 +1,5 @@
 inputs.types.grid = {
 
-	cell_down: function(field) {
-	},
-
-	cell_left: function(field) {
-	},
-
-	cell_right: function(field) {
-	},
-
-	cell_up: function(field) {
-	},
-
 	cell_update: function(field) {
 	},
 
@@ -75,14 +63,28 @@ inputs.types.grid = {
 
 	on_key: function(field, key) {
 		if (key.code == SPKEY.ARROW_DOWN) {
-			this.draw_cell(field);
+			inputs.blur(field);
 			field.cell.y++;
 			if (field.cell.y == field.height) field.cell.y = 0;
 			field.value = field.data[field.cell.x][field.cell.y];
 			this.draw_cell(field);
 			inputs.focus(field);
 		}
+		else if (key.code == SPKEY.ARROW_LEFT) {
+			inputs.blur(field);
+			field.cell.x--;
+			if (field.cell.x < 0) field.cell.x = 0;
+			field.value = field.data[field.cell.x][field.cell.y];
+			this.draw_cell(field);
+			inputs.focus(field);
+		}
 		else if (key.code == SPKEY.ARROW_UP) {
+			inputs.blur(field);
+			field.cell.y--;
+			if (field.cell.y < 0) field.cell.y = field.height-1;
+			field.value = field.data[field.cell.x][field.cell.y];
+			this.draw_cell(field);
+			inputs.focus(field);
 		}
 	},
 
