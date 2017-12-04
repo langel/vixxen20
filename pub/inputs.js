@@ -14,12 +14,14 @@ document.body.onkeydown = function(e) {
 		};
 	}
 	vixxen.plot_str(24, 28, 'KEY PRESSED ' + e.keyCode + ' ', 2);
+	console.log(e);
 };
 
 document.body.onkeyup = function(e) {
 	if (e.keyCode == SPKEY.SHIFT) inputs.mod.shift = false;
 	else if (e.keyCode == SPKEY.COMMAND || e.keyCode == SPKEY.CONTROL) inputs.mod.control = false;
 	else delete inputs.key_state[e.keyCode];
+	console.log('key up: ' + e.key);
 };
 
 const SPKEY = {

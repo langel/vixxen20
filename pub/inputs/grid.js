@@ -62,7 +62,15 @@ inputs.types.grid = {
 	},
 
 	on_key: function(field, key) {
-		if (key.code == SPKEY.ARROW_DOWN) {
+		console.log(key);
+		if (key.label == 'CONTROL_' + SPKEY.ARROW_UP) {
+			if (field.data[field.cell.x][field.cell.y] < field.value_max) {;
+				field.data[field.cell.x][field.cell.y]++;
+				this.draw_cell(field);
+				inputs.focus(field);
+			}
+		}
+		else if (key.label == SPKEY.ARROW_DOWN) {
 			inputs.blur(field);
 			field.cell.y++;
 			if (field.cell.y == field.height) field.cell.y = 0;
@@ -70,7 +78,7 @@ inputs.types.grid = {
 			this.draw_cell(field);
 			inputs.focus(field);
 		}
-		else if (key.code == SPKEY.ARROW_LEFT) {
+		else if (key.label == SPKEY.ARROW_LEFT) {
 			inputs.blur(field);
 			field.cell.x--;
 			if (field.cell.x < 0) field.cell.x = 0;
@@ -78,7 +86,15 @@ inputs.types.grid = {
 			this.draw_cell(field);
 			inputs.focus(field);
 		}
-		else if (key.code == SPKEY.ARROW_UP) {
+		else if (key.label == SPKEY.ARROW_RIGHT) {
+			inputs.blur(field);
+			field.cell.x++;
+			if (field.cell.x == field.width) field.cell.x = 0;
+			field.value = field.data[field.cell.x][field.cell.y];
+			this.draw_cell(field);
+			inputs.focus(field);
+		}
+		else if (key.label == SPKEY.ARROW_UP) {
 			inputs.blur(field);
 			field.cell.y--;
 			if (field.cell.y < 0) field.cell.y = field.height-1;
