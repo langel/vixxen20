@@ -64,6 +64,7 @@ var beta_k = {
 	includes: [
 		'pattern_grid',
 		'speed_grid',
+		'volume_grid',
 	],
 	
 	octave: 0,
@@ -174,7 +175,7 @@ var beta_k = {
 		this.song = this.song_new();
 		this.inputs.fields.unshift(beta_k_pattern_grid);
 		this.inputs.fields.unshift(beta_k_speed_grid);
-		console.log(this.inputs);
+		this.inputs.fields.unshift(beta_k_volume_grid);
 		var i;
 		for (i = 0; i < 4; i++) {
 			beta_k_pattern_grid.on_load(i, this.song.patterns[i]);

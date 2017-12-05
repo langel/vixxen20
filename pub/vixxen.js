@@ -51,7 +51,7 @@ var vixxen = {
 	display: {
 		// return hex string from integer
 		hex: function(n) {
-			return ('0' + n.toString(16).toUpperCase()).slice(-2);
+			return n.toString(16).toUpperCase();
 		},
 		// return integer from hex string
 		num: function(n) {

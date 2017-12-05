@@ -6,22 +6,20 @@ document.body.onkeydown = function(e) {
 	e.preventDefault();
 	if (typeof inputs.key_state[e.keyCode] === 'undefined') {
 		if (e.keyCode == SPKEY.SHIFT) inputs.mod.shift = true;
-		else if (e.keyCode == SPKEY.COMMAND || e.keyCode == SPKEY.CONTROL) inputs.mod.control = true;
+		else if (e.keyCode == SPKEY.CONTROL || e.keyCode == SPKEY.META) inputs.mod.control = true;
 		else inputs.key_state[e.keyCode] = {
 			frames: 0,
 			input: e.key,
 			code: e.keyCode,
 		};
+		vixxen.plot_str(24, 28, 'KEY PRESSED ' + e.keyCode + ' ', 2);
 	}
-	vixxen.plot_str(24, 28, 'KEY PRESSED ' + e.keyCode + ' ', 2);
-	console.log(e);
 };
 
 document.body.onkeyup = function(e) {
 	if (e.keyCode == SPKEY.SHIFT) inputs.mod.shift = false;
-	else if (e.keyCode == SPKEY.COMMAND || e.keyCode == SPKEY.CONTROL) inputs.mod.control = false;
+	else if (e.keyCode == SPKEY.CONTROL || e.keyCode == SPKEY.META) inputs.mod.control = false;
 	else delete inputs.key_state[e.keyCode];
-	console.log('key up: ' + e.key);
 };
 
 const SPKEY = {
@@ -31,7 +29,7 @@ const SPKEY = {
 	ARROW_RIGHT: 39,
 	ARROW_UP: 38,
 	CAPSLOCK: 20,
-	COMMAND: 91,
+	META: 18,
 	CONTROL: 17,
 	BACKSPACE: 8,
 	DELETE: 46,
@@ -144,7 +142,6 @@ var inputs = {
 		for (var i = 0; i < this.fields.length; i++) {
 			this.fields[i].index = i;
 			// run input type init
-			console.log(this.types[this.fields[i].type]);
 			if (typeof this.types[this.fields[i].type].init === 'function') {
 				this.types[this.fields[i].type].init(this.fields[i]);
 			}

@@ -10,7 +10,7 @@ inputs.types.grid = {
 	},
 
 	draw_cell: function(field) {
-		field.display = field.data[field.cell.x][field.cell.y];
+		field.display = vixxen.display.hex(field.data[field.cell.x][field.cell.y]);
 		field.x = (field.cell.x == 0) ? field.origin_x : field.origin_x + field.cell.x * (field.cell_width + field.cell_margin);
 		field.y = field.origin_y + field.cell.y;
 		inputs.blur(field);
@@ -62,10 +62,34 @@ inputs.types.grid = {
 	},
 
 	on_key: function(field, key) {
-		console.log(key);
-		if (key.label == 'CONTROL_' + SPKEY.ARROW_UP) {
+		if (key.label == 'CONTROL_' + SPKEY.ARROW_DOWN) {
+			if (field.data[field.cell.x][field.cell.y] > field.value_min) {;
+				field.data[field.cell.x][field.cell.y]--;
+				this.draw_cell(field);
+				inputs.focus(field);
+			}
+		}
+		else if (key.label == 'CONTROL_' + SPKEY.ARROW_UP) {
 			if (field.data[field.cell.x][field.cell.y] < field.value_max) {;
 				field.data[field.cell.x][field.cell.y]++;
+				this.draw_cell(field);
+				inputs.focus(field);
+			}
+		}
+		else if (key.label == 'CONTROL_' + SPKEY.ARROW_LEFT) {
+			if (field.data[field.cell.x][field.cell.y] > field.value_min) {
+				field.data[field.cell.x][field.cell.y] -= 16;
+				if (field.data[field.cell.x][field.cell.y] < field.value_min)
+					field.data[field.cell.x][field.cell.y] = field.value_min;
+				this.draw_cell(field);
+				inputs.focus(field);
+			}
+		}
+		else if (key.label == 'CONTROL_' + SPKEY.ARROW_RIGHT) {
+			if (field.data[field.cell.x][field.cell.y] < field.value_max) {
+				field.data[field.cell.x][field.cell.y] += 16;
+				if (field.data[field.cell.x][field.cell.y] > field.value_max)
+					field.data[field.cell.x][field.cell.y] = field.value_max;
 				this.draw_cell(field);
 				inputs.focus(field);
 			}
