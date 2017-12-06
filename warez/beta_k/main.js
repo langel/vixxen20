@@ -35,22 +35,6 @@
 */
 
 
-var new_pattern = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-
-var new_song = {
-	title: 'Title',
-	artist: 'Artist',
-	copy_info: 'Copy Info',
-	pattern_length: 16,
-	patterns: [
-		new_pattern,
-		new_pattern,
-		new_pattern,
-		new_pattern,
-	],
-	list: [[0,1,2,3]],
-};
-
 
 var beta_k = {
 
@@ -62,108 +46,17 @@ var beta_k = {
 	frame_rate: 5,
 
 	includes: [
+		'inputs',
 		'pattern_grid',
-		'speed_grid',
-		'volume_grid',
+		'song_schema',
 	],
 	
 	octave: 0,
 	pattern_index: 0,
 	pause: true,
 
-	inputs: {
-		fields: [{
-			label: 'SPEED',
-			type: 'range',
-			on_update: function() {
-				beta_k.frame_rate = this.value;
-				this.display = this.label + '  ' + vixxen.display.pad(this.value, 2, ' ');
-			},
-			value: 5,
-			value_min: 1,
-			value_max: 99,
-			x: 20,
-			y: 3
-		},{
-			label: 'VOLUME',
-			type: 'range',
-			on_update: function() {
-				vic.set_volume(this.value);
-				this.display = this.label + ' ' + vixxen.display.pad(this.value, 2, ' ');
-			},
-			value: 1,
-			value_min: 0,
-			value_max: 15,
-			x: 20,
-			y: 4
-		},{
-			label: 'OCTAVE',
-			type: 'range',
-			on_update: function() {
-				beta_k.octave = this.value;
-				this.display = this.label + '  ' + this.value;
-			},
-			value: 0,
-			value_min: 0,
-			value_max: 1,
-			x: 20,
-			y: 5
-		},
-		{
-			label: 'TITLE',
-			type: 'string',
-			on_update: function() {
-				beta_k.song.title = this.value;
-			},
-			value: new_song.title,
-			length: 16,
-			x: 2,
-			y: 3,
-		},
-		{
-			label: 'ARTIST',
-			type: 'string',
-			on_update: function() {
-				beta_k.song.artist = this.value;
-			},
-			value: new_song.artist,
-			length: 16,
-			x: 2,
-			y: 4,
-		},
-		{
-			label: 'COPY INFO',
-			type: 'string',
-			on_update: function() {
-				beta_k.song.copy_info = this.value;
-			},
-			value: new_song.copy_info,
-			length: 16,
-			x: 2,
-			y: 5,
-		},
-		],
-		
-		global_keys: [{
-			// space
-			// pause song
-			key: 32,
-			on_update: function() {
-				beta_k.pause = !beta_k.pause;
-				if (beta_k.pause == true) beta_k.song_pause();
-				else beta_k.song_play();
-			}
-		},{
-			// backslash '\'
-			// toggle root octave
-			key: 220,
-			on_update: function() {
-				if (beta_k.octave == 0) beta_k.octave = 1;
-				else beta_k.octave = 0;
-				inputs.set_value('OCTAVE', beta_k.octave);
-			}
-		}],
-	},
+	inputs: {},
+
 	/*
 	 * methods
 	 */
@@ -173,9 +66,8 @@ var beta_k = {
 		vixxen.plot_str(0, 1, ' BETA-K ON VIXXEN20 ', 5);
 		vixxen.plot_str(2, 8, 'ch1 ch2 ch3 ch4  SongonG0NGg  SPD VOL', 1);
 		this.song = this.song_new();
+		this.inputs = beta_k_inputs;
 		this.inputs.fields.unshift(beta_k_pattern_grid);
-		this.inputs.fields.unshift(beta_k_speed_grid);
-		this.inputs.fields.unshift(beta_k_volume_grid);
 		var i;
 		for (i = 0; i < 4; i++) {
 			beta_k_pattern_grid.on_load(i, this.song.patterns[i]);
@@ -208,7 +100,7 @@ var beta_k = {
 	},
 
 	song_new: function() {
-		return JSON.parse(JSON.stringify(new_song));
+		return JSON.parse(JSON.stringify(beta_k_new_song));
 	},
 
 	song_pause: function() {
