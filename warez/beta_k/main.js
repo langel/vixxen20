@@ -2,24 +2,26 @@
 
 var beta_k = {
 
+	includes: [
+		'song_schema',
+		'inputs',
+		'pattern_grid',
+	],
+
 	/*
 	 * parameters
 	 */
 
 	frame_counter: 0,
 	frame_rate: 5,
-
-	includes: [
-		'song_schema',
-		'inputs',
-		'pattern_grid',
-	],
-	
-	octave: 0,
-	pattern_index: 0,
-	pause: true,
-
 	inputs: {},
+	octave: 0,
+	pattern_pos: 0,
+	pattern_order_pos: 0,
+	pause: true,
+	song: 'load a song dummy',
+
+
 
 	/*
 	 * methods
@@ -28,6 +30,12 @@ var beta_k = {
 	init: function() {
 		vixxen.screen.clear();
 		vixxen.plot_str(0, 1, ' BETA-K ON VIXXEN20 ', 5);
+		vixxen.plot_str(20, 3, 'SPEED', 1);
+		vixxen.plot_str(20, 4, 'VOLUME', 1);
+		vixxen.plot_str(30, 3, ' ALTO ', 1);
+		vixxen.plot_str(30, 4, ' TENR ', 1);
+		vixxen.plot_str(30, 5, ' SOPR ', 1);
+		vixxen.plot_str(30, 6, ' NUZZ ', 1);
 		vixxen.plot_str(2, 8, 'ch1 ch2 ch3 ch4  SongonG0NGg  SPD VOL', 1);
 		this.song = this.song_new();
 		this.inputs = beta_k_inputs;
@@ -50,10 +58,10 @@ var beta_k = {
 			if (beta_k.frame_counter % beta_k.frame_rate == 0) {
 				beta_k_pattern_grid.play_next_row();
 			}
-			vixxen.plot_str(30, 3, ' ALTO ' + vixxen.display.hex(vic.voices[0].value), 1);
-			vixxen.plot_str(30, 4, ' TENR ' + vixxen.display.hex(vic.voices[1].value), 1);
-			vixxen.plot_str(30, 5, ' SOPR ' + vixxen.display.hex(vic.voices[2].value), 1);
-			vixxen.plot_str(30, 6, ' NUZZ ' + vixxen.display.hex(vic.voices[3].value), 1);
+			for (var i = 0; i < 4; i++) {
+				var display = (vic.voices[i].value >= 128) ? vixxen.display.hex(vic.voices[i].value) : '--';
+				vixxen.plot_str(36, 3+i, display, 1);
+			}
 		}
 		beta_k.frame_counter++;
 		vixxen.plot_str(0, 28, ` FRAME ${beta_k.frame_counter} `, 2);
@@ -91,7 +99,6 @@ var beta_k = {
 		this.play_status('STOPPED');
 	},
 
-	song: 'load a song dummy',
 	play_position: {
 		list: 0,
 		row: 0,
