@@ -25,7 +25,6 @@ var beta_k_inputs = {
 	fields: [{
 
 		label: 'SPEED LOOP EDITOR',
-
 		type: 'grid',
 
 		cell_width: 1,
@@ -36,20 +35,16 @@ var beta_k_inputs = {
 
 		width: 1,
 		height: 16,
-
 		x: 33,
 		y: 10,
-
 		value_min: 1,
 		value_max: 15,
-
 		on_update: function() {
 		},
 
 	},	{
 
 		label: 'VOLUME LOOP EDITOR',
-
 		type: 'grid',
 
 		cell_width: 1,
@@ -60,13 +55,10 @@ var beta_k_inputs = {
 
 		width: 1,
 		height: 16,
-
 		x: 37,
 		y: 10,
-
 		value_min: 0,
 		value_max: 15,
-
 		on_update: function() {
 		},
 

@@ -1,6 +1,23 @@
 inputs.types.grid = {
 
+	cell_advance: function(field) {
+		inputs.blur(field);
+		field.cell.y++;
+		if (field.cell.y == field.height) field.cell.y = 0;
+		field.value = field.data[field.cell.x][field.cell.y];
+		this.cell_position_update(field);
+		inputs.focus(field);
+	},
+
+	cell_position_update: function(field) {
+		field.x = (field.cell.x == 0) ? field.origin_x : field.origin_x + field.cell.x * (field.cell_width + field.cell_margin);
+		field.y = field.origin_y + field.cell.y;
+	},
+
 	cell_update: function(field) {
+		field.value = field.data[field.cell.x][field.cell.y];
+		field.display = vixxen.display.hex(field.value);
+		inputs.blur(field);
 	},
 
 	draw_all: function(field) {
@@ -20,8 +37,7 @@ inputs.types.grid = {
 		field.cell.x = x;
 		for (var y = field.height-1; y >= 0; y--) {
 			field.cell.y = y;
-			field.display = field.data[x][y];
-			this.draw_cell(field);
+			this.cell_update(field);
 		}
 	},
 
@@ -29,15 +45,8 @@ inputs.types.grid = {
 		field.y = y;
 		for (var x = field.width-1; x >= 0; x--) {
 			field.x = x;
-			field.display = field.data[x][y];
-			this.draw_cell(field);
+			this.cell_update(field);
 		}
-	},
-
-	get_cell_pos: function(field, x, y) {
-		x = (field.x == 0) ? field.origin_x : field.origin_x + x * (field.cell_width + field.cell_margin);
-		y = field.origin_y + y;
-		return {x:x, y:y};
 	},
 
 	init: function(field) {
@@ -62,52 +71,47 @@ inputs.types.grid = {
 	},
 
 	on_key: function(field, key) {
+		// cell value adjustment
 		if (key.label == 'CONTROL_' + SPKEY.ARROW_DOWN) {
 			if (field.data[field.cell.x][field.cell.y] > field.value_min) {;
 				field.data[field.cell.x][field.cell.y]--;
-				this.draw_cell(field);
-				inputs.focus(field);
+				this.cell_update(field);
 			}
 		}
 		else if (key.label == 'CONTROL_' + SPKEY.ARROW_UP) {
 			if (field.data[field.cell.x][field.cell.y] < field.value_max) {;
 				field.data[field.cell.x][field.cell.y]++;
-				this.draw_cell(field);
-				inputs.focus(field);
+				this.cell_update(field);
 			}
 		}
 		else if (key.label == 'CONTROL_' + SPKEY.ARROW_LEFT) {
 			if (field.data[field.cell.x][field.cell.y] > field.value_min) {
 				field.data[field.cell.x][field.cell.y] -= 16;
-				if (field.data[field.cell.x][field.cell.y] < field.value_min)
+				if (field.data[field.cell.x][field.cell.y] < field.value_min) {
 					field.data[field.cell.x][field.cell.y] = field.value_min;
-				this.draw_cell(field);
-				inputs.focus(field);
+					this.cell_update(field);
+				}
 			}
 		}
 		else if (key.label == 'CONTROL_' + SPKEY.ARROW_RIGHT) {
 			if (field.data[field.cell.x][field.cell.y] < field.value_max) {
 				field.data[field.cell.x][field.cell.y] += 16;
-				if (field.data[field.cell.x][field.cell.y] > field.value_max)
+				if (field.data[field.cell.x][field.cell.y] > field.value_max) {
 					field.data[field.cell.x][field.cell.y] = field.value_max;
-				this.draw_cell(field);
-				inputs.focus(field);
+					this.cell_update(field);
+				}
 			}
 		}
+		// grid navigate
 		else if (key.label == SPKEY.ARROW_DOWN) {
-			inputs.blur(field);
-			field.cell.y++;
-			if (field.cell.y == field.height) field.cell.y = 0;
-			field.value = field.data[field.cell.x][field.cell.y];
-			this.draw_cell(field);
-			inputs.focus(field);
+			this.cell_advance(field);
 		}
 		else if (key.label == SPKEY.ARROW_LEFT) {
 			inputs.blur(field);
 			field.cell.x--;
 			if (field.cell.x < 0) field.cell.x = 0;
 			field.value = field.data[field.cell.x][field.cell.y];
-			this.draw_cell(field);
+			this.cell_position_update(field);
 			inputs.focus(field);
 		}
 		else if (key.label == SPKEY.ARROW_RIGHT) {
@@ -115,7 +119,7 @@ inputs.types.grid = {
 			field.cell.x++;
 			if (field.cell.x == field.width) field.cell.x = 0;
 			field.value = field.data[field.cell.x][field.cell.y];
-			this.draw_cell(field);
+			this.cell_position_update(field);
 			inputs.focus(field);
 		}
 		else if (key.label == SPKEY.ARROW_UP) {
@@ -123,8 +127,12 @@ inputs.types.grid = {
 			field.cell.y--;
 			if (field.cell.y < 0) field.cell.y = field.height-1;
 			field.value = field.data[field.cell.x][field.cell.y];
-			this.draw_cell(field);
+			this.cell_position_update(field);
 			inputs.focus(field);
+		}
+		// call custom key handler
+		else if (typeof field.on_key === 'function') {
+			field.on_key(key);
 		}
 	},
 
