@@ -132,7 +132,10 @@ inputs.types.grid = {
 		}
 		// call custom key handler
 		else if (typeof field.on_key === 'function') {
-			field.on_key(key);
+			let cell_value = field.value;
+			let cell_advance = field.on_key(key);
+			if (cell_value !== field.value) this.cell_update(field);
+			if (cell_advance == true) this.cell_advance(field);
 		}
 	},
 
