@@ -39,9 +39,8 @@ var beta_k_new_pattern = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 var beta_k_new_song_order = [];
 for (var i = 0; i < 128; i++) {
 	if (i == 0) beta_k_new_song_order.push([0,1,2,3]);
-	else beta_k_new_song_order.push([0,0,0,0]);
+	else beta_k_new_song_order.push([255,255,255,255]);
 }
-console.log(beta_k_new_song_order);
 
 var beta_k_new_song = {
 	title: 'Title',

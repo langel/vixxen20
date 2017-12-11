@@ -38,6 +38,9 @@ var beta_k_inputs = {
 		value_min: 0,
 		value_max: 127,
 
+		on_display: function() {
+			this.display = '--';
+		},
 		on_init: function() {
 			this.data = [];
 			for (var x = 0; x < 4; x++) {
@@ -50,6 +53,7 @@ var beta_k_inputs = {
 		},
 		on_update: function() {
 			beta_k.song.pattern_order[this.cell.y][this.cell.x] = this.value;
+			this.cell_type = (this.value < 128) ? 'hex' : 'custom';
 		},
 
 	}, {

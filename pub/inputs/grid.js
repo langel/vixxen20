@@ -5,19 +5,8 @@ inputs.types.grid = {
 		field.cell.y++;
 		if (field.cell.y == field.height) field.cell.y = 0;
 		field.value = field.data[field.cell.x][field.cell.y];
-		this.cell_position_update(field);
+		this.draw_cell(field);
 		inputs.focus(field);
-	},
-
-	cell_position_update: function(field) {
-		field.x = (field.cell.x == 0) ? field.origin_x : field.origin_x + field.cell.x * (field.cell_width + field.cell_margin);
-		field.y = field.origin_y + field.cell.y;
-	},
-
-	cell_update: function(field) {
-		field.value = field.data[field.cell.x][field.cell.y];
-		field.display = vixxen.display.hex(field.value);
-		inputs.blur(field);
 	},
 
 	draw_all: function(field) {
@@ -29,15 +18,21 @@ inputs.types.grid = {
 	draw_cell: function(field) {
 		// update cell value
 		field.value = field.data[field.cell.x][field.cell.y];
-		// handle hex display
-		if (field.cell_type == 'hex') {
-			field.display = vixxen.display.hex(field.data[field.cell.x][field.cell.y]);
-			field.display = vixxen.display.pad(field.display, field.cell_width, '0');
+		// call inputs on_update if defined
+		if (typeof field.on_update == 'function') field.on_update();
+		// handle custom cell display
+		if (field.cell_type == 'custom') {
+			field.on_display();
 		}
-		// handle decimal/default display
+		// handle hex cell display
+		else if (field.cell_type == 'hex') {
+			field.display = vixxen.display.pad(vixxen.display.hex(field.data[field.cell.x][field.cell.y]), field.cell_width, '0');
+		}
+		// handle decimal/default cell display
 		else {
 			field.display = vixxen.display.pad(field.value, 3, ' ');
 		}
+		// position the cell coorectly
 		field.x = (field.cell.x == 0) ? field.origin_x : field.origin_x + field.cell.x * (field.cell_width + field.cell_margin);
 		field.y = field.origin_y + field.cell.y;
 		inputs.blur(field);
@@ -47,7 +42,7 @@ inputs.types.grid = {
 		field.cell.x = x;
 		for (var y = field.height-1; y >= 0; y--) {
 			field.cell.y = y;
-			this.cell_update(field);
+			this.draw_cell(field);
 		}
 	},
 
@@ -55,7 +50,7 @@ inputs.types.grid = {
 		field.y = y;
 		for (var x = field.width-1; x >= 0; x--) {
 			field.x = x;
-			this.cell_update(field);
+			this.draw_cell(field);
 		}
 	},
 
@@ -79,24 +74,23 @@ inputs.types.grid = {
 			y: 0,
 			display: field.data[field.cell.x][field.cell.y],
 		};
-console.log(field);
 		this.draw_all(field);
 	},
 
 	on_key: function(field, key) {
+		// tab out
+		if (key.code == 9) return;
 		// cell value adjustment
 		if (key.label == 'CONTROL_' + SPKEY.ARROW_DOWN ||
-			key.code == 189) {
+			key.label == 189) {
 			if (field.data[field.cell.x][field.cell.y] > field.value_min) {;
 				field.data[field.cell.x][field.cell.y]--;
-				this.cell_update(field);
 			}
 		}
 		else if (key.label == 'CONTROL_' + SPKEY.ARROW_UP ||
-			key.code == 187) {
+			key.label == 187) {
 			if (field.data[field.cell.x][field.cell.y] < field.value_max) {;
 				field.data[field.cell.x][field.cell.y]++;
-				this.cell_update(field);
 			}
 		}
 		else if (key.label == 'CONTROL_' + SPKEY.ARROW_LEFT ||
@@ -105,7 +99,6 @@ console.log(field);
 				field.data[field.cell.x][field.cell.y] -= 16;
 				if (field.data[field.cell.x][field.cell.y] < field.value_min) {
 					field.data[field.cell.x][field.cell.y] = field.value_min;
-					this.cell_update(field);
 				}
 			}
 		}
@@ -115,7 +108,6 @@ console.log(field);
 				field.data[field.cell.x][field.cell.y] += 16;
 				if (field.data[field.cell.x][field.cell.y] > field.value_max) {
 					field.data[field.cell.x][field.cell.y] = field.value_max;
-					this.cell_update(field);
 				}
 			}
 		}
@@ -126,39 +118,25 @@ console.log(field);
 		else if (key.label == SPKEY.ARROW_LEFT) {
 			inputs.blur(field);
 			field.cell.x--;
-			if (field.cell.x < 0) field.cell.x = 0;
+			if (field.cell.x < 0) field.cell.x = field.width-1;
 			field.value = field.data[field.cell.x][field.cell.y];
-			this.cell_position_update(field);
-			inputs.focus(field);
 		}
 		else if (key.label == SPKEY.ARROW_RIGHT) {
 			inputs.blur(field);
 			field.cell.x++;
 			if (field.cell.x == field.width) field.cell.x = 0;
 			field.value = field.data[field.cell.x][field.cell.y];
-			this.cell_position_update(field);
-			inputs.focus(field);
 		}
 		else if (key.label == SPKEY.ARROW_UP) {
 			inputs.blur(field);
 			field.cell.y--;
 			if (field.cell.y < 0) field.cell.y = field.height-1;
 			field.value = field.data[field.cell.x][field.cell.y];
-			this.cell_position_update(field);
-			inputs.focus(field);
 		}
-
-		// call inputs on_update if defined
-		if (typeof field.on_update == 'function') {
-			field.on_update();
 		// call custom key handler
-		//
-		else if (typeof field.on_key === 'function') {
-			let cell_value = field.value;
-			let cell_advance = field.on_key(key);
-			if (cell_value !== field.value) this.cell_update(field);
-			if (cell_advance == true) this.cell_advance(field);
-		}
+		else if (typeof field.on_key === 'function' && field.on_key() == true) this.cell_advance(field);
+		// display cursor updates
+		this.draw_cell(field) & inputs.focus(field);
 	},
 
 	row_dehighlight: function(field, row) {
