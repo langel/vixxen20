@@ -40,10 +40,12 @@ var beta_k_inputs = {
 		x: 33,
 		y: 10,
 
+		value: 5,
 		value_min: 1,
 		value_max: 15,
 
 		on_update: function() {
+			beta_k.song.speed_table[this.cell.y] = this.value;
 		},
 
 	},	{
@@ -64,10 +66,12 @@ var beta_k_inputs = {
 		x: 37,
 		y: 10,
 
+		value: 7,
 		value_min: 0,
 		value_max: 15,
 
 		on_update: function() {
+			beta_k.song.volume_table[this.cell.y] = this.value;
 		},
 
 	}, {
@@ -114,7 +118,7 @@ var beta_k_inputs = {
 		label: 'TITLE',
 		type: 'string',
 		on_update: function() {
-			beta_k.song.title = this.value;
+			beta_k.song.title = this.string;
 		},
 		value: beta_k_new_song.title,
 		length: 16,
@@ -125,7 +129,7 @@ var beta_k_inputs = {
 		label: 'ARTIST',
 		type: 'string',
 		on_update: function() {
-			beta_k.song.artist = this.value;
+			beta_k.song.artist = this.string;
 		},
 		value: beta_k_new_song.artist,
 		length: 16,

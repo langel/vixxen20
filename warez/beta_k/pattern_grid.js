@@ -163,37 +163,6 @@ var beta_k_pattern_grid = {
 		this.y = cell_pos.y;
 	},
 
-	play_next_row: function() {
-		this.row_dehighlight(this.play_position);
-		this.play_position++;
-		if (this.play_position >= 16) this.play_position = 0;
-		this.row_highlight(this.play_position);
-		// act on pattern row data
-		for (var i = 0; i < 4; i++) {
-			var value = beta_k.song.patterns[i][this.play_position];
-			// PITCH DATA
-			if (value >= 128) {
-				vic.set_voice_value(i, beta_k.song.patterns[i][this.play_position]);
-			}
-			// NOTE OFF
-			if (value == 1) {
-				vic.set_voice_value(i, 0);
-			}
-			// NEXT PATTERN
-			if (value == 2) {
-				// there's a smarter way to do this...
-				this.row_dehighlight(this.play_position);
-				this.play_position = 15;
-				this.play_next_row();
-			}
-			// END SONG
-			if (value == 3) {
-				this.row_dehighlight(this.play_position);
-				beta_k.song_stop();
-			}
-		}
-	},
-
 	play_position: 0,
 
 	row_dehighlight: function(row_id) {

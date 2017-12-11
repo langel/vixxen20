@@ -11,6 +11,7 @@ inputs.types.grid = {
 
 	draw_cell: function(field) {
 		field.display = vixxen.display.hex(field.data[field.cell.x][field.cell.y]);
+		field.value = field.data[field.cell.x][field.cell.y];
 		field.x = (field.cell.x == 0) ? field.origin_x : field.origin_x + field.cell.x * (field.cell_width + field.cell_margin);
 		field.y = field.origin_y + field.cell.y;
 		inputs.blur(field);
@@ -62,21 +63,24 @@ inputs.types.grid = {
 	},
 
 	on_key: function(field, key) {
-		if (key.label == 'CONTROL_' + SPKEY.ARROW_DOWN) {
+		if (key.label == 'CONTROL_' + SPKEY.ARROW_DOWN ||
+			key.code == 189) {
 			if (field.data[field.cell.x][field.cell.y] > field.value_min) {;
 				field.data[field.cell.x][field.cell.y]--;
 				this.draw_cell(field);
 				inputs.focus(field);
 			}
 		}
-		else if (key.label == 'CONTROL_' + SPKEY.ARROW_UP) {
+		else if (key.label == 'CONTROL_' + SPKEY.ARROW_UP ||
+			key.code == 187) {
 			if (field.data[field.cell.x][field.cell.y] < field.value_max) {;
 				field.data[field.cell.x][field.cell.y]++;
 				this.draw_cell(field);
 				inputs.focus(field);
 			}
 		}
-		else if (key.label == 'CONTROL_' + SPKEY.ARROW_LEFT) {
+		else if (key.label == 'CONTROL_' + SPKEY.ARROW_LEFT ||
+			key.label == 'SHIFT_189') {
 			if (field.data[field.cell.x][field.cell.y] > field.value_min) {
 				field.data[field.cell.x][field.cell.y] -= 16;
 				if (field.data[field.cell.x][field.cell.y] < field.value_min)
@@ -85,7 +89,8 @@ inputs.types.grid = {
 				inputs.focus(field);
 			}
 		}
-		else if (key.label == 'CONTROL_' + SPKEY.ARROW_RIGHT) {
+		else if (key.label == 'CONTROL_' + SPKEY.ARROW_RIGHT ||
+			key.label == 'SHIFT_187') {
 			if (field.data[field.cell.x][field.cell.y] < field.value_max) {
 				field.data[field.cell.x][field.cell.y] += 16;
 				if (field.data[field.cell.x][field.cell.y] > field.value_max)
@@ -125,6 +130,11 @@ inputs.types.grid = {
 			field.value = field.data[field.cell.x][field.cell.y];
 			this.draw_cell(field);
 			inputs.focus(field);
+		}
+
+		// call inputs on_update if defined
+		if (typeof field.on_update == 'function') {
+			field.on_update();
 		}
 	},
 

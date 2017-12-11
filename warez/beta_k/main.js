@@ -56,7 +56,7 @@ var beta_k = {
 		vixxen.plot_str(35, 1, vic.video_mode.toUpperCase()+' ', 6);
 		if (beta_k.pause !== true) {
 			if (beta_k.frame_counter % beta_k.frame_rate == 0) {
-				beta_k_pattern_grid.play_next_row();
+				this.play_next_row();
 			}
 			for (var i = 0; i < 4; i++) {
 				var display = (vic.voices[i].value >= 128) ? vixxen.display.hex(vic.voices[i].value) : '--';
@@ -65,6 +65,41 @@ var beta_k = {
 		}
 		beta_k.frame_counter++;
 		vixxen.plot_str(0, 28, ` FRAME ${beta_k.frame_counter} `, 2);
+	},
+	
+	play_next_row: function() {
+		//this.row_dehighlight(this.pattern_pos);
+		this.pattern_pos++;
+		if (this.pattern_pos >= 16) this.pattern_pos = 0;
+		//this.row_highlight(this.pattern_pos);
+		// act on pattern row data
+		for (var i = 0; i < 4; i++) {
+			var value = beta_k.song.patterns[i][this.pattern_pos];
+			// PITCH DATA
+			if (value >= 128) {
+				vic.set_voice_value(i, beta_k.song.patterns[i][this.pattern_pos]);
+			}
+			// NOTE OFF
+			if (value == 1) {
+				vic.set_voice_value(i, 0);
+			}
+			// NEXT PATTERN
+			if (value == 2) {
+				// there's a smarter way to do this...
+				//this.row_dehighlight(this.pattern_pos);
+				this.pattern_pos = 15;
+				this.play_next_row();
+			}
+			// END SONG
+			if (value == 3) {
+				//this.row_dehighlight(this.pattern_pos);
+				this.song_stop();
+			}
+		}
+		// act on speed table data
+		this.frame_rate = this.song.speed_table[this.pattern_pos];
+		// act on volume table data
+		vic.set_volume(this.song.volume_table[this.pattern_pos]);
 	},
 
 	play_status: function(status) {
