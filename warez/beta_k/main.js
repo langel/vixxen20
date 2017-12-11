@@ -111,8 +111,10 @@ var beta_k = {
 		}
 		// act on speed table data
 		this.frame_rate = this.song.speed_table[this.pattern_pos];
+		vixxen.plot_str(26, 3, vixxen.display.pad(this.frame_rate, 3, ' '), 1);
 		// act on volume table data
 		vic.set_volume(this.song.volume_table[this.pattern_pos]);
+		vixxen.plot_str(26, 4, vixxen.display.pad(vic.volume, 3, ' '), 1);
 	},
 
 	play_status: function(status) {

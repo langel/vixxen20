@@ -88,7 +88,7 @@ var vic = {
 			value: 0
 		}
 	],
-
+	volume: 0,
 	volume_node: audio.createGain(),
 
 
@@ -168,6 +168,7 @@ var vic = {
 	},
 
 	set_volume: function(value) {
+		this.volume = value;
 		// 4 bit value max
 		var vol = 0;
 		if (value > 15) vol = 15;
