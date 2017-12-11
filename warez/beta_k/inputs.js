@@ -67,7 +67,6 @@ var beta_k_inputs = {
 		y: 10,
 		value_min: 1,
 		value_max: 15,
-
 		on_update: function() {
 			beta_k.song.speed_table[this.cell.y] = this.value;
 		},
@@ -87,7 +86,6 @@ var beta_k_inputs = {
 		y: 10,
 		value_min: 0,
 		value_max: 15,
-
 		on_update: function() {
 			beta_k.song.volume_table[this.cell.y] = this.value;
 		},

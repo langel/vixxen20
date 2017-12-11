@@ -18,6 +18,13 @@ var beta_k = {
 	octave: 0,
 	pattern_pos: 0,
 	pattern_order_pos: 0,
+	play_mode: 0,
+	play_modes: [
+		'LOOPING',
+		'PAUSED',
+		'PLAYING',
+		'STOPPED',
+	],
 	pause: true,
 	song: 'load a song dummy',
 
@@ -28,6 +35,7 @@ var beta_k = {
 	 */
 
 	init: function() {
+		// setup screen
 		vixxen.screen.clear();
 		vixxen.plot_str(0, 1, ' BETA-K ON VIXXEN20 ', 5);
 		vixxen.plot_str(20, 3, 'SPEED', 1);
@@ -37,9 +45,11 @@ var beta_k = {
 		vixxen.plot_str(30, 5, ' SOPR ', 1);
 		vixxen.plot_str(30, 6, ' NUZZ ', 1);
 		vixxen.plot_str(2, 8, 'ch1 ch2 ch3 ch4  SongonG0NGg  SPD VOL', 1);
+		// setup components
 		this.song = this.song_new();
 		this.inputs = beta_k_inputs;
 		this.inputs.fields.unshift(beta_k_pattern_grid);
+		// XXX this is crap
 		var i;
 		for (i = 0; i < 4; i++) {
 			beta_k_pattern_grid.on_load(i, this.song.patterns[i]);
@@ -53,11 +63,14 @@ var beta_k = {
 	},
 
 	frame: function() {
+		// display video mode
 		vixxen.plot_str(35, 1, vic.video_mode.toUpperCase()+' ', 6);
 		if (beta_k.pause !== true) {
+			// play next row
 			if (beta_k.frame_counter % beta_k.frame_rate == 0) {
 				this.play_next_row();
 			}
+			// update displays
 			for (var i = 0; i < 4; i++) {
 				var display = (vic.voices[i].value >= 128) ? vixxen.display.hex(vic.voices[i].value) : '--';
 				vixxen.plot_str(36, 3+i, display, 1);
