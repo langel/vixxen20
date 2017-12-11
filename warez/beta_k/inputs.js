@@ -96,32 +96,6 @@ var beta_k_inputs = {
 
 	}, {
 
-		label: 'SPEED',
-		type: 'range',
-		on_update: function() {
-			beta_k.frame_rate = this.value;
-			this.display = this.label + '  ' + vixxen.display.pad(this.value, 2, ' ');
-		},
-		value: 5,
-		value_min: 1,
-		value_max: 99,
-		x: 20,
-		y: 3
-	},	{
-	
-		label: 'VOLUME',
-		type: 'range',
-		on_update: function() {
-			vic.set_volume(this.value);
-			this.display = this.label + ' ' + vixxen.display.pad(this.value, 2, ' ');
-		},
-		value: 1,
-		value_min: 0,
-		value_max: 15,
-		x: 20,
-		y: 4
-	},	{
-
 		label: 'OCTAVE',
 		type: 'range',
 		on_update: function() {
@@ -160,7 +134,7 @@ var beta_k_inputs = {
 		label: 'COPY INFO',
 		type: 'string',
 		on_update: function() {
-			beta_k.song.copy_info = this.value;
+			beta_k.song.copy_info = this.string;
 		},
 		value: beta_k_new_song.copy_info,
 		length: 16,
