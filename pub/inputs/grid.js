@@ -10,8 +10,17 @@ inputs.types.grid = {
 	},
 
 	draw_cell: function(field) {
-		field.display = vixxen.display.hex(field.data[field.cell.x][field.cell.y]);
+		// update cell value
 		field.value = field.data[field.cell.x][field.cell.y];
+		// handle hex display
+		if (field.cell_type == 'hex') {
+			field.display = vixxen.display.hex(field.data[field.cell.x][field.cell.y]);
+			field.display = vixxen.display.pad(field.display, field.cell_width, '0');
+		}
+		// handle decimal/default display
+		else {
+			field.display = vixxen.display.pad(field.value, 3, ' ');
+		}
 		field.x = (field.cell.x == 0) ? field.origin_x : field.origin_x + field.cell.x * (field.cell_width + field.cell_margin);
 		field.y = field.origin_y + field.cell.y;
 		inputs.blur(field);
@@ -46,7 +55,10 @@ inputs.types.grid = {
 		field.origin_x = field.x;
 		field.origin_y = field.y;
 		field.data = [];
-		for (var x = field.width; x > 0; x--) {
+		// run custom init
+		if (typeof field.on_init == 'function') field.on_init();
+		// default init function
+		else for (var x = field.width; x > 0; x--) {
 			var column = [];
 			for (var y = field.height; y > 0; y--) {
 				column.push(field.cell_value);
@@ -58,7 +70,7 @@ inputs.types.grid = {
 			y: 0,
 			display: field.data[field.cell.x][field.cell.y],
 		};
-
+console.log(field);
 		this.draw_all(field);
 	},
 

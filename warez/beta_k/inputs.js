@@ -24,23 +24,47 @@ var beta_k_inputs = {
 
 	fields: [{
 
-		label: 'SPEED LOOP EDITOR',
-
+		label: 'SONG ORDER LIST',
 		type: 'grid',
+		cell_width: 2,
+		cell_height: 1,
+		cell_margin: 1,
+		cell_type: 'hex',
+		cell_value: 0,
+		width: 4,
+		height: 16,
+		x: 19,
+		y: 10,
+		value_min: 0,
+		value_max: 127,
 
+		on_init: function() {
+			this.data = [];
+			for (var x = 0; x < 4; x++) {
+				var column = [];
+				for (var y = 0; y < 128; y++) {
+					column.push(beta_k.song.pattern_order[y][x]);
+				}
+				this.data.push(column);
+			}
+		},
+		on_update: function() {
+			beta_k.song.pattern_order[this.cell.y][this.cell.x] = this.value;
+		},
+
+	}, {
+
+		label: 'SPEED LOOP EDITOR',
+		type: 'grid',
 		cell_width: 1,
 		cell_height: 1,
 		cell_margin: 1,
 		cell_type: 'hex',
 		cell_value: 5,
-
 		width: 1,
 		height: 16,
-
 		x: 33,
 		y: 10,
-
-		value: 5,
 		value_min: 1,
 		value_max: 15,
 
@@ -51,22 +75,16 @@ var beta_k_inputs = {
 	},	{
 
 		label: 'VOLUME LOOP EDITOR',
-
 		type: 'grid',
-
 		cell_width: 1,
 		cell_height: 1,
 		cell_margin: 1,
 		cell_type: 'hex',
-		cell_value: 5,
-
+		cell_value: 7,
 		width: 1,
 		height: 16,
-
 		x: 37,
 		y: 10,
-
-		value: 7,
 		value_min: 0,
 		value_max: 15,
 
