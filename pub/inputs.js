@@ -44,6 +44,8 @@ const SPKEY = {
 	TAB: 9,
 };
 
+const HEXKEY = [192, 49, 50, 51, 52, 53, 54, 55, 56, 57, 81, 87, 69, 82, 84, 89];
+
 var inputs = {
 	
 	style: {

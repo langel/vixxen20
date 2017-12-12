@@ -133,6 +133,13 @@ inputs.types.grid = {
 			if (field.cell.y < 0) field.cell.y = field.height-1;
 			field.value = field.data[field.cell.x][field.cell.y];
 		}
+		// handle hex number keys
+		else if (field.cell_type == 'hex' && HEXKEY.includes(key.code)) {
+			field.data[field.cell.x][field.cell.y] = HEXKEY.indexOf(key.code);
+			field.on_update();
+			this.draw_cell(field);
+			this.cell_advance(field);
+		}
 		// call custom key handler
 		else if (typeof field.on_key === 'function' && field.on_key() == true) this.cell_advance(field);
 		// display cursor updates
