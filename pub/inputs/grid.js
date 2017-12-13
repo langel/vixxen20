@@ -1,11 +1,24 @@
 inputs.types.grid = {
 
-	cell_advance: function(field) {
+	cell_advance: function(field, direction) {
 		inputs.blur(field);
-		field.cell.y++;
-		if (field.cell.y == field.height) field.cell.y = 0;
-		field.value = field.data[field.cell.x][field.cell.y];
-		this.draw_cell(field);
+		if (direction == 'down') {
+			field.cell.y++;
+			if (field.cell.y == field.height) field.cell.y = 0;
+		}
+		if (direction == 'left') {
+			field.cell.x--;
+			if (field.cell.x < 0) field.cell.x = field.width-1;
+		}
+		if (direction == 'right') {
+			field.cell.x++;
+			if (field.cell.x == field.width) field.cell.x = 0;
+		}
+		if (direction == 'up') {
+			field.cell.y--;
+			if (field.cell.y < 0) field.cell.y = field.height-1;
+		}
+		this.cell_update(field);
 		inputs.focus(field);
 	},
 
@@ -15,7 +28,7 @@ inputs.types.grid = {
 		}
 	},
 
-	draw_cell: function(field) {
+	cell_update: function(field) {
 		// update cell value
 		field.value = field.data[field.cell.x][field.cell.y];
 		// call inputs on_update if defined
@@ -42,7 +55,7 @@ inputs.types.grid = {
 		field.cell.x = x;
 		for (var y = field.height-1; y >= 0; y--) {
 			field.cell.y = y;
-			this.draw_cell(field);
+			this.cell_update(field);
 		}
 	},
 
@@ -50,7 +63,7 @@ inputs.types.grid = {
 		field.y = y;
 		for (var x = field.width-1; x >= 0; x--) {
 			field.x = x;
-			this.draw_cell(field);
+			this.cell_update(field);
 		}
 	},
 
@@ -59,6 +72,7 @@ inputs.types.grid = {
 		field.origin_x = field.x;
 		field.origin_y = field.y;
 		field.data = [];
+		field.cell_advance_behavior = 'down';
 		// run custom init
 		if (typeof field.on_init == 'function') field.on_init();
 		// default init function
@@ -113,37 +127,28 @@ inputs.types.grid = {
 		}
 		// grid navigate
 		else if (key.label == SPKEY.ARROW_DOWN) {
-			this.cell_advance(field);
+			this.cell_advance(field, 'down');
 		}
 		else if (key.label == SPKEY.ARROW_LEFT) {
-			inputs.blur(field);
-			field.cell.x--;
-			if (field.cell.x < 0) field.cell.x = field.width-1;
-			field.value = field.data[field.cell.x][field.cell.y];
+			this.cell_advance(field, 'left');
 		}
 		else if (key.label == SPKEY.ARROW_RIGHT) {
-			inputs.blur(field);
-			field.cell.x++;
-			if (field.cell.x == field.width) field.cell.x = 0;
-			field.value = field.data[field.cell.x][field.cell.y];
+			this.cell_advance(field, 'right');
 		}
 		else if (key.label == SPKEY.ARROW_UP) {
-			inputs.blur(field);
-			field.cell.y--;
-			if (field.cell.y < 0) field.cell.y = field.height-1;
-			field.value = field.data[field.cell.x][field.cell.y];
+			this.cell_advance(field, 'up');
 		}
 		// handle hex number keys
 		else if (field.cell_type == 'hex' && HEXKEY.includes(key.code)) {
 			field.data[field.cell.x][field.cell.y] = HEXKEY.indexOf(key.code);
 			field.on_update();
-			this.draw_cell(field);
-			this.cell_advance(field);
+			this.cell_update(field);
+			this.cell_advance(field, field.cell_advance_behavior);
 		}
 		// call custom key handler
 		else if (typeof field.on_key === 'function' && field.on_key() == true) this.cell_advance(field);
 		// display cursor updates
-		this.draw_cell(field) & inputs.focus(field);
+		this.cell_update(field) & inputs.focus(field);
 	},
 
 	row_dehighlight: function(field, row) {

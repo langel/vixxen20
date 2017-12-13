@@ -52,8 +52,8 @@ var inputs = {
 		// XXX not implemented yet :(
 		// color, inverse
 		blur: [1, 0],
-		block: [3, 1],
 		focus: [5, 1],
+		block: [3, 1],
 		highlight: [2, 0],
 	},
 
