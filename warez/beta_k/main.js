@@ -67,7 +67,7 @@ var beta_k = {
 		vixxen.plot_str(35, 1, vic.video_mode.toUpperCase()+' ', 6);
 		if (beta_k.pause !== true) {
 			// play next row
-			if (beta_k.frame_counter % beta_k.frame_rate == 0) {
+			if (this.frame_counter >= beta_k.frame_rate) {
 				this.play_next_row();
 			}
 			// update displays
@@ -81,10 +81,9 @@ var beta_k = {
 	},
 	
 	play_next_row: function() {
-		//this.row_dehighlight(this.pattern_pos);
+		this.frame_counter = 0;
 		this.pattern_pos++;
 		if (this.pattern_pos >= 16) this.pattern_pos = 0;
-		//this.row_highlight(this.pattern_pos);
 		// act on pattern row data
 		for (var i = 0; i < 4; i++) {
 			var value = beta_k.song.patterns[i][this.pattern_pos];
@@ -99,13 +98,11 @@ var beta_k = {
 			// NEXT PATTERN
 			if (value == 2) {
 				// there's a smarter way to do this...
-				//this.row_dehighlight(this.pattern_pos);
 				this.pattern_pos = 15;
 				this.play_next_row();
 			}
 			// END SONG
 			if (value == 3) {
-				//this.row_dehighlight(this.pattern_pos);
 				this.song_stop();
 			}
 		}
@@ -115,6 +112,9 @@ var beta_k = {
 		// act on volume table data
 		vic.set_volume(this.song.volume_table[this.pattern_pos]);
 		vixxen.plot_str(26, 4, vixxen.display.pad(vic.volume, 3, ' '), 1);
+		// highlight appropriate rows
+		inputs.types.grid.row_highlight(inputs.get_field_by_label('SPEED'), this.pattern_pos);
+		inputs.types.grid.row_highlight(inputs.get_field_by_label('VOLUME'), this.pattern_pos);
 	},
 
 	play_status: function(status) {

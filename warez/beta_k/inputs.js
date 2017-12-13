@@ -38,8 +38,8 @@ var beta_k_inputs = {
 		value_min: 0,
 		value_max: 127,
 
-		on_display: function() {
-			this.display = '--';
+		cell_display: function(value) {
+			return '--';
 		},
 		on_init: function() {
 			this.data = [];
@@ -58,7 +58,7 @@ var beta_k_inputs = {
 
 	}, {
 
-		label: 'SPEED LOOP EDITOR',
+		label: 'SPEED',
 		type: 'grid',
 		cell_width: 1,
 		cell_height: 1,
@@ -77,7 +77,7 @@ var beta_k_inputs = {
 
 	},	{
 
-		label: 'VOLUME LOOP EDITOR',
+		label: 'VOLUME',
 		type: 'grid',
 		cell_width: 1,
 		cell_height: 1,

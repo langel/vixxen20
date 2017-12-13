@@ -28,27 +28,19 @@ inputs.types.grid = {
 		}
 	},
 
-	cell_update: function(field) {
+	cell_update: function(field, style='blur') {
 		// update cell value
 		field.value = field.data[field.cell.x][field.cell.y];
 		// call inputs on_update if defined
 		if (typeof field.on_update == 'function') field.on_update();
-		// handle custom cell display
-		if (field.cell_type == 'custom') {
-			field.on_display();
-		}
-		// handle hex cell display
-		else if (field.cell_type == 'hex') {
-			field.display = vixxen.display.pad(vixxen.display.hex(field.data[field.cell.x][field.cell.y]), field.cell_width, '0');
-		}
-		// handle decimal/default cell display
-		else {
-			field.display = vixxen.display.pad(field.value, 3, ' ');
-		}
+		// update cell display
+		field.display = this.get_cell_display(field, field.cell.x, field.cell.y);
 		// position the cell coorectly
-		field.x = (field.cell.x == 0) ? field.origin_x : field.origin_x + field.cell.x * (field.cell_width + field.cell_margin);
-		field.y = field.origin_y + field.cell.y;
-		inputs.blur(field);
+		this.get_cell_position(field, field.cell.x, field.cell.y).map((val, index) => {
+			if (index == 0) field.x = val;
+			else field.y = val;
+		});
+		inputs.draw_display(field, style);
 	},
 
 	draw_column: function(field, x) {
@@ -60,11 +52,35 @@ inputs.types.grid = {
 	},
 
 	draw_row: function(field, y) {
-		field.y = y;
+		field.cell.y = y;
 		for (var x = field.width-1; x >= 0; x--) {
-			field.x = x;
+			field.cell.x = x;
 			this.cell_update(field);
 		}
+	},
+	
+	get_cell_display: function(field, x, y) {
+		var value = field.data[x][y];
+		// handle custom cell display
+		if (field.cell_type == 'custom') {
+			return field.cell_display(value);
+		}
+		// handle hex cell display
+		else if (field.cell_type == 'hex') {
+			return vixxen.display.pad(vixxen.display.hex(value), field.cell_width, '0');
+		}
+		// handle alphanumeric default cell display
+		else {
+			return vixxen.display.pad(value, field.cell_width, ' ');
+		}
+	},
+
+	get_cell_position: function(field, x, y) {
+		// returns [x, y]
+		return [
+			(x == 0) ? field.origin_x : field.origin_x + x * (field.cell_width + field.cell_margin),
+			field.origin_y + y
+		];
 	},
 
 	init: function(field) {
@@ -73,6 +89,7 @@ inputs.types.grid = {
 		field.origin_y = field.y;
 		field.data = [];
 		field.cell_advance_behavior = 'down';
+		field.row_highlighted = 0;
 		// run custom init
 		if (typeof field.on_init == 'function') field.on_init();
 		// default init function
@@ -152,9 +169,22 @@ inputs.types.grid = {
 	},
 
 	row_dehighlight: function(field, row) {
+		for (var i = 0; i < field.width; i++) {
+			var pos = this.get_cell_position(field, i, row);
+			var display = this.get_cell_display(field, i, row);
+			inputs.draw(pos[0], pos[1], display, 'blur');
+		}
 	},
 
 	row_highlight: function(field, row) {
+		this.row_dehighlight(field, field.row_highlighted);
+		field.row_highlighted = row;
+		for (var i = 0; i < field.width; i++) {
+			var pos = this.get_cell_position(field, i, row);
+			var display = this.get_cell_display(field, i, row);
+			inputs.draw(pos[0], pos[1], display, 'highlight');
+		}
+		if (inputs.field_index == inputs.get_field_by_label(field.label).index) inputs.focus(field);
 	},
 
 	set_block: function(field, x1, y1, x2, y2) {

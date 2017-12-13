@@ -69,13 +69,29 @@ var inputs = {
 		control: false,
 	},
 
-	blur: function(field) {
-		var display = inputs.get_field_display(field);
-		vixxen.plot_str(field.x, field.y, display, 1);
+	draw: function(x, y, display, style) {
+		if (this.style[style][1] == 0) vixxen.plot_str(x, y, display, this.style[style][0]);
+		else vixxen.plot_str_inv(x, y, display, this.style[style][0]);
 	},
+	
+	draw_display: function(field, style) {
+		this.draw(field.x, field.y, this.get_field_display(field), style);
+	},
+
+	blur: function(field) {
+		this.draw_display(field, 'blur');
+	},
+
 	focus: function(field) {
-		var display = inputs.get_field_display(field);
-		vixxen.plot_str_inv(field.x, field.y, display, 5);
+		this.draw_display(field, 'focus');
+	},
+
+	block: function(field) {
+		this.draw_display(field, 'block');
+	},
+
+	highlight: function(field) {
+		this.draw_display(field, 'highlight');
 	},
 
 	frame: function() {
