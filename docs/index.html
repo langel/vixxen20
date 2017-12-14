@@ -7,6 +7,7 @@
 
 Known Issues
 ~ OSX users should use Option/Alt key in place of Ctrl
+~ no idea how well this runs on slower machines
 ~ audio emulation is not close to perfect (issue #19)
 ~ faster frame rates have inaccurate timing (issue #2)
 
@@ -23,34 +24,50 @@ Ctrl Shift \     - reboot vixxen
 Grid Input Keys
 
 Arrow Keys       - navigation
--                - decrease value
-=                - increase value
-Shift -          - decrease value by 16
-Shift =          - increase value by 16
-Ctrl -           - decrease value across row
-Ctrl =           - increase value across row
-Ctrl Shift -     - decrease value by 16 across row
-Ctrl Shift =     - increase value by 16 acroos row
+Ctrl Down        - decrease value
+Ctrl Up          - increase value
+Ctrl Left        - decrease value by 16
+Ctrl Right       - increase value by 16
 
 
 BETA-K Global Keys
 
+F5               - play song from begining
+F6               - loop pattern
+F7               - play song from position
+F8               - stop
 Space            - toggle play/pause
 \                - toggle root octave
+Ctrl L           - load song
+Ctrl N           - new song
+Ctrl S           - save song
 
 
-Pattern Editor
+Pattern and Song Editor Keys
 
-`                - END
-1                - OFF
-Shift `          - NeXT
-
+-                - 1 pattern backward
++                - 1 pattern forawrd
+Shift -          - 16 patterns backward
+Shift +          - 16 patterns forward
+Ctrl -           - 1 pattern backward whole row
+Ctrl +           - 1 pattern forward whole row
+Ctrl Shift -     - 16 patterns backward whole row
+Ctrl Shift +     - 16 patterns forword whole row
 
 Hex Value Inputs
 
 Keys   ` 1 2 3 4 5 6 7 8 9 q w e r t y
 Value  0 1 2 3 4 5 6 7 8 9 A B C D E F
 
+
+Pattern Editor
+
+1                - OFF
+`                - NeXT
+~                - END
+Ctrl C           - copy current pattern
+Ctrl A           - copy pattern editor
+Ctrl V           - paste from clipboard
 
 Music Note Inputs [2 Octaves]
 
