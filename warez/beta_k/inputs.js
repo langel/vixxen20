@@ -24,6 +24,28 @@ var beta_k_inputs = {
 
 	fields: [{
 
+		lable: 'PATTERN',
+		type: 'grid',
+		cell_width: 3,
+		cell_height: 1,
+		cell_margin: 1,
+		cell_height: 'custom',
+		cell_value: 0,
+		width: 4,
+		height: 16,
+		x: 3,
+		y: 10,
+		value_min: 0,
+		value_max: 255,
+
+		call_display: function(value) {
+		},
+		on_init: function() {
+		},
+		on_update: function() {
+		},
+	},	{
+
 		label: 'SONG ORDER LIST',
 		type: 'grid',
 		cell_width: 2,

@@ -5,7 +5,6 @@ var beta_k = {
 	includes: [
 		'song_schema',
 		'inputs',
-		'pattern_grid',
 	],
 
 	/*
@@ -48,7 +47,6 @@ var beta_k = {
 		// setup components
 		this.song = this.song_new();
 		this.inputs = beta_k_inputs;
-		this.inputs.fields.unshift(beta_k_pattern_grid);
 		// XXX this is crap
 		var i;
 		for (i = 0; i < 4; i++) {
