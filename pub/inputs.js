@@ -127,11 +127,15 @@ var inputs = {
 				}
 
 				// FIELD HANDLING
-				if (typeof inputs.types[field.type] !== 'undefined') {
-					var value = field.value;
-					inputs.types[field.type].on_key(field, this.key_state[index]);
-					if (value != field.value) this.update(field);
+				var field_type = inputs.types[field.type];
+				var value = field.value;
+				if (typeof field_type.on_key !== 'undefined') {
+					field_type.on_key(field, this.key_state[index]);
 				}
+				if (typeof field_type.on_update !== 'undefined') {
+					field_type.update(field);
+				}
+				else if (value != field.value) this.update(field);
 			}
 		}
 	},
@@ -210,7 +214,7 @@ var inputs = {
 	},
 
 	update: function(field) {
-		field.on_update();
+		if (typeof field.on_update !== 'undefined') field.on_update();
 		this.focus(field);
 	},
 

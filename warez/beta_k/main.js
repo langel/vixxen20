@@ -43,15 +43,10 @@ var beta_k = {
 		vixxen.plot_str(30, 4, ' TENR ', 1);
 		vixxen.plot_str(30, 5, ' SOPR ', 1);
 		vixxen.plot_str(30, 6, ' NUZZ ', 1);
-		vixxen.plot_str(2, 8, 'ch1 ch2 ch3 ch4  SongonG0NGg  SPD VOL', 1);
+		vixxen.plot_str(2, 8, 'ch1 ch2 ch3 ch4  Songond0NGg  SPD VOL', 1);
 		// setup components
 		this.song = this.song_new();
 		this.inputs = beta_k_inputs;
-		// XXX this is crap
-		var i;
-		for (i = 0; i < 4; i++) {
-			beta_k_pattern_grid.on_load(i, this.song.patterns[i]);
-		};
 		inputs.init(this.inputs);
 		vixxen.frame.hook_add({
 			object: 'beta_k',
@@ -111,6 +106,7 @@ var beta_k = {
 		vic.set_volume(this.song.volume_table[this.pattern_pos]);
 		vixxen.plot_str(26, 4, vixxen.display.pad(vic.volume, 3, ' '), 1);
 		// highlight appropriate rows
+		inputs.types.grid.row_highlight(inputs.get_field_by_label('PATTERN'), this.pattern_pos);
 		inputs.types.grid.row_highlight(inputs.get_field_by_label('SPEED'), this.pattern_pos);
 		inputs.types.grid.row_highlight(inputs.get_field_by_label('VOLUME'), this.pattern_pos);
 	},

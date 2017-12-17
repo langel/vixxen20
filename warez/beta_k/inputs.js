@@ -24,25 +24,69 @@ var beta_k_inputs = {
 
 	fields: [{
 
-		lable: 'PATTERN',
+		label: 'PATTERN',
 		type: 'grid',
 		cell_width: 3,
 		cell_height: 1,
 		cell_margin: 1,
-		cell_height: 'custom',
+		cell_type: 'custom',
 		cell_value: 0,
 		width: 4,
 		height: 16,
-		x: 3,
+		x: 2,
 		y: 10,
 		value_min: 0,
 		value_max: 255,
 
-		call_display: function(value) {
+		cell_display: function(value) {
+			var display, note = beta_k_note_values.indexOf(value);
+			if (note !== -1) 
+			display = beta_k_note_names[note%12] +
+			'' + 
+			(Math.floor(note/12) + this.cell.x);
+			else if (value > 127) display = value;
+			else if (value < beta_k_note_specials.length) display = beta_k_note_specials[value];
+			else display = this.value;
+			display = vixxen.display.pad(display, this.cell_width, ' ');
+			return display;
 		},
 		on_init: function() {
+			this.data = [];
+			// XXX this is crap
+			var i;
+			for (i = 0; i < 4; i++) {
+				this.data.push(beta_k.song.patterns[i]);
+			};
 		},
-		on_update: function() {
+		on_key: function(key) {
+			var old_value = this.value;
+			var note = beta_k_note_keycodes.indexOf(parseInt(key.code, 10));
+			if (note != -1) {
+				if (beta_k.octave > 0) note += beta_k.octave * 12;
+				this.value = beta_k_note_values[note];
+			}
+			else if (key.input == 'Delete') this.value = 0;
+			else if (key.input == '1') this.value = 1;
+			else if (key.input == '`') this.value = 2;
+			else if (key.input == '~') this.value = 3;
+			this.data[this.cell.x][this.cell.y] = this.value;
+			beta_k.song.patterns[this.cell.x][this.cell.y] = this.value;
+			if (this.value !== old_value) return 'down';
+			else return false;
+			/* XXX code from old pattern grid to clean up pattern column
+			var song = beta_k.song;
+			var old_value = song.patterns[this.channel][this.row];
+			song.patterns[this.channel][this.row] = note;
+			this.patterns_display[this.channel][this.row] = this.display;
+			this.cursor_forward();
+			var r = this.row;
+			if (r !== 0) while (song.patterns[this.channel][r] === old_value || song.patterns[this.channel][r] === 0) {
+				song.patterns[this.channel][r] = 0;
+				this.patterns_display[this.channel][r] = this.note_specials[0];
+				r++;
+			}
+			this.draw_channel(this.channel, this.patterns_display[this.channel]);
+			*/
 		},
 	},	{
 

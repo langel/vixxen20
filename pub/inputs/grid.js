@@ -22,12 +22,6 @@ inputs.types.grid = {
 		inputs.focus(field);
 	},
 
-	draw_all: function(field) {
-		for (var x = field.width-1; x >= 0; x--) {
-			this.draw_column(field, x);
-		}
-	},
-
 	cell_update: function(field, style='blur') {
 		// update cell value
 		field.value = field.data[field.cell.x][field.cell.y];
@@ -41,6 +35,12 @@ inputs.types.grid = {
 			else field.y = val;
 		});
 		inputs.draw_display(field, style);
+	},
+
+	draw_all: function(field) {
+		for (var x = field.width-1; x >= 0; x--) {
+			this.draw_column(field, x);
+		}
 	},
 
 	draw_column: function(field, x) {
@@ -109,6 +109,8 @@ inputs.types.grid = {
 	},
 
 	on_key: function(field, key) {
+		// flag for cell advancement
+		var advance = false;
 		// tab out
 		if (key.code == 9) return;
 		// cell value adjustment
@@ -144,28 +146,30 @@ inputs.types.grid = {
 		}
 		// grid navigate
 		else if (key.label == SPKEY.ARROW_DOWN) {
-			this.cell_advance(field, 'down');
+			advance = 'down';
 		}
 		else if (key.label == SPKEY.ARROW_LEFT) {
-			this.cell_advance(field, 'left');
+			advance = 'left';
 		}
 		else if (key.label == SPKEY.ARROW_RIGHT) {
-			this.cell_advance(field, 'right');
+			advance = 'right';
 		}
 		else if (key.label == SPKEY.ARROW_UP) {
-			this.cell_advance(field, 'up');
+			advance = 'up';
 		}
 		// handle hex number keys
 		else if (field.cell_type == 'hex' && HEXKEY.includes(key.code)) {
 			field.data[field.cell.x][field.cell.y] = HEXKEY.indexOf(key.code);
-			field.on_update();
-			this.cell_update(field);
-			this.cell_advance(field, field.cell_advance_behavior);
+			advance = field.cell_advance_behavior;
 		}
 		// call custom key handler
-		else if (typeof field.on_key === 'function' && field.on_key() == true) this.cell_advance(field);
+		else if (typeof field.on_key === 'function') {
+			advance = field.on_key(key);
+		}
 		// display cursor updates
-		this.cell_update(field) & inputs.focus(field);
+		this.cell_update(field, 'focus');
+		// advance cell if defined
+		this.cell_advance(field, advance);
 	},
 
 	row_dehighlight: function(field, row) {
