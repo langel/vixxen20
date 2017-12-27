@@ -100,7 +100,7 @@ var vic = {
 	init: function() {
 
 		// initialize the Video Interface Chip audio
-		vic.volume_node.gain.value = 0;
+		vic.volume_node.gain.setValueAtTime(0, 0);
 		vic.volume_node.connect(audio.destination);
 		vic.audio_node = audio.createScriptProcessor(vic.audio_buffer_size, 1, 1);
 		vic.audio_node.onaudioprocess = vic._buffer_gen;
@@ -174,7 +174,7 @@ var vic = {
 		if (value > 15) vol = 15;
 		if (value <= 0) vol = 0;
 		else vol = (value / 15) * 0.5; 
-		vic.volume_node.gain.value = vol;
+		vic.volume_node.gain.setValueAtTime(vol, 0);
 	},
 
 	/*

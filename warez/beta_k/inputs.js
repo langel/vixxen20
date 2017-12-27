@@ -51,6 +51,7 @@ var beta_k_inputs = {
 			return display;
 		},
 		on_init: function() {
+			this.song_grid = inputs.get_field_by_label('SONG');
 			this.data = [];
 			// XXX this is crap
 			var i;
@@ -90,7 +91,7 @@ var beta_k_inputs = {
 		},
 	},	{
 
-		label: 'SONG ORDER LIST',
+		label: 'SONG',
 		type: 'grid',
 		cell_width: 2,
 		cell_height: 1,
@@ -109,6 +110,7 @@ var beta_k_inputs = {
 			return vixxen.display.pad(vixxen.display.hex(value), this.cell_width, '0');
 		},
 		on_init: function() {
+			this.pattern_grid = inputs.get_field_by_label('PATTERN');
 			this.data = [];
 			for (var x = 0; x < 4; x++) {
 				var column = [];
