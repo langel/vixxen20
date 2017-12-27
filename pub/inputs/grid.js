@@ -113,37 +113,6 @@ inputs.types.grid = {
 		var advance = false;
 		// tab out
 		if (key.code == 9) return;
-		// cell value adjustment
-		if (key.label == 'CONTROL_' + SPKEY.ARROW_DOWN ||
-			key.label == 189) {
-			if (field.data[field.cell.x][field.cell.y] > field.value_min) {;
-				field.data[field.cell.x][field.cell.y]--;
-			}
-		}
-		else if (key.label == 'CONTROL_' + SPKEY.ARROW_UP ||
-			key.label == 187) {
-			if (field.data[field.cell.x][field.cell.y] < field.value_max) {;
-				field.data[field.cell.x][field.cell.y]++;
-			}
-		}
-		else if (key.label == 'CONTROL_' + SPKEY.ARROW_LEFT ||
-			key.label == 'SHIFT_189') {
-			if (field.data[field.cell.x][field.cell.y] > field.value_min) {
-				field.data[field.cell.x][field.cell.y] -= 16;
-				if (field.data[field.cell.x][field.cell.y] < field.value_min) {
-					field.data[field.cell.x][field.cell.y] = field.value_min;
-				}
-			}
-		}
-		else if (key.label == 'CONTROL_' + SPKEY.ARROW_RIGHT ||
-			key.label == 'SHIFT_187') {
-			if (field.data[field.cell.x][field.cell.y] < field.value_max) {
-				field.data[field.cell.x][field.cell.y] += 16;
-				if (field.data[field.cell.x][field.cell.y] > field.value_max) {
-					field.data[field.cell.x][field.cell.y] = field.value_max;
-				}
-			}
-		}
 		// grid navigate
 		else if (key.label == SPKEY.ARROW_DOWN) {
 			advance = 'down';
@@ -156,6 +125,33 @@ inputs.types.grid = {
 		}
 		else if (key.label == SPKEY.ARROW_UP) {
 			advance = 'up';
+		}
+		// cell value adjustment
+		if (key.label == 'CONTROL_' + SPKEY.ARROW_DOWN) {
+			if (field.data[field.cell.x][field.cell.y] > field.value_min) {;
+				field.data[field.cell.x][field.cell.y]--;
+			}
+		}
+		else if (key.label == 'CONTROL_' + SPKEY.ARROW_UP) {
+			if (field.data[field.cell.x][field.cell.y] < field.value_max) {;
+				field.data[field.cell.x][field.cell.y]++;
+			}
+		}
+		else if (key.label == 'CONTROL_' + SPKEY.ARROW_LEFT) {
+			if (field.data[field.cell.x][field.cell.y] > field.value_min) {
+				field.data[field.cell.x][field.cell.y] -= 16;
+				if (field.data[field.cell.x][field.cell.y] < field.value_min) {
+					field.data[field.cell.x][field.cell.y] = field.value_min;
+				}
+			}
+		}
+		else if (key.label == 'CONTROL_' + SPKEY.ARROW_RIGHT) {
+			if (field.data[field.cell.x][field.cell.y] < field.value_max) {
+				field.data[field.cell.x][field.cell.y] += 16;
+				if (field.data[field.cell.x][field.cell.y] > field.value_max) {
+					field.data[field.cell.x][field.cell.y] = field.value_max;
+				}
+			}
 		}
 		// handle hex number keys
 		else if (field.cell_type == 'hex' && HEXKEY.includes(key.code)) {

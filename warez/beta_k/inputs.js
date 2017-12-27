@@ -70,6 +70,31 @@ var beta_k_inputs = {
 			else if (key.input == '1') this.value = 1;
 			else if (key.input == '`') this.value = 2;
 			else if (key.input == '~') this.value = 3;
+			// decrease pattern number
+			else if (key.label == SPKEY.DASH) {
+			}
+			// increase pattern number
+			else if (key.label == SPKEY.EQUAL) {
+			}
+			// decrease pattern number by 16
+			else if (key.label == 'SHIFT_' + SPKEY.DASH) {
+			}
+			// increase pattern number by 16
+			else if (key.label == 'SHIFT_' + SPKEY.EQUAL) {
+			}
+			// decrease pattern number across row
+			else if (key.label == 'CONTROL_' + SPKEY.DASH) {
+			}
+			// increase pattern number across row
+			else if (key.label == 'CONTROL_' + SPKEY.EQUAL) {
+			}
+			// decrease pattern number by 16 across row
+			else if (key.label == 'CONTROL_SHIFT_' + SPKEY.DASH) {
+			}
+			// increase pattern number by 16 across row
+			else if (key.label == 'CONTROL_SHIFT_' + SPKEY.EQUAL) {
+			}
+
 			this.data[this.cell.x][this.cell.y] = this.value;
 			beta_k.song.patterns[this.cell.x][this.cell.y] = this.value;
 			if (this.value !== old_value) return 'down';
