@@ -139,7 +139,7 @@ var beta_k = {
 	song_stop: function() {
 		beta_k.pause = true;
 		vixxen.silent();	
-		beta_k_pattern_grid.play_position = 0;
+		this.pattern_pos = 0;
 		this.play_status('STOPPED');
 	},
 

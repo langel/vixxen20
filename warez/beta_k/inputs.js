@@ -60,45 +60,54 @@ var beta_k_inputs = {
 			};
 		},
 		on_key: function(key) {
-			var old_value = this.value;
+			var advance = 'down';
+			// note inputs
 			var note = beta_k_note_keycodes.indexOf(parseInt(key.code, 10));
 			if (note != -1) {
 				if (beta_k.octave > 0) note += beta_k.octave * 12;
 				this.value = beta_k_note_values[note];
+				if (typeof this.value == 'undefined') {
+					if (note == 38) this.value = 245;
+					if (note == 39) this.value = 250;
+					if (note == 40) this.value = 255;
+				}
 			}
+			// special note inputs
 			else if (key.input == 'Delete') this.value = 0;
 			else if (key.input == '1') this.value = 1;
 			else if (key.input == '`') this.value = 2;
 			else if (key.input == '~') this.value = 3;
-			// decrease pattern number
-			else if (key.label == SPKEY.DASH) {
+			// cursor does not advance with keys below
+			else {
+				var advance = false;
+				// decrease pattern number
+				if (key.label == SPKEY.DASH) {
+				}
+				// increase pattern number
+				else if (key.label == SPKEY.EQUAL) {
+				}
+				// decrease pattern number by 16
+				else if (key.label == 'SHIFT_' + SPKEY.DASH) {
+				}
+				// increase pattern number by 16
+				else if (key.label == 'SHIFT_' + SPKEY.EQUAL) {
+				}
+				// decrease pattern number across row
+				else if (key.label == 'CONTROL_' + SPKEY.DASH) {
+				}
+				// increase pattern number across row
+				else if (key.label == 'CONTROL_' + SPKEY.EQUAL) {
+				}
+				// decrease pattern number by 16 across row
+				else if (key.label == 'CONTROL_SHIFT_' + SPKEY.DASH) {
+				}
+				// increase pattern number by 16 across row
+				else if (key.label == 'CONTROL_SHIFT_' + SPKEY.EQUAL) {
+				}
 			}
-			// increase pattern number
-			else if (key.label == SPKEY.EQUAL) {
-			}
-			// decrease pattern number by 16
-			else if (key.label == 'SHIFT_' + SPKEY.DASH) {
-			}
-			// increase pattern number by 16
-			else if (key.label == 'SHIFT_' + SPKEY.EQUAL) {
-			}
-			// decrease pattern number across row
-			else if (key.label == 'CONTROL_' + SPKEY.DASH) {
-			}
-			// increase pattern number across row
-			else if (key.label == 'CONTROL_' + SPKEY.EQUAL) {
-			}
-			// decrease pattern number by 16 across row
-			else if (key.label == 'CONTROL_SHIFT_' + SPKEY.DASH) {
-			}
-			// increase pattern number by 16 across row
-			else if (key.label == 'CONTROL_SHIFT_' + SPKEY.EQUAL) {
-			}
-
 			this.data[this.cell.x][this.cell.y] = this.value;
 			beta_k.song.patterns[this.cell.x][this.cell.y] = this.value;
-			if (this.value !== old_value) return 'down';
-			else return false;
+			return advance;
 			/* XXX code from old pattern grid to clean up pattern column
 			var song = beta_k.song;
 			var old_value = song.patterns[this.channel][this.row];
@@ -146,10 +155,11 @@ var beta_k_inputs = {
 			}
 		},
 		on_key: function(key) {
-			if (HEXKEY.includes(key.code)) this.data[this.cell.x][this.cell.y] = HEXKEY.indexOf(key.code);
-			beta_k.song.pattern_order[this.cell.y][this.cell.x] = this.value;
-			console.log(this.value);
-			return 'down';
+			if (HEXKEY.includes(key.code)) {
+				this.data[this.cell.x][this.cell.y] = HEXKEY.indexOf(key.code);
+				beta_k.song.pattern_order[this.cell.y][this.cell.x] = this.value;
+				return 'down';
+			}
 		},
 	}, {
 

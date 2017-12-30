@@ -127,7 +127,7 @@ inputs.types.grid = {
 			advance = 'up';
 		}
 		// cell value adjustment
-		if (key.label == 'CONTROL_' + SPKEY.ARROW_DOWN) {
+		else if (key.label == 'CONTROL_' + SPKEY.ARROW_DOWN) {
 			if (field.data[field.cell.x][field.cell.y] > field.value_min) {;
 				field.data[field.cell.x][field.cell.y]--;
 			}
