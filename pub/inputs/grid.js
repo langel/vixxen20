@@ -126,6 +126,24 @@ inputs.types.grid = {
 		else if (key.label == SPKEY.ARROW_UP) {
 			advance = 'up';
 		}
+		else if (key.label == SPKEY.HOME) {
+			inputs.blur(field);
+			field.cell.y = 0;
+		}
+		else if (key.label == SPKEY.END) {
+			inputs.blur(field);
+			field.cell.y = field.height-1;
+		}
+		else if (key.label == SPKEY.PAGE_DOWN) {
+			inputs.blur(field);
+			field.cell.y += 4;
+			if (field.cell.y >= field.height) field.cell.y = field.height-1;
+		}
+		else if (key.label == SPKEY.PAGE_UP) {
+			inputs.blur(field);
+			field.cell.y -= 4;
+			if (field.cell.y <= 0) field.cell.y = 0;
+		}
 		// cell value adjustment
 		else if (key.label == 'CONTROL_' + SPKEY.ARROW_DOWN) {
 			if (field.data[field.cell.x][field.cell.y] > field.value_min) {;
