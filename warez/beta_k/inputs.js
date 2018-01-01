@@ -130,7 +130,7 @@ var beta_k_inputs = {
 		cell_width: 2,
 		cell_height: 1,
 		cell_margin: 1,
-		cell_type: 'custom',
+		cell_type: 'hex',
 		cell_value: 0,
 		width: 4,
 		height: 16,
@@ -140,7 +140,7 @@ var beta_k_inputs = {
 		value_max: 127,
 
 		cell_display: function(value) {
-			if (value > 128) return '--';
+			if (value >= 128) return '--';
 			return vixxen.display.pad(vixxen.display.hex(value), this.cell_width, '0');
 		},
 		on_init: function() {
@@ -154,12 +154,9 @@ var beta_k_inputs = {
 				this.data.push(column);
 			}
 		},
-		on_key: function(key) {
-			if (HEXKEY.includes(key.code)) {
-				this.data[this.cell.x][this.cell.y] = HEXKEY.indexOf(key.code);
-				beta_k.song.pattern_order[this.cell.y][this.cell.x] = this.value;
-				return 'down';
-			}
+		on_update: function() {
+			// put new value in song data
+			beta_k.song.pattern_order[this.cell.y][this.cell.x] = this.value;
 		},
 	}, {
 

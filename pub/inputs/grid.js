@@ -62,7 +62,7 @@ inputs.types.grid = {
 	get_cell_display: function(field, x, y) {
 		var value = field.data[x][y];
 		// handle custom cell display
-		if (field.cell_type == 'custom') {
+		if (field.cell_type == 'custom' || typeof field.cell_display == 'function') {
 			return field.cell_display(value);
 		}
 		// handle hex cell display
@@ -153,10 +153,25 @@ inputs.types.grid = {
 				}
 			}
 		}
-		// handle hex number keys
+		// handle hex number keys (currently limited to 8bit values)
 		else if (field.cell_type == 'hex' && HEXKEY.includes(key.code)) {
-			field.data[field.cell.x][field.cell.y] = HEXKEY.indexOf(key.code);
-			advance = field.cell_advance_behavior;
+			if (typeof field.hexkeycount == 'undefined' || field.hexkeycount == 0) {
+				field.hexkeycount = field.cell_width;
+			}
+			var value = field.data[field.cell.x][field.cell.y];
+			var input_value = HEXKEY.indexOf(key.code);
+			field.hexkeycount--;
+			// XXX more conditionals if we go 16bit hex values
+			if (field.hexkeycount == 1) {
+				value = (value & 0b00001111) + (input_value << 4);
+			}
+			if (field.hexkeycount == 0) {
+				value = (value & 0b11110000) + input_value;
+				advance = field.cell_advance_behavior;
+			}
+			if (value > field.value_max) value = field.value_max;
+			else if (value < field.value_min) value = field.value_min;
+			field.data[field.cell.x][field.cell.y] = value;
 		}
 		// call custom key handler
 		else if (typeof field.on_key === 'function') {
