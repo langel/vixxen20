@@ -154,6 +154,10 @@ var beta_k_inputs = {
 				this.data.push(column);
 			}
 		},
+		on_key: function() {
+			var advance = false;
+			return false;
+		},
 		on_update: function() {
 			// put new value in song data
 			beta_k.song.pattern_order[this.cell.y][this.cell.x] = this.value;
