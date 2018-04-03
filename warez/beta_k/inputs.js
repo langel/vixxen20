@@ -50,15 +50,22 @@ var beta_k_inputs = {
 			display = vixxen.display.pad(display, this.cell_width, ' ');
 			return display;
 		},
-		on_init: function() {
-			this.song_grid = inputs.get_field_by_label('SONG');
+
+		load_patterns: function(pattern_order_row) {
 			this.data = [];
-			// XXX this is crap
 			var i;
 			for (i = 0; i < 4; i++) {
-				this.data.push(beta_k.song.patterns[i]);
+				var pattern_id = beta_k.song.pattern_order[pattern_order_row][i];
+				this.data.push((pattern_id != 255) ? beta_k.song.patterns[pattern_id] : beta_k_new_pattern);
 			};
+			inputs.types.grid.draw_all(inputs.get_field_by_label('PATTERN'));
 		},
+
+		on_init: function() {
+			this.song_grid = inputs.get_field_by_label('SONG');
+			this.load_patterns(0);
+		},
+
 		on_key: function(key) {
 			var advance = 'down';
 			// note inputs
@@ -108,20 +115,6 @@ var beta_k_inputs = {
 			this.data[this.cell.x][this.cell.y] = this.value;
 			beta_k.song.patterns[this.cell.x][this.cell.y] = this.value;
 			return advance;
-			/* XXX code from old pattern grid to clean up pattern column
-			var song = beta_k.song;
-			var old_value = song.patterns[this.channel][this.row];
-			song.patterns[this.channel][this.row] = note;
-			this.patterns_display[this.channel][this.row] = this.display;
-			this.cursor_forward();
-			var r = this.row;
-			if (r !== 0) while (song.patterns[this.channel][r] === old_value || song.patterns[this.channel][r] === 0) {
-				song.patterns[this.channel][r] = 0;
-				this.patterns_display[this.channel][r] = this.note_specials[0];
-				r++;
-			}
-			this.draw_channel(this.channel, this.patterns_display[this.channel]);
-			*/
 		},
 	},	{
 

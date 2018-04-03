@@ -15,6 +15,7 @@ var beta_k = {
 	frame_rate: 5,
 	inputs: {},
 	octave: 0,
+	pattern_length: 16,
 	pattern_pos: 0,
 	pattern_order_pos: 0,
 	play_mode: 0,
@@ -59,8 +60,9 @@ var beta_k = {
 		// display video mode
 		vixxen.plot_str(35, 1, vic.video_mode.toUpperCase()+' ', 6);
 		if (beta_k.pause !== true) {
-			// play next row
+			// play next row after frame count
 			if (this.frame_counter >= beta_k.frame_rate) {
+				this.frame_counter = 0;
 				this.play_next_row();
 			}
 			// update displays
@@ -74,41 +76,61 @@ var beta_k = {
 	},
 	
 	play_next_row: function() {
-		this.frame_counter = 0;
 		this.pattern_pos++;
-		if (this.pattern_pos >= 16) this.pattern_pos = 0;
-		// act on pattern row data
+		// play next song position after pattern
+		if (this.pattern_pos >= this.pattern_length) {
+			this.pattern_pos = 0;
+			this.pattern_order_pos++;
+			inputs.get_field_by_label('PATTERN').load_patterns(this.pattern_order_pos);
+		}
+		// get pattern order row
+		var pattern_order_row = beta_k.song.pattern_order[this.pattern_order_pos];
+		// make sure at least one pattern in row is populated
+		var pop = 0;
 		for (var i = 0; i < 4; i++) {
-			var value = beta_k.song.patterns[i][this.pattern_pos];
+			if (pattern_order_row[i] != 255) pop++;
+		}
+		if (pop == 0) {
+			this.pattern_pos = this.pattern_length;
+			this.pattern_order_pos = -1;
+			this.play_next_row();
+		}
+		// act on pattern row data
+		else for (var i = 0; i < 4; i++) {
+			var current_pattern = (pattern_order_row[i] != 255) ? this.song.patterns[pattern_order_row[i]] : beta_k_new_pattern;
+			var value = current_pattern[this.pattern_pos];
 			// PITCH DATA
 			if (value >= 128) {
-				vic.set_voice_value(i, beta_k.song.patterns[i][this.pattern_pos]);
+				vic.set_voice_value(i, value);
 			}
 			// NOTE OFF
 			if (value == 1) {
 				vic.set_voice_value(i, 0);
 			}
-			// NEXT PATTERN
-			if (value == 2) {
-				// there's a smarter way to do this...
-				this.pattern_pos = 15;
-				this.play_next_row();
-			}
 			// END SONG
 			if (value == 3) {
 				this.song_stop();
 			}
+			// NEXT PATTERN
+			if (value == 2) {
+				// there's a smarter way to do this...
+				this.pattern_pos = this.pattern_length;
+				this.play_next_row();
+			}
+			else {
+				// act on speed table data
+				this.frame_rate = this.song.speed_table[this.pattern_pos];
+				vixxen.plot_str(26, 3, vixxen.display.pad(this.frame_rate, 3, ' '), 1);
+				// act on volume table data
+				vic.set_volume(this.song.volume_table[this.pattern_pos]);
+				vixxen.plot_str(26, 4, vixxen.display.pad(vic.volume, 3, ' '), 1);
+				// highlight appropriate rows
+				inputs.types.grid.row_highlight(inputs.get_field_by_label('PATTERN'), this.pattern_pos);
+				inputs.types.grid.row_highlight(inputs.get_field_by_label('SPEED'), this.pattern_pos);
+				inputs.types.grid.row_highlight(inputs.get_field_by_label('VOLUME'), this.pattern_pos);
+				inputs.types.grid.row_highlight(inputs.get_field_by_label('SONG'), this.pattern_order_pos);
+			}
 		}
-		// act on speed table data
-		this.frame_rate = this.song.speed_table[this.pattern_pos];
-		vixxen.plot_str(26, 3, vixxen.display.pad(this.frame_rate, 3, ' '), 1);
-		// act on volume table data
-		vic.set_volume(this.song.volume_table[this.pattern_pos]);
-		vixxen.plot_str(26, 4, vixxen.display.pad(vic.volume, 3, ' '), 1);
-		// highlight appropriate rows
-		inputs.types.grid.row_highlight(inputs.get_field_by_label('PATTERN'), this.pattern_pos);
-		inputs.types.grid.row_highlight(inputs.get_field_by_label('SPEED'), this.pattern_pos);
-		inputs.types.grid.row_highlight(inputs.get_field_by_label('VOLUME'), this.pattern_pos);
 	},
 
 	play_status: function(status) {

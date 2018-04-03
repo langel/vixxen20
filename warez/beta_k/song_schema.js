@@ -36,8 +36,10 @@
 
 
 var beta_k_new_pattern = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+var beta_k_new_pattern_set = [];
 var beta_k_new_song_order = [];
 for (var i = 0; i < 128; i++) {
+	beta_k_new_pattern_set.push(beta_k_new_pattern);
 	if (i == 0) beta_k_new_song_order.push([0,1,2,3]);
 	else beta_k_new_song_order.push([255,255,255,255]);
 }
@@ -47,12 +49,7 @@ var beta_k_new_song = {
 	artist: 'Artist',
 	copy_info: 'Copy Info',
 	pattern_order: beta_k_new_song_order,
-	patterns: [
-		beta_k_new_pattern,
-		beta_k_new_pattern,
-		beta_k_new_pattern,
-		beta_k_new_pattern,
-	],
+	patterns: beta_k_new_pattern_set,
 	speed_table: [5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5],
 	volume_table: [7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7],
 };

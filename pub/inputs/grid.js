@@ -100,11 +100,7 @@ inputs.types.grid = {
 			}
 			field.data.push(column);
 		}
-		field.cell = {
-			x: 0,
-			y: 0,
-			display: field.data[field.cell.x][field.cell.y],
-		};
+		field.cell.display = field.data[field.cell.x][field.cell.y];
 		this.draw_all(field);
 	},
 
