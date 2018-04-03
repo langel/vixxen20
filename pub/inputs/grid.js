@@ -38,9 +38,15 @@ inputs.types.grid = {
 	},
 
 	draw_all: function(field) {
-		for (var x = field.width-1; x >= 0; x--) {
-			this.draw_column(field, x);
+		var x = field.cell.x;
+		var y = field.cell.y;
+		var old_cursor = field.cell;
+		for (var c = field.width-1; c >= 0; c--) {
+			this.draw_column(field, c);
 		}
+		field.cell.x = x;
+		field.cell.y = y;
+		this.cell_update(field, 'focus');
 	},
 
 	draw_column: function(field, x) {

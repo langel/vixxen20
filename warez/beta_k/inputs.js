@@ -41,9 +41,7 @@ var beta_k_inputs = {
 		cell_display: function(value) {
 			var display, note = beta_k_note_values.indexOf(value);
 			if (note !== -1) 
-			display = beta_k_note_names[note%12] +
-			'' + 
-			(Math.floor(note/12) + this.cell.x);
+				display = beta_k_note_names[note%12] + '' + (Math.floor(note/12) + this.cell.x);
 			else if (value > 127) display = value;
 			else if (value < beta_k_note_specials.length) display = beta_k_note_specials[value];
 			else display = this.value;
