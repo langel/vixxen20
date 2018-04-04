@@ -74,29 +74,33 @@ var beta_k = {
 		beta_k.frame_counter++;
 		vixxen.plot_str(0, 28, ` FRAME ${beta_k.frame_counter} `, 2);
 	},
-	
-	play_next_row: function() {
-		this.pattern_pos++;
-		// play next song position after pattern
-		if (this.pattern_pos >= this.pattern_length) {
-			this.pattern_pos = 0;
-			this.pattern_order_pos++;
-			inputs.get_field_by_label('PATTERN').load_patterns(this.pattern_order_pos);
-		}
-		// get pattern order row
-		var pattern_order_row = beta_k.song.pattern_order[this.pattern_order_pos];
+
+	play_next_order: function() {
+		// loads next order of patterns
+		// check if playing in song or pattern mode
+
+		// get next pattern order row
+		var next_order_row = beta_k.song.pattern_order[this.pattern_order_pos + 1];
 		// make sure at least one pattern in row is populated
 		var pop = 0;
 		for (var i = 0; i < 4; i++) {
-			if (pattern_order_row[i] != 255) pop++;
+			if (next_order_row[i] != 255) pop++;
 		}
-		if (pop == 0) {
-			this.pattern_pos = this.pattern_length;
-			this.pattern_order_pos = -1;
-			this.play_next_row();
+		if (pop > 0) this.pattern_order_pos++;
+		else this.pattern_order_pos = 0;
+		inputs.get_field_by_label('PATTERN').load_patterns(this.pattern_order_pos);
+	},
+	
+	play_next_row: function() {
+		// play next song position after pattern
+		if (this.pattern_pos >= this.pattern_length) {
+			this.pattern_pos = 0;
+			this.play_next_order();
 		}
+		// get pattern order row
+		var pattern_order_row = beta_k.song.pattern_order[this.pattern_order_pos];
 		// act on pattern row data
-		else for (var i = 0; i < 4; i++) {
+		for (var i = 0; i < 4; i++) {
 			var current_pattern = (pattern_order_row[i] != 255) ? this.song.patterns[pattern_order_row[i]] : beta_k_new_pattern;
 			var value = current_pattern[this.pattern_pos];
 			// PITCH DATA
@@ -131,6 +135,7 @@ var beta_k = {
 				inputs.types.grid.row_highlight(inputs.get_field_by_label('SONG'), this.pattern_order_pos);
 			}
 		}
+		this.pattern_pos++;
 	},
 
 	play_status: function(status) {

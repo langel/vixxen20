@@ -111,7 +111,8 @@ var beta_k_inputs = {
 				}
 			}
 			this.data[this.cell.x][this.cell.y] = this.value;
-			beta_k.song.patterns[this.cell.x][this.cell.y] = this.value;
+			var pattern_id = beta_k.song.pattern_order[beta_k.pattern_order_pos][this.cell.x];
+			beta_k.song.patterns[pattern_id][this.cell.y] = this.value;
 			return advance;
 		},
 	},	{
