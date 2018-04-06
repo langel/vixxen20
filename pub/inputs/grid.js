@@ -148,17 +148,17 @@ inputs.types.grid = {
 			if (field.cell.y <= 0) field.cell.y = 0;
 		}
 		// cell value adjustment
-		else if (key.label == 'CONTROL_' + SPKEY.ARROW_DOWN) {
+		else if (key.label == 'SHIFT_' + SPKEY.ARROW_DOWN) {
 			if (field.data[field.cell.x][field.cell.y] > field.value_min) {;
 				field.data[field.cell.x][field.cell.y]--;
 			}
 		}
-		else if (key.label == 'CONTROL_' + SPKEY.ARROW_UP) {
+		else if (key.label == 'SHIFT_' + SPKEY.ARROW_UP) {
 			if (field.data[field.cell.x][field.cell.y] < field.value_max) {;
 				field.data[field.cell.x][field.cell.y]++;
 			}
 		}
-		else if (key.label == 'CONTROL_' + SPKEY.ARROW_LEFT) {
+		else if (key.label == 'SHIFT_' + SPKEY.ARROW_LEFT) {
 			if (field.data[field.cell.x][field.cell.y] > field.value_min) {
 				field.data[field.cell.x][field.cell.y] -= 16;
 				if (field.data[field.cell.x][field.cell.y] < field.value_min) {
@@ -166,7 +166,7 @@ inputs.types.grid = {
 				}
 			}
 		}
-		else if (key.label == 'CONTROL_' + SPKEY.ARROW_RIGHT) {
+		else if (key.label == 'SHIFT_' + SPKEY.ARROW_RIGHT) {
 			if (field.data[field.cell.x][field.cell.y] < field.value_max) {
 				field.data[field.cell.x][field.cell.y] += 16;
 				if (field.data[field.cell.x][field.cell.y] > field.value_max) {

@@ -7,6 +7,7 @@
 
 Known Issues
 ~ no idea how well this runs on slower machines
+  (currently seems equal in cpu usage to teleconferencing browser apps)
 ~ audio emulation is not close to perfect (issue #19)
 ~ faster frame rates have inaccurate timing (issue #2)
 
@@ -16,6 +17,7 @@ Keys
 
 Global Keys
 
+*F1               - open manual (issue #20)
 Tab              - next input
 Shift Tab        - widdershins input
 Meta Tab         - toggle PAL/NTSC
@@ -26,10 +28,10 @@ Meta Shift \     - reboot vixxen
 Grid Input Keys
 
 Arrow Keys       - navigation
-Meta Down        - decrease value
-Meta Up          - increase value
-Meta Left        - decrease value by 16
-Meta Right       - increase value by 16
+Shift Down       - decrease value
+Shift Up         - increase value
+Shift Left       - decrease value by 16
+Shift Right      - increase value by 16
 Page Up          - move cursor 4 up
 Page Down        - move cursor 4 down
 Home             - move cursor to the top
@@ -37,13 +39,13 @@ End              - move cursor to the bottom
 *Insert           - insert empty cell
 *Delete           - suck cells up
 *Backspace        - empty cell, move cursor up
-.                - place empty cell
+.                - empty cell, move cursor down
 
 BETA-K Global Keys
 
 *F5               - play song from begining
-*F6               - loop pattern
-*F7               - play song from position
+*F6               - loop current song row
+*F7               - play starting with current song row
 *F8               - stop
 Space            - toggle play/pause
 \                - toggle root octave
@@ -74,6 +76,10 @@ Pattern Editor
 1                - OFF
 `                - NeXT
 ~                - END
+Meta Up          - decrease song row
+Meta Down        - increase song row
+Shift Meta Up    - decrease song row by 16
+Shift Meta Down  - increase song row by 16
 *Meta C           - copy current pattern
 *Meta A           - copy pattern editor
 *Meta V           - paste from clipboard
