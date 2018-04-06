@@ -35,6 +35,7 @@ var beta_k_inputs = {
 		height: 16,
 		x: 2,
 		y: 10,
+		value_default: 0,
 		value_min: 0,
 		value_max: 255,
 
@@ -128,6 +129,7 @@ var beta_k_inputs = {
 		height: 16,
 		x: 19,
 		y: 10,
+		value_default: 255,
 		value_min: 0,
 		value_max: 127,
 

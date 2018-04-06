@@ -193,6 +193,14 @@ inputs.types.grid = {
 			else if (value < field.value_min) value = field.value_min;
 			field.data[field.cell.x][field.cell.y] = value;
 		}
+		// cell deletions
+		else if (key.code == 190) {
+			if (typeof field.value_default != 'undefined') {
+				advance = 'down';
+				value = field.value_default;
+				field.data[field.cell.x][field.cell.y] = value;
+			}
+		}
 		// call custom key handler
 		else if (typeof field.on_key === 'function') {
 			advance = field.on_key(key);
