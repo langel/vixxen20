@@ -67,7 +67,6 @@ var beta_k_inputs = {
 
 		on_key: function(key) {
 			var pattern_id = beta_k.song.pattern_order[beta_k.pattern_order_pos][this.cell.x];
-			var pattern_new_id = pattern_id;
 			var advance = 'down';
 			// note inputs
 			var note = beta_k_note_keycodes.indexOf(parseInt(key.code, 10));
@@ -85,27 +84,28 @@ var beta_k_inputs = {
 			else if (key.input == '1') this.value = 1;
 			else if (key.input == '`') this.value = 2;
 			else if (key.input == '~') this.value = 3;
+
 			// cursor does not advance with keys below
 			else {
-				var advance = false;
-				// change current pattern
+				advance = false;
+				// keys to change current pattern in order row
 				// decrease pattern number
 				if (key.label == SPKEY.DASH) {
-					pattern_new_id--;
+					beta_k.update_order_cell(beta_k.pattern_order_pos, this.cell.x, pattern_id--);
 				}
 				// increase pattern number
 				else if (key.label == SPKEY.EQUAL) {
-					pattern_new_id++;
+					beta_k.update_order_cell(beta_k.pattern_order_pos, this.cell.x, pattern_id++);
 				}
 				// decrease pattern number by 16
 				else if (key.label == 'SHIFT_' + SPKEY.DASH) {
-					pattern_new_id -= 16;
+					beta_k.update_order_cell(beta_k.pattern_order_pos, this.cell.x, pattern_id+=16);
 				}
 				// increase pattern number by 16
 				else if (key.label == 'SHIFT_' + SPKEY.EQUAL) {
-					pattern_new_id += 16;
+					beta_k.update_order_cell(beta_k.pattern_order_pos, this.cell.x, pattern_id-=16);
 				}
-				// change current song row
+				// keys to change current patterns in order row
 				// decrease pattern number across row
 				else if (key.label == 'CONTROL_' + SPKEY.DASH) {
 				}
@@ -119,9 +119,6 @@ var beta_k_inputs = {
 				else if (key.label == 'CONTROL_SHIFT_' + SPKEY.EQUAL) {
 				}
 			}
-			if (pattern_id != pattern_new_id) {
-				beta_k.song.pattern_order[beta_k.pattern_order_pos][this.cell.x] = pattern_new_id;
-			}
 			this.data[this.cell.x][this.cell.y] = this.value;
 			beta_k.song.patterns[pattern_id][this.cell.y] = this.value;
 			return advance;
@@ -133,7 +130,7 @@ var beta_k_inputs = {
 		cell_width: 2,
 		cell_height: 1,
 		cell_margin: 1,
-		cell_type: 'hex',
+		cell_type: 'custom',
 		cell_value: 0,
 		width: 4,
 		height: 16,

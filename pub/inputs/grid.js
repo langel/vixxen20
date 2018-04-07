@@ -19,57 +19,61 @@ inputs.types.grid = {
 			field.cell.y--;
 			if (field.cell.y < 0) field.cell.y = field.height-1;
 		}
-		this.cell_update(field);
+		this.cell_update(field, 'blur');
 		inputs.focus(field);
 	},
 
-	cell_update: function(field, style='blur') {
+	// visually update cell w/o cursor
+	cell_draw: function(field, x, y, style) {
+		field.cell.display = this.get_cell_display(field, x, y);
+		var pos = this.get_cell_position(field, x, y);
+		inputs.draw(pos[0], pos[1], field.cell.display, style);	
+	},
+
+	cell_update: function(field, style) {
 		// update cell value
 		field.value = field.data[field.cell.x][field.cell.y];
 		// call inputs on_update if defined
 		if (typeof field.on_update == 'function') field.on_update();
-		// update cell display
-		field.display = this.get_cell_display(field, field.cell.x, field.cell.y);
-		// position the cell coorectly
+		// update cursor position
 		this.get_cell_position(field, field.cell.x, field.cell.y).map((val, index) => {
 			if (index == 0) field.x = val;
 			else field.y = val;
 		});
-		inputs.draw_display(field, style);
+		// update cell display
+		this.cell_draw(field, field.cell.x, field.cell.y, style);
 	},
 
 	draw_all: function(field) {
 		var x = field.cell.x;
 		var y = field.cell.y;
 		var old_cursor = field.cell;
-		for (var c = field.width-1; c >= 0; c--) {
+		// draw all grid columns
+		for (var c = field.width - 1; c >= 0; c--) {
 			this.draw_column(field, c);
 		}
+		// highlight cursor
 		field.cell.x = x;
 		field.cell.y = y;
 		this.cell_update(field, 'focus');
 	},
 
 	draw_column: function(field, x) {
-		field.cell.x = x;
-		for (var y = field.height-1; y >= 0; y--) {
-			field.cell.y = y;
-			this.cell_update(field);
+		for (var y = field.height - 1; y >= 0; y--) {
+			this.cell_draw(field, x, y, 'blur');
 		}
 	},
 
 	draw_row: function(field, y) {
-		field.cell.y = y;
-		for (var x = field.width-1; x >= 0; x--) {
-			field.cell.x = x;
-			this.cell_update(field);
+		for (var x = field.width - 1; x >= 0; x--) {
+			this.cell_draw(field, x, y, 'blur');
 		}
 	},
 	
 	get_cell_display: function(field, x, y) {
 		var value = field.data[x][y];
 		// handle custom cell display
-		if (field.cell_type == 'custom' || typeof field.cell_display == 'function') {
+		if (field.cell_type == 'custom') {
 			return field.cell_display(value);
 		}
 		// handle hex cell display

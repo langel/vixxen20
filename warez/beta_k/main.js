@@ -170,18 +170,25 @@ var beta_k = {
 		this.play_status('STOPPED');
 	},
 
-	play_position: {
-		list: 0,
-		row: 0,
-		increase: function() {
-			this.row++;
-			if (this.row >= 16) {
-				this.row = 0;
-				this.list++;
-				if (this.list >= beta_k.song.list.length) this.list = 0;
-			}
-		},
+	/* change order cell value; update view
+	 * row - song order position of change
+	 * channel - values 0..4
+	 * pattern_id - new pattern value for cell
+	 */
+	update_order_cell: function(row, col, value) {
+		beta_k.song.pattern_order[row][col] = value;
+		inputs.types.grid.draw_column(inputs.get_field_by_label('PATTERN'), col);
+		inputs.types.grid.cell_draw(inputs.get_field_by_label('SONG'), col, row, 'blur');
 	},
 
+	/* change entire order row; update view
+	 * row - song order position of change
+	 * values - an array with a pattern id for each channel
+	 */
+	update_order_row: function(row, values) {
+		for (var i = 0; i < 4; i++) {
+			this.update_order_cell(row, i, values[i]);
+		}
+	},
 }
 

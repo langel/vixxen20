@@ -51,7 +51,6 @@ const HEXKEY = [192, 49, 50, 51, 52, 53, 54, 55, 56, 57, 81, 87, 69, 82, 84, 89]
 var inputs = {
 	
 	style: {
-		// XXX not implemented yet :(
 		// color, inverse
 		blur: [1, 0],
 		focus: [5, 1],
