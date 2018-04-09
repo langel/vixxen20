@@ -1,4 +1,4 @@
-var beta_k_inputs = {
+var baby_k_inputs = {
 
 	
 	global_keys: [{
@@ -6,18 +6,18 @@ var beta_k_inputs = {
 		// pause song
 		key: 32,
 		on_update: function() {
-			beta_k.pause = !beta_k.pause;
-			if (beta_k.pause == true) beta_k.song_pause();
-			else beta_k.song_play();
+			baby_k.pause = !baby_k.pause;
+			if (baby_k.pause == true) baby_k.song_pause();
+			else baby_k.song_play();
 		}
 	},{
 		// backslash '\'
 		// toggle root octave
 		key: 220,
 		on_update: function() {
-			if (beta_k.octave == 0) beta_k.octave = 1;
-			else beta_k.octave = 0;
-			inputs.set_value('OCTAVE', beta_k.octave);
+			if (baby_k.octave == 0) baby_k.octave = 1;
+			else baby_k.octave = 0;
+			inputs.set_value('OCTAVE', baby_k.octave);
 		}
 	}],
 
@@ -42,11 +42,11 @@ var beta_k_inputs = {
 			value_max: 255,
 
 			cell_display: function(value) {
-				var display, note = beta_k_note_values.indexOf(value);
+				var display, note = baby_k_note_values.indexOf(value);
 				if (note !== -1) 
-					display = beta_k_note_names[note%12] + '' + (Math.floor(note/12) + this.cell.x);
+					display = baby_k_note_names[note%12] + '' + (Math.floor(note/12) + this.cell.x);
 				else if (value > 127) display = value;
-				else if (value < beta_k_note_specials.length) display = beta_k_note_specials[value];
+				else if (value < baby_k_note_specials.length) display = baby_k_note_specials[value];
 				else display = this.value;
 				display = vixxen.display.pad(display, this.cell_width, ' ');
 				return display;
@@ -56,8 +56,8 @@ var beta_k_inputs = {
 				this.data = [];
 				var i;
 				for (i = 0; i < 4; i++) {
-					var pattern_id = beta_k.song.pattern_order[pattern_order_row][i];
-					this.data.push((pattern_id != 255) ? beta_k.song.patterns[pattern_id] : beta_k_new_pattern);
+					var pattern_id = baby_k.song.pattern_order[pattern_order_row][i];
+					this.data.push((pattern_id != 255) ? baby_k.song.patterns[pattern_id] : baby_k_new_pattern);
 				};
 				inputs.types.grid.draw_all(inputs.get_field_by_label('PATTERN'));
 			},
@@ -70,10 +70,10 @@ var beta_k_inputs = {
 			on_key: function(key) {
 				var advance = 'down';
 				// note inputs
-				var note = beta_k_note_keycodes.indexOf(parseInt(key.code, 10));
+				var note = baby_k_note_keycodes.indexOf(parseInt(key.code, 10));
 				if (note != -1) {
-					if (beta_k.octave > 0) note += beta_k.octave * 12;
-					this.value = beta_k_note_values[note];
+					if (baby_k.octave > 0) note += baby_k.octave * 12;
+					this.value = baby_k_note_values[note];
 					if (typeof this.value == 'undefined') {
 						if (note == 38) this.value = 245;
 						if (note == 39) this.value = 250;
@@ -114,8 +114,8 @@ var beta_k_inputs = {
 					}
 				}
 				this.data[this.cell.x][this.cell.y] = this.value;
-				var pattern_id = beta_k.song.pattern_order[beta_k.pattern_order_pos][this.cell.x];
-				beta_k.song.patterns[pattern_id][this.cell.y] = this.value;
+				var pattern_id = baby_k.song.pattern_order[baby_k.pattern_order_pos][this.cell.x];
+				baby_k.song.patterns[pattern_id][this.cell.y] = this.value;
 				return advance;
 			},
 		},	{
@@ -145,7 +145,7 @@ var beta_k_inputs = {
 				for (var x = 0; x < 4; x++) {
 					var column = [];
 					for (var y = 0; y < 128; y++) {
-						column.push(beta_k.song.pattern_order[y][x]);
+						column.push(baby_k.song.pattern_order[y][x]);
 					}
 					this.data.push(column);
 				}
@@ -156,7 +156,7 @@ var beta_k_inputs = {
 			},
 			on_update: function() {
 				// put new value in song data
-				beta_k.song.pattern_order[this.cell.y][this.cell.x] = this.value;
+				baby_k.song.pattern_order[this.cell.y][this.cell.x] = this.value;
 			},
 		}, {
 
@@ -174,7 +174,7 @@ var beta_k_inputs = {
 			value_min: 1,
 			value_max: 15,
 			on_update: function() {
-				beta_k.song.speed_table[this.cell.y] = this.value;
+				baby_k.song.speed_table[this.cell.y] = this.value;
 			},
 
 		},	{
@@ -193,7 +193,7 @@ var beta_k_inputs = {
 			value_min: 0,
 			value_max: 15,
 			on_update: function() {
-				beta_k.song.volume_table[this.cell.y] = this.value;
+				baby_k.song.volume_table[this.cell.y] = this.value;
 			},
 
 		}, {
@@ -201,7 +201,7 @@ var beta_k_inputs = {
 			label: 'OCTAVE',
 			type: 'range',
 			on_update: function() {
-				beta_k.octave = this.value;
+				baby_k.octave = this.value;
 				this.display = this.label + '  ' + this.value;
 			},
 			value: 0,
@@ -214,9 +214,9 @@ var beta_k_inputs = {
 			label: 'TITLE',
 			type: 'string',
 			on_update: function() {
-				beta_k.song.title = this.string;
+				baby_k.song.title = this.string;
 			},
-			value: beta_k_new_song.title,
+			value: baby_k_new_song.title,
 			length: 16,
 			x: 2,
 			y: 3,
@@ -225,9 +225,9 @@ var beta_k_inputs = {
 			label: 'ARTIST',
 			type: 'string',
 			on_update: function() {
-				beta_k.song.artist = this.string;
+				baby_k.song.artist = this.string;
 			},
-			value: beta_k_new_song.artist,
+			value: baby_k_new_song.artist,
 			length: 16,
 			x: 2,
 			y: 4,
@@ -236,9 +236,9 @@ var beta_k_inputs = {
 			label: 'COPY INFO',
 			type: 'string',
 			on_update: function() {
-				beta_k.song.copy_info = this.string;
+				baby_k.song.copy_info = this.string;
 			},
-			value: beta_k_new_song.copy_info,
+			value: baby_k_new_song.copy_info,
 			length: 16,
 			x: 2,
 			y: 5,

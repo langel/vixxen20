@@ -1,6 +1,6 @@
 // MAKE IT SING
 
-var beta_k = {
+var baby_k = {
 
 	includes: [
 		'song_schema',
@@ -46,12 +46,12 @@ var beta_k = {
 		vixxen.plot_str(30, 6, ' NUZZ ', 1);
 		vixxen.plot_str(2, 8, 'ch1 ch2 ch3 ch4  Songond0NGg  SPD VOL', 1);
 		// setup components
-		beta_k_inputs.init();
+		baby_k_inputs.init();
 		this.song = this.song_new();
-		this.inputs = beta_k_inputs;
+		this.inputs = baby_k_inputs;
 		inputs.init(this.inputs);
 		vixxen.frame.hook_add({
-			object: 'beta_k',
+			object: 'baby_k',
 			method: 'frame'
 		});
 		this.song_play_pattern();
@@ -60,9 +60,9 @@ var beta_k = {
 	frame: function() {
 		// display video mode
 		vixxen.plot_str(35, 1, vic.video_mode.toUpperCase()+' ', 6);
-		if (beta_k.pause !== true) {
+		if (baby_k.pause !== true) {
 			// play next row after frame count
-			if (this.frame_counter >= beta_k.frame_rate) {
+			if (this.frame_counter >= baby_k.frame_rate) {
 				this.frame_counter = 0;
 				this.play_next_row();
 			}
@@ -72,8 +72,8 @@ var beta_k = {
 				vixxen.plot_str(36, 3+i, display, 1);
 			}
 		}
-		beta_k.frame_counter++;
-		vixxen.plot_str(0, 28, ` FRAME ${beta_k.frame_counter} `, 2);
+		baby_k.frame_counter++;
+		vixxen.plot_str(0, 28, ` FRAME ${baby_k.frame_counter} `, 2);
 	},
 
 	play_next_order: function() {
@@ -81,7 +81,7 @@ var beta_k = {
 		// check if playing in song or pattern mode
 
 		// get next pattern order row
-		var next_order_row = beta_k.song.pattern_order[this.pattern_order_pos + 1];
+		var next_order_row = baby_k.song.pattern_order[this.pattern_order_pos + 1];
 		// make sure at least one pattern in row is populated
 		var pop = 0;
 		for (var i = 0; i < 4; i++) {
@@ -99,10 +99,10 @@ var beta_k = {
 			this.play_next_order();
 		}
 		// get pattern order row
-		var pattern_order_row = beta_k.song.pattern_order[this.pattern_order_pos];
+		var pattern_order_row = baby_k.song.pattern_order[this.pattern_order_pos];
 		// act on pattern row data
 		for (var i = 0; i < 4; i++) {
-			var current_pattern = (pattern_order_row[i] != 255) ? this.song.patterns[pattern_order_row[i]] : beta_k_new_pattern;
+			var current_pattern = (pattern_order_row[i] != 255) ? this.song.patterns[pattern_order_row[i]] : baby_k_new_pattern;
 			var value = current_pattern[this.pattern_pos];
 			// PITCH DATA
 			if (value >= 128) {
@@ -144,28 +144,28 @@ var beta_k = {
 	},
 
 	song_new: function() {
-		return JSON.parse(JSON.stringify(beta_k_new_song));
+		return JSON.parse(JSON.stringify(baby_k_new_song));
 	},
 
 	song_pause: function() {
-		beta_k.pause = true;
+		baby_k.pause = true;
 		vixxen.silent();	
 		this.play_status('PAUSED');
 		return;
 	},
 
 	song_play: function() {
-		beta_k.pause = false;
+		baby_k.pause = false;
 		this.play_status('PLAYING');
 	},
 
 	song_play_pattern: function() {
-		beta_k.pause = false;
+		baby_k.pause = false;
 		this.play_status('PLAYING');
 	},
 
 	song_stop: function() {
-		beta_k.pause = true;
+		baby_k.pause = true;
 		vixxen.silent();	
 		this.pattern_pos = 0;
 		this.play_status('STOPPED');
@@ -179,7 +179,7 @@ var beta_k = {
 			if (this.row >= 16) {
 				this.row = 0;
 				this.list++;
-				if (this.list >= beta_k.song.list.length) this.list = 0;
+				if (this.list >= baby_k.song.list.length) this.list = 0;
 			}
 		},
 	},

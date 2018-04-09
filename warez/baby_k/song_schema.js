@@ -35,37 +35,37 @@
 */
 
 
-var beta_k_new_pattern = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-var beta_k_new_pattern_set = [];
-var beta_k_new_song_order = [];
+var baby_k_new_pattern = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+var baby_k_new_pattern_set = [];
+var baby_k_new_song_order = [];
 for (var i = 0; i < 128; i++) {
-	beta_k_new_pattern_set.push(beta_k_new_pattern);
-	if (i == 0) beta_k_new_song_order.push([0,1,2,3]);
-	else beta_k_new_song_order.push([255,255,255,255]);
+	baby_k_new_pattern_set.push(baby_k_new_pattern);
+	if (i == 0) baby_k_new_song_order.push([0,1,2,3]);
+	else baby_k_new_song_order.push([255,255,255,255]);
 }
 
-var beta_k_new_song = {
+var baby_k_new_song = {
 	title: 'Title',
 	artist: 'Artist',
 	copy_info: 'Copy Info',
-	pattern_order: beta_k_new_song_order,
-	patterns: beta_k_new_pattern_set,
+	pattern_order: baby_k_new_song_order,
+	patterns: baby_k_new_pattern_set,
 	speed_table: [5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5],
 	volume_table: [7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7],
 };
 
-var beta_k_note_keycodes = [
+var baby_k_note_keycodes = [
 	// bottom row
 	90,83,88,68,67,86,71,66,72,78,74,77,
 	// top row
 	81,50,87,51,69,82,53,84,54,89,55,85,73,57,79,48,80
 ];
 
-var beta_k_note_names = ['C ','C#','D ','D#','E ','F ','F#','G ','G#','A ','A#','B '];
+var baby_k_note_names = ['C ','C#','D ','D#','E ','F ','F#','G ','G#','A ','A#','B '];
 
-var beta_k_note_specials = ['---','OFF','NXT','END'];
+var baby_k_note_specials = ['---','OFF','NXT','END'];
 
-var beta_k_note_values = [
+var baby_k_note_values = [
 	131,140,145,151,158,161,166,173,178,181,185,189,
 	192,197,200,203,206,208,211,214,216,218,220,222,
 	224,226,227,229,231,232,233,234,236,237,238,239,

@@ -11,7 +11,7 @@ var vic = {
 	 * Properties
 	 */
 
-	audio_buffer_size: 1024,
+	audio_buffer_size: 2048,
 
 	char_rom_block: 1,
 	char_rom_block_size: 2048,

@@ -3,7 +3,7 @@
 var vixxen = {
 
 	//autoload: 'booter',
-	autoload: 'beta_k',
+	autoload: 'baby_k',
 
 	ascii2petscii: function(string) {
 		var new_string = '';

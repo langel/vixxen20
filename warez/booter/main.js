@@ -44,7 +44,7 @@ var booter = {
 
 
 			// loading beta-k manually
-			vixxen.load('beta_k');
+			vixxen.load('baby_k');
 
 		}
 	}
