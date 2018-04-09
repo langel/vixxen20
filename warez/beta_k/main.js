@@ -46,6 +46,7 @@ var beta_k = {
 		vixxen.plot_str(30, 6, ' NUZZ ', 1);
 		vixxen.plot_str(2, 8, 'ch1 ch2 ch3 ch4  Songond0NGg  SPD VOL', 1);
 		// setup components
+		beta_k_inputs.init();
 		this.song = this.song_new();
 		this.inputs = beta_k_inputs;
 		inputs.init(this.inputs);

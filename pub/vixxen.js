@@ -88,29 +88,39 @@ var vixxen = {
 
 	init: function() {
 		// wut
+		console.log('VIXXEN20 STARTED');
 		vic.init();
 		this.frame.main();
 		// escalate boot process
-		this.load(this.autoload);
+		this.load_js(this.autoload);
 	},
 	
-	load: function(ware) {
-		vixxen._attach_js('warez/' + ware + '/main');
-		setTimeout(function() {
-			console.log('LOADING ' + ware);
-			//console.log(window[ware].includes.isArray());
+	load_js: function(ware) {
+		console.log('LOADING ' + ware);
+		var ware_file = document.createElement('script');
+		ware_file.src = 'warez/' + ware + '/main.js';
+		document.body.appendChild(ware_file);
+		var includes_counter = 0;
+		ware_file.onload = function() {
 			var includes = window[ware].includes;
-			if (typeof includes !== 'undefined' && includes.constructor === Array) {
-				includes.forEach(function(lib) {
-					vixxen._attach_js('warez/' +ware + '/' + lib);
-					console.log('INCLUDING ' + lib);
-				});
+			if (Array.isArray(includes)) includes.forEach(function(lib) {
+				includes_counter++;
+				lib_file = document.createElement('script');
+				lib_file.src = 'warez/' + ware + '/' + lib + '.js';
+				document.body.appendChild(lib_file);
+				lib_file.onload = function() {
+					includes_counter--;
+				}
+			});
+			var wait_loop = function() {
+				if (includes_counter == 0) {
+					window[ware].init();
+					return;
+				}
+				setTimeout(wait_loop, 100);
 			}
-			setTimeout(function() {
-				console.log('RUNNING ' + ware);
-				window[ware].init();
-			}, 250);
-		}, 250);
+			wait_loop();
+		}
 	},
 
 	plot_str: function(x, y, string, color) {
