@@ -37,9 +37,14 @@ var baby_k = {
 	init: function() {
 		// setup screen
 		vixxen.screen.clear();
+
 		vixxen.plot_str(0, 1, ' BETA-K ON VIXXEN20 ', 5);
 		vixxen.plot_str(20, 3, 'SPEED', 1);
 		vixxen.plot_str(20, 4, 'VOLUME', 1);
+		// 'OCTAVE' on row 5
+		vixxen.plot_str(20, 6, 'S.ROW', 1);
+		this.update_song_row_display();
+
 		vixxen.plot_str(30, 3, ' ALTO ', 1);
 		vixxen.plot_str(30, 4, ' TENR ', 1);
 		vixxen.plot_str(30, 5, ' SOPR ', 1);
@@ -90,6 +95,7 @@ var baby_k = {
 		if (pop > 0) this.pattern_order_pos++;
 		else this.pattern_order_pos = 0;
 		inputs.get_field_by_label('PATTERN').load_patterns(this.pattern_order_pos);
+		this.update_song_row_display();
 	},
 	
 	play_next_row: function() {
@@ -170,6 +176,10 @@ var baby_k = {
 		vixxen.silent();	
 		this.pattern_pos = 0;
 		this.play_status('STOPPED');
+	},
+
+	update_song_row_display: function() {
+		vixxen.plot_str(27, 6, vixxen.display.pad(vixxen.display.hex(this.pattern_order_pos), 2, '0'), 1);
 	},
 
 	play_position: {
