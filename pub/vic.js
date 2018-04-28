@@ -192,88 +192,6 @@ var vic = {
 				if (vic.voices[v].value & 128) {
 					if (vic.voices[v].delta_counter <= 0) {
 						var pitch = vic.voices[v].value;
-						/* 
-							 Programmer's Reference Guide on Sound --
-
-								  Frequency = Clock / (127-X)
-
-								  X is the number from 0 to 127 that is put into the frequency
-								register. If X is 127, then use -1 for X in the formula. The value of
-								Clock comes from the following table:
-								 +----------+-----------------+-----------------+
-								 | Register |  NTSC (US TV's) |  PAL (European) |
-								 +----------+-----------------+-----------------+
-								 |  36874   |       3995      |       4329      |
-								 |  36875   |       7990      |       8659      |
-								 |  36876   |      15980      |      17320      |
-								 |  36877   |      31960      |      34640      |
-								 +----------+-----------------+-----------------+
-
-
-							VIC-I Doc by Marko Mäkelä / Frequency Formulas by Levente Hársfalvi --
-
-								 N: bass enable,    R: freq f=Phi2/256/(128-(($900a+1)&127))
-								 O: alto enable,    S: freq f=Phi2/128/(128-(($900b+1)&127))
-								 P: soprano enable, T: freq f=Phi2/64/(128-(($900c+1)&127))
-								 Q: noise enable,   U: freq f=Phi2/32/(128-(($900d+1)&127))
-								 * PAL:  Phi2=4433618/4 Hz
-								 * NTSC: Phi2=14318181/14 Hz
-						*/
-						/*
-							RIPPED FROM VICE
-
-							src/vic20/vic20sound.c
-
-    for (j = 0; j < 3; j++) {
-        int chspeed = "\4\3\2"[j];
-
-        if (snd.ch[j].ctr > cycles) {
-            snd.accum += snd.ch[j].out * cycles;
-            snd.ch[j].ctr -= cycles;
-        } else {
-            for (i = cycles; i; i--) {
-                snd.ch[j].ctr--;
-                if (snd.ch[j].ctr <= 0) {
-                    int a = (~snd.ch[j].reg) & 127;
-                    a = a ? a : 128;
-                    snd.ch[j].ctr += a << chspeed;
-                    if (snd.ch[j].reg & 128) {
-                        unsigned char shift = snd.ch[j].shift;
-                        shift = ((shift << 1) | ((shift & 128) >> 7)) ^ 1;
-                        snd.ch[j].shift = shift;
-                        snd.ch[j].out = shift & 1;
-                    } else {
-                        snd.ch[j].shift <<= 1;
-                        snd.ch[j].out = 0;
-                    }
-                }
-                snd.accum += snd.ch[j].out;
-            }
-        }
-    }
-
-    if (snd.ch[3].ctr > cycles) {
-        snd.accum += snd.ch[3].out * cycles;
-        snd.ch[3].ctr -= cycles;
-    } else {
-        for (i = cycles; i; i--) {
-            snd.ch[3].ctr--;
-            if (snd.ch[3].ctr <= 0) {
-                int a = (~snd.ch[3].reg) & 127;
-                a = a ? a : 128;
-                snd.ch[3].ctr += a << 4;
-                if (snd.ch[3].reg & 128) {
-					 	// noisepattern is an array full of seemingly random bytes
-                    snd.ch[3].out = (noisepattern[(snd.noisectr >> 3) & 1023] >> (snd.noisectr & 7)) & 1;
-                } else {
-                    snd.ch[3].out = 0;
-                }
-                snd.noisectr++;
-            }
-            snd.accum += snd.ch[3].out;
-        }
-    }
-						*/
 						//if (pitch == 255) pitch--;
 						//freq = vic.voices[v].clock[vic.video_mode] / (128 - (pitch++ & 127));
 						freq = vic.voices[v].clock[vic.video_mode] / (128 - (pitch & 127));
@@ -297,11 +215,22 @@ var vic = {
 	},
 	
 	_plot_pixel: function(x, y, color) {
+		x *= vic.screen_pixel_mul_x;
+		y *= vic.screen_pixel_mul_y;
+		vic.screen.strokeStyle = vic.color_hex(color);
+		for (var l = 0; l < vic.screen_pixel_mul_y; l++) {
+			vic.screen.beginPath();
+			vic.screen.moveTo(x, y + l);
+			vic.screen.lineTo(x + vic.screen_pixel_mul_x, y + l);
+			vic.screen.stroke();
+		}
+	/*
 		color = vic.color_hex(color);
 		var xmul = vic.screen_pixel_mul_x;
 		var ymul = vic.screen_pixel_mul_y;
 		vic.screen.fillStyle = color;
 		vic.screen.fillRect(x * xmul, y * ymul, xmul, ymul);
+		*/
 	},
 
 	_screen_refresh: function() {
