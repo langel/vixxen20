@@ -245,13 +245,14 @@ var vic = {
 	},
 
 	_screen_blit: function() {
+		vic.screen.drawImage(blit_buff, 0, 0, vic.screen.width, vic.screen.height);
 		var copy = vic.screen_buff.getImageData(0, 0, blit_buff.width - 1, blit_buff.height - 1);
-		vic.screen.drawImage(copy, 0, 0, vic.screen.width, vic.screen.height);
 
 		//apply the image data
-		vic.screen.putImageData(copy, 0, 0);
+		//vic.screen.scale(vic.screen_pixel_mul_x, vic.screen_pixel_mul_y);
 		vic.screen.scale(vic.screen_pixel_mul_x, vic.screen_pixel_mul_y);
-		vic.screen.setTransform(1, 0, 0, 1, 0, 0);
+		vic.screen.putImageData(copy, 0, 0);
+		//vic.screen.setTransform(vic.screen_pixel_mul_x, 0, 0, 1, 0, 0);
 	},
 
 	_screen_refresh: function() {
