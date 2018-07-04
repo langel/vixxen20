@@ -217,16 +217,6 @@ var vic = {
 	},
 	
 	_plot_pixel: function(x, y, color) {
-		/*
-		// line method
-		for (var l = 0; l < vic.screen_pixel_mul_y; l++) {
-			vic.screen.beginPath();
-			vic.screen.moveTo(x, y + l);
-			vic.screen.lineTo(x + vic.screen_pixel_mul_x, y + l);
-			vic.screen.stroke();
-		}
-		*/
-		// rectangle method
 		color = vic.color_hex(color);
 		vic.screen.buff_ctx.fillStyle = color;
 		vic.screen.buff_ctx.fillRect(x, y, 1, 1);
