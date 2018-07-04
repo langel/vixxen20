@@ -190,6 +190,7 @@ var kernel = {
 
 		scroll_much: 1,
 
+// XXX is this broken now because of screen buff?
 		scroll: function(much) {
 			for (var m = 0; m < much; m++) {
 				var new_ram = new Array(vic.screen_char_x * vic.screen_char_y).fill(kernel.screen.empty_char);
