@@ -190,6 +190,7 @@ var vic = {
 
 	set_voice_value: function(voice_id, value) {
 		vic.voices[voice_id].value = value;
+		vic.voices[voice_id].delta_counter = 0;
 		// XXX should we reset the delta_counter?
 	},
 

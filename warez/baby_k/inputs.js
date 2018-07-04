@@ -41,10 +41,10 @@ var baby_k_inputs = {
 			value_min: 0,
 			value_max: 255,
 
-			cell_display: function(value) {
+			cell_display: function(value, x, y) {
 				var display, note = baby_k_note_values.indexOf(value);
 				if (note !== -1) 
-					display = baby_k_note_names[note%12] + '' + (Math.floor(note/12) + this.cell.x);
+					display = baby_k_note_names[note%12] + '' + (Math.floor(note/12) + x);
 				else if (value > 127) display = value;
 				else if (value < baby_k_note_specials.length) display = baby_k_note_specials[value];
 				else display = this.value;

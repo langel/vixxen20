@@ -70,7 +70,7 @@ inputs.types.grid = {
 		var value = field.data[x][y];
 		// handle custom cell display
 		if (field.cell_type == 'custom' || typeof field.cell_display == 'function') {
-			return field.cell_display(value);
+			return field.cell_display(value, x, y);
 		}
 		// handle hex cell display
 		else if (field.cell_type == 'hex') {

@@ -12,7 +12,7 @@ var baby_k = {
 	 */
 
 	frame_counter: 0,
-	frame_rate: 5,
+	frame_rate: 6,
 	inputs: {},
 	octave: 0,
 	pattern_length: 16,
@@ -38,7 +38,7 @@ var baby_k = {
 		// setup screen
 		kernel.screen.clear();
 
-		kernel.plot_str(0, 1, ' BETA-K ON VIXXEN20 ', 5);
+		kernel.plot_str(0, 1, ' BABY-K on VIXXEN20 ', 5);
 		kernel.plot_str(20, 3, 'SPEED', 1);
 		kernel.plot_str(20, 4, 'VOLUME', 1);
 		// 'OCTAVE' on row 5
@@ -67,14 +67,14 @@ var baby_k = {
 		kernel.plot_str(35, 1, vic.video_mode.toUpperCase()+' ', 6);
 		if (baby_k.pause !== true) {
 			// play next row after frame count
-			if (this.frame_counter >= baby_k.frame_rate) {
+			if (this.frame_counter >= baby_k.frame_rate * 2) {
 				this.frame_counter = 0;
 				this.play_next_row();
-			}
-			// update displays
-			for (var i = 0; i < 4; i++) {
-				var display = (vic.voices[i].value >= 128) ? kernel.display.hex(vic.voices[i].value) : '--';
-				kernel.plot_str(36, 3+i, display, 1);
+				// update displays
+				for (var i = 0; i < 4; i++) {
+					var display = (vic.voices[i].value >= 128) ? kernel.display.hex(vic.voices[i].value) : '--';
+					kernel.plot_str(36, 3+i, display, 1);
+				}
 			}
 		}
 		baby_k.frame_counter++;
@@ -96,6 +96,7 @@ var baby_k = {
 		else this.pattern_order_pos = 0;
 		inputs.get_field_by_label('PATTERN').load_patterns(this.pattern_order_pos);
 		this.update_song_row_display();
+		inputs.types.grid.row_highlight(inputs.get_field_by_label('SONG'), this.pattern_order_pos);
 	},
 	
 	play_next_row: function() {
@@ -115,33 +116,29 @@ var baby_k = {
 				vic.set_voice_value(i, value);
 			}
 			// NOTE OFF
-			if (value == 1) {
+			else if (value == 1) {
 				vic.set_voice_value(i, 0);
 			}
-			// END SONG
-			if (value == 3) {
-				this.song_stop();
-			}
 			// NEXT PATTERN
-			if (value == 2) {
+			else if (value == 2) {
 				// there's a smarter way to do this...
 				this.pattern_pos = this.pattern_length;
 				this.play_next_row();
 			}
-			else {
-				// act on speed table data
-				this.frame_rate = this.song.speed_table[this.pattern_pos];
-				kernel.plot_str(26, 3, kernel.display.pad(this.frame_rate, 3, ' '), 1);
-				// act on volume table data
-				vic.set_volume(this.song.volume_table[this.pattern_pos]);
-				kernel.plot_str(26, 4, kernel.display.pad(vic.volume, 3, ' '), 1);
-				// highlight appropriate rows
-				inputs.types.grid.row_highlight(inputs.get_field_by_label('PATTERN'), this.pattern_pos);
-				inputs.types.grid.row_highlight(inputs.get_field_by_label('SPEED'), this.pattern_pos);
-				inputs.types.grid.row_highlight(inputs.get_field_by_label('VOLUME'), this.pattern_pos);
-				// XXX is this needed for every pattern row?
-				inputs.types.grid.row_highlight(inputs.get_field_by_label('SONG'), this.pattern_order_pos);
+			// END SONG
+			else if (value == 3) {
+				this.song_stop();
 			}
+			// act on speed table data
+			this.frame_rate = this.song.speed_table[this.pattern_pos];
+			kernel.plot_str(26, 3, kernel.display.pad(this.frame_rate, 3, ' '), 1);
+			// act on volume table data
+			vic.set_volume(this.song.volume_table[this.pattern_pos]);
+			kernel.plot_str(26, 4, kernel.display.pad(vic.volume, 3, ' '), 1);
+			// highlight appropriate rows
+			inputs.types.grid.row_highlight(inputs.get_field_by_label('PATTERN'), this.pattern_pos);
+			inputs.types.grid.row_highlight(inputs.get_field_by_label('SPEED'), this.pattern_pos);
+			inputs.types.grid.row_highlight(inputs.get_field_by_label('VOLUME'), this.pattern_pos);
 		}
 		this.pattern_pos++;
 	},
