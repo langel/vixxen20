@@ -21,8 +21,17 @@ var kernel = {
 		return new_string;
 	},
 
-	cursor: {
+	character_rom_test: function() {
+		var char_count = 0;
+		for (var y=0; y<16; y++) {
+			for (var x=0; x<16; x++) {
+				vic.plot_char(x, y, char_count, 1);
+				char_count++;
+			}
+		}
+	},
 
+	cursor: {
 		blink_rate: 30,
 		color: 1,
 		pos: 0,
@@ -79,17 +88,22 @@ var kernel = {
 		},
 		main: function() {
 			// allow loop speed to be changed by NTSC/PAL setting
-			window.setTimeout(kernel.frame.main, vic.get_frame_ms());
+			let this_frame = Date.now();
+			let timeout = Math.floor(vic.get_frame_ms() - (this_frame - kernel.frame.last_frame));
+			kernel.frame.last_frame = this_frame;
+			timeout = (timeout < 1) ? 1 : timeout;
 			kernel.frame.hooks.forEach((hook) => {
 				window[hook.object][hook.method]();
 			});
 			vic._screen_blit();
+			window.setTimeout(kernel.frame.main, timeout);
 		}
 	},
 
 	init: function() {
 		// wut
 		console.log('VIXXEN20 STARTED');
+		this.frame.last_frame = Date.now();
 		vic.init();
 		this.frame.main();
 		// escalate boot process
@@ -225,31 +239,4 @@ window.onload = function() {
 
 
 
-// XXX these should be in a util object
-
-var fill_color = 0;
-
-
-fill_screen = function() {
-	var max_x = Math.floor(vic.screen_x / vic.pixel_mul);
-	var max_y = Math.floor(vic.screen_y / vic.pixel_mul);
-	for (var y=0; y<max_y; y++) {
-		for (var x=0; x<max_x; x++) {
-			vic.plot_pixel(x, y, fill_color % 15) 
-			fill_color++;
-		}
-	}
-}
-
-//fill_screen();
-
-character_rom_test = function() {
-	var char_count = 0;
-	for (var y=0; y<16; y++) {
-		for (var x=0; x<16; x++) {
-			vic.plot_char(x, y, char_count, 1);
-			char_count++;
-		}
-	}
-}
 
