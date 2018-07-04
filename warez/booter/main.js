@@ -12,7 +12,7 @@ var booter = {
 
 	init: function() {
 		vic.set_volume(3);
-		vixxen.frame.hook_add({
+		kernel.frame.hook_add({
 			object: 'booter',
 			method: 'frame'
 		});
@@ -21,9 +21,9 @@ var booter = {
 	frame: function() {
 		if (this.counter < 128) {
 			var print_color = this.counter % 7 + 1;
-			vixxen.cursor.print('VIXXEN20 ', print_color);
-			vixxen.cursor.print(String.fromCharCode(Math.floor(Math.random()*32)), print_color);
-			vixxen.cursor.print(String.fromCharCode(Math.floor(Math.random()*32)+96) + ' ', print_color);
+			kernel.cursor.print('VIXXEN20 ', print_color);
+			kernel.cursor.print(String.fromCharCode(Math.floor(Math.random()*32)), print_color);
+			kernel.cursor.print(String.fromCharCode(Math.floor(Math.random()*32)+96) + ' ', print_color);
 			this.counter++;
 			vic.set_voice_value(0, this.counter + 128);
 			vic.set_voice_value(1, this.counter + 128);
@@ -35,16 +35,16 @@ var booter = {
 			vic.set_voice_value(1, 0);
 			vic.set_voice_value(2, 0);
 			vic.set_voice_value(3, 0);
-			vixxen.screen.clear();
-			vixxen.plot_str(11, 11, 'V I X X E N   2 0 ', 5);
+			kernel.screen.clear();
+			kernel.plot_str(11, 11, 'V I X X E N   2 0 ', 5);
 
 
 			// XXX menu should be launched here
-			vixxen.frame.hook_remove_all();
+			kernel.frame.hook_remove_all();
 
 
 			// loading beta-k manually
-			vixxen.load('baby_k');
+			kernel.load('baby_k');
 
 		}
 	}

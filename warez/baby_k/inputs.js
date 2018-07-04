@@ -48,7 +48,7 @@ var baby_k_inputs = {
 				else if (value > 127) display = value;
 				else if (value < baby_k_note_specials.length) display = baby_k_note_specials[value];
 				else display = this.value;
-				display = vixxen.display.pad(display, this.cell_width, ' ');
+				display = kernel.display.pad(display, this.cell_width, ' ');
 				return display;
 			},
 
@@ -137,7 +137,7 @@ var baby_k_inputs = {
 
 			cell_display: function(value) {
 				if (value >= 128) return '--';
-				return vixxen.display.pad(vixxen.display.hex(value), this.cell_width, '0');
+				return kernel.display.pad(kernel.display.hex(value), this.cell_width, '0');
 			},
 			on_init: function() {
 				this.pattern_grid = inputs.get_field_by_label('PATTERN');

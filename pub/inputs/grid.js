@@ -74,11 +74,11 @@ inputs.types.grid = {
 		}
 		// handle hex cell display
 		else if (field.cell_type == 'hex') {
-			return vixxen.display.pad(vixxen.display.hex(value), field.cell_width, '0');
+			return kernel.display.pad(kernel.display.hex(value), field.cell_width, '0');
 		}
 		// handle alphanumeric default cell display
 		else {
-			return vixxen.display.pad(value, field.cell_width, ' ');
+			return kernel.display.pad(value, field.cell_width, ' ');
 		}
 	},
 

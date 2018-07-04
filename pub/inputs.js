@@ -12,7 +12,7 @@ document.body.onkeydown = function(e) {
 			input: e.key,
 			code: e.keyCode,
 		};
-		vixxen.plot_str(24, 28, 'KEY PRESSED ' + e.keyCode + ' ', 2);
+		kernel.plot_str(24, 28, 'KEY PRESSED ' + e.keyCode + ' ', 2);
 	}
 };
 
@@ -72,8 +72,8 @@ var inputs = {
 	},
 
 	draw: function(x, y, display, style) {
-		if (this.style[style][1] == 0) vixxen.plot_str(x, y, display, this.style[style][0]);
-		else vixxen.plot_str_inv(x, y, display, this.style[style][0]);
+		if (this.style[style][1] == 0) kernel.plot_str(x, y, display, this.style[style][0]);
+		else kernel.plot_str_inv(x, y, display, this.style[style][0]);
 	},
 	
 	draw_display: function(field, style) {
@@ -176,7 +176,7 @@ var inputs = {
 			this.blur(this.fields[i]);
 		}
 		this.update(this.fields[this.field_index]);
-		vixxen.frame.hook_add({
+		kernel.frame.hook_add({
 			object: 'inputs',
 			method: 'frame'
 		});

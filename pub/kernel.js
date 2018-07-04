@@ -1,6 +1,6 @@
 
 
-var vixxen = {
+var kernel = {
 
 	//autoload: 'booter',
 	autoload: 'baby_k',
@@ -29,21 +29,21 @@ var vixxen = {
 
 		get_pos: function() {
 			return {
-				x: vixxen.cursor.pos % vic.screen_char_x,
-				y: Math.floor(vixxen.cursor.pos / vic.screen_char_x)
+				x: kernel.cursor.pos % vic.screen_char_x,
+				y: Math.floor(kernel.cursor.pos / vic.screen_char_x)
 			};
 		},
 
 		print: function(string, color) {
 			for (var i=0; i<string.length; i++) {
-				var pos = vixxen.cursor.get_pos();
+				var pos = kernel.cursor.get_pos();
 				if (pos.y >= vic.screen_char_y) {
-					vixxen.screen.scroll(vixxen.screen.scroll_much);
-					pos.y -= vixxen.screen.scroll_much;
-					vixxen.cursor.pos = vixxen.cursor.pos - vic.screen_char_x * vixxen.screen.scroll_much;
+					kernel.screen.scroll(kernel.screen.scroll_much);
+					pos.y -= kernel.screen.scroll_much;
+					kernel.cursor.pos = kernel.cursor.pos - vic.screen_char_x * kernel.screen.scroll_much;
 				}
 				vic.plot_char(pos.x, pos.y, string.charCodeAt(i), color);
-				vixxen.cursor.pos++;
+				kernel.cursor.pos++;
 			}
 		}
 	},
@@ -68,19 +68,19 @@ var vixxen = {
 	frame: {
 		hooks: [],
 		hook_add: function(hook) {
-			vixxen.frame.hooks.push(hook);
+			kernel.frame.hooks.push(hook);
 		},
 		hook_remove: function(hook) {
-			var i = vixxen.frame.hooks.indexOf(hook);
-			if (i >= 0) vixxen.frame.hooks.splice(i, 1);
+			var i = kernel.frame.hooks.indexOf(hook);
+			if (i >= 0) kernel.frame.hooks.splice(i, 1);
 		},
 		hook_remove_all: function() {
-			vixxen.frame.hooks = [];
+			kernel.frame.hooks = [];
 		},
 		main: function() {
 			// allow loop speed to be changed by NTSC/PAL setting
-			window.setTimeout(vixxen.frame.main, vic.get_frame_ms());
-			vixxen.frame.hooks.forEach((hook) => {
+			window.setTimeout(kernel.frame.main, vic.get_frame_ms());
+			kernel.frame.hooks.forEach((hook) => {
 				window[hook.object][hook.method]();
 			});
 			vic._screen_blit();
@@ -137,16 +137,16 @@ var vixxen = {
 		for (var i = 0; i < string.length; i++) {
 			new_string += String.fromCodePoint(parseInt(string.charCodeAt(i)) + 128);
 		}
-		vixxen.plot_str(x, y, new_string, color);
+		kernel.plot_str(x, y, new_string, color);
 	},
 
 	screen: {
 
 		clear: function() {
 			console.log('CLR');
-			vixxen.cursor.pos = 0;
+			kernel.cursor.pos = 0;
 			for (var i = 0; i < vic.screen_ram.length; i++) {
-				vic.screen_ram[i] = vixxen.screen.empty_char;
+				vic.screen_ram[i] = kernel.screen.empty_char;
 			}
 			vic._screen_refresh();
 		},
@@ -178,7 +178,7 @@ var vixxen = {
 
 		scroll: function(much) {
 			for (var m = 0; m < much; m++) {
-				var new_ram = new Array(vic.screen_char_x * vic.screen_char_y).fill(vixxen.screen.empty_char);
+				var new_ram = new Array(vic.screen_char_x * vic.screen_char_y).fill(kernel.screen.empty_char);
 				for (var n = 0; n < vic.screen_ram.length - vic.screen_char_x; n++) {
 					new_ram[n] = vic.screen_ram[vic.screen_char_x + n];
 				}
@@ -220,7 +220,7 @@ var vixxen = {
 }
 
 window.onload = function() {
-	vixxen.init();
+	kernel.init();
 };
 
 

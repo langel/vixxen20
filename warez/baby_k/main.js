@@ -36,26 +36,26 @@ var baby_k = {
 
 	init: function() {
 		// setup screen
-		vixxen.screen.clear();
+		kernel.screen.clear();
 
-		vixxen.plot_str(0, 1, ' BETA-K ON VIXXEN20 ', 5);
-		vixxen.plot_str(20, 3, 'SPEED', 1);
-		vixxen.plot_str(20, 4, 'VOLUME', 1);
+		kernel.plot_str(0, 1, ' BETA-K ON VIXXEN20 ', 5);
+		kernel.plot_str(20, 3, 'SPEED', 1);
+		kernel.plot_str(20, 4, 'VOLUME', 1);
 		// 'OCTAVE' on row 5
-		vixxen.plot_str(20, 6, 'S.ROW', 1);
+		kernel.plot_str(20, 6, 'S.ROW', 1);
 		this.update_song_row_display();
 
-		vixxen.plot_str(30, 3, ' ALTO ', 1);
-		vixxen.plot_str(30, 4, ' TENR ', 1);
-		vixxen.plot_str(30, 5, ' SOPR ', 1);
-		vixxen.plot_str(30, 6, ' NUZZ ', 1);
-		vixxen.plot_str(2, 8, 'ch1 ch2 ch3 ch4  Songond0NGg  SPD VOL', 1);
+		kernel.plot_str(30, 3, ' ALTO ', 1);
+		kernel.plot_str(30, 4, ' TENR ', 1);
+		kernel.plot_str(30, 5, ' SOPR ', 1);
+		kernel.plot_str(30, 6, ' NUZZ ', 1);
+		kernel.plot_str(2, 8, 'ch1 ch2 ch3 ch4  Songond0NGg  SPD VOL', 1);
 		// setup components
 		baby_k_inputs.init();
 		this.song = this.song_new();
 		this.inputs = baby_k_inputs;
 		inputs.init(this.inputs);
-		vixxen.frame.hook_add({
+		kernel.frame.hook_add({
 			object: 'baby_k',
 			method: 'frame'
 		});
@@ -64,7 +64,7 @@ var baby_k = {
 
 	frame: function() {
 		// display video mode
-		vixxen.plot_str(35, 1, vic.video_mode.toUpperCase()+' ', 6);
+		kernel.plot_str(35, 1, vic.video_mode.toUpperCase()+' ', 6);
 		if (baby_k.pause !== true) {
 			// play next row after frame count
 			if (this.frame_counter >= baby_k.frame_rate) {
@@ -73,12 +73,12 @@ var baby_k = {
 			}
 			// update displays
 			for (var i = 0; i < 4; i++) {
-				var display = (vic.voices[i].value >= 128) ? vixxen.display.hex(vic.voices[i].value) : '--';
-				vixxen.plot_str(36, 3+i, display, 1);
+				var display = (vic.voices[i].value >= 128) ? kernel.display.hex(vic.voices[i].value) : '--';
+				kernel.plot_str(36, 3+i, display, 1);
 			}
 		}
 		baby_k.frame_counter++;
-		vixxen.plot_str(0, 28, ` FRAME ${baby_k.frame_counter} `, 2);
+		kernel.plot_str(0, 28, ` FRAME ${baby_k.frame_counter} `, 2);
 	},
 
 	play_next_order: function() {
@@ -131,10 +131,10 @@ var baby_k = {
 			else {
 				// act on speed table data
 				this.frame_rate = this.song.speed_table[this.pattern_pos];
-				vixxen.plot_str(26, 3, vixxen.display.pad(this.frame_rate, 3, ' '), 1);
+				kernel.plot_str(26, 3, kernel.display.pad(this.frame_rate, 3, ' '), 1);
 				// act on volume table data
 				vic.set_volume(this.song.volume_table[this.pattern_pos]);
-				vixxen.plot_str(26, 4, vixxen.display.pad(vic.volume, 3, ' '), 1);
+				kernel.plot_str(26, 4, kernel.display.pad(vic.volume, 3, ' '), 1);
 				// highlight appropriate rows
 				inputs.types.grid.row_highlight(inputs.get_field_by_label('PATTERN'), this.pattern_pos);
 				inputs.types.grid.row_highlight(inputs.get_field_by_label('SPEED'), this.pattern_pos);
@@ -147,7 +147,7 @@ var baby_k = {
 	},
 
 	play_status: function(status) {
-		vixxen.plot_str(22, 1, ` ${status}   `, 1);
+		kernel.plot_str(22, 1, ` ${status}   `, 1);
 	},
 
 	song_new: function() {
@@ -156,7 +156,7 @@ var baby_k = {
 
 	song_pause: function() {
 		baby_k.pause = true;
-		vixxen.silent();	
+		kernel.silent();	
 		this.play_status('PAUSED');
 		return;
 	},
@@ -173,13 +173,13 @@ var baby_k = {
 
 	song_stop: function() {
 		baby_k.pause = true;
-		vixxen.silent();	
+		kernel.silent();	
 		this.pattern_pos = 0;
 		this.play_status('STOPPED');
 	},
 
 	update_song_row_display: function() {
-		vixxen.plot_str(27, 6, vixxen.display.pad(vixxen.display.hex(this.pattern_order_pos), 2, '0'), 1);
+		kernel.plot_str(27, 6, kernel.display.pad(kernel.display.hex(this.pattern_order_pos), 2, '0'), 1);
 	},
 
 	play_position: {
