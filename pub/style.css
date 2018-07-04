@@ -3,3 +3,11 @@ body {
 	align-items: center;
 	justify-content: center;
 }
+
+#blit_buff {
+	display: none;
+}
+
+#monitor {
+	image-rendering: pixelated;
+}

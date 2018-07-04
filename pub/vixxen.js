@@ -83,6 +83,7 @@ var vixxen = {
 			vixxen.frame.hooks.forEach((hook) => {
 				window[hook.object][hook.method]();
 			});
+			vic._screen_blit();
 		}
 	},
 
@@ -221,6 +222,10 @@ var vixxen = {
 window.onload = function() {
 	vixxen.init();
 };
+
+
+
+// XXX these should be in a util object
 
 var fill_color = 0;
 
