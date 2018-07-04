@@ -5,6 +5,7 @@
 var audio = new (window.AudioContext || window.webkitAudioContext)();
 var video = document.getElementById('monitor');
 
+
 var vic = {
 	
 	/*
@@ -107,6 +108,15 @@ var vic = {
 		vic.audio_node.connect(vic.volume_node);
 		console.log(`audio synthesis running at ${audio.sampleRate}Hz`);
 
+		// initialize character table cache
+		vic.char_table = document.createElement('canvas');
+		vic.char_table_ctx = vic.char_table.getContext('2d', { alpha: false });
+		vic.char_table_ctx.width = 256 * 8;
+		vic.char_table_ctx.height = 256 * 128;
+// XXX maybe make this its own method
+// should be called when using a new char set
+		vic.char_table.tracker = Array(128).fill(null).map(()=>Array(256).fill(0));
+
 		// initialize the Video Interface Chip video
 		vic.set_border_color(vic.color_border);
 		vic.screen_ram.fill({petscii:0,color:vic.color_fg});
@@ -132,22 +142,38 @@ var vic = {
 		return vic.framerate[vic.video_mode];
 	},
 
-	plot_char: function(x, y, petscii, color) {
-		vic.screen_ram[y * vic.screen_char_x + x] = {petscii:petscii,color:color};
-		var char_start = vic.char_rom_block * vic.char_rom_block_size + petscii * 8;
-		var char_x = x * 8;
-		var char_y = y * 8;
-		for (var y=0; y<8; y++) {
-			for (var x=0; x<8; x++) {
-				if (char_rom[char_start] & (1 << (7-x))) {
-					vic._plot_pixel(char_x+x, char_y+y, color);
-				}
-				else {
-					vic._plot_pixel(char_x+x, char_y+y, vic.color_bg);
-				}
-			}	
-			char_start++;
+	plot_char: function(char_x, char_y, petscii, color) {
+		// update screen ram with petscii code
+		vic.screen_ram[char_y * vic.screen_char_x + char_x] = {petscii:petscii,color:color};
+		// check char table for existing render
+		var table_x = petscii;
+		var table_y = vic.color_bg * 8 + color;
+		// if render does not exist then render
+		if (vic.char_table.tracker[table_y][table_x] == 0) {
+			var char_start = vic.char_rom_block * vic.char_rom_block_size + petscii * 8;
+			var color_bg = vic.color_hex(vic.color_bg);
+			var color_fg = vic.color_hex(color);
+			vic.char_table.tracker[table_y][table_x] = true;
+			table_x *= 8;
+			table_y *= 8;
+			for (var y=0; y<8; y++) {
+				for (var x=0; x<8; x++) {
+					if (char_rom[char_start] & (1 << (7-x))) {
+		//				vic._plot_pixel(char_x+x, char_y+y, color);
+						vic.char_table_ctx.fillStyle = color_fg;
+					}
+					else {
+		//				vic._plot_pixel(char_x+x, char_y+y, vic.color_bg);
+						vic.char_table_ctx.fillStyle = color_bg;
+					}
+					vic.char_table_ctx.fillRect(table_x + x, table_y + y, 1, 1);
+				}	
+				char_start++;
+			}
 		}
+		// copy render to screen buff
+		var character = vic.char_table_ctx.getImageData(table_x, table_y, 8, 8);
+		vic.screen.buff_ctx.putImageData(character, char_x * 8, char_y * 8);
 	},
 
 	set_bg_color: function(color) {
@@ -216,6 +242,7 @@ var vic = {
 		}
 	},
 	
+	// XXX not sure when this would be used outside of char rendering
 	_plot_pixel: function(x, y, color) {
 		color = vic.color_hex(color);
 		vic.screen.buff_ctx.fillStyle = color;
