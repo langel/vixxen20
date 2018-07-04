@@ -4,7 +4,6 @@
 
 var audio = new (window.AudioContext || window.webkitAudioContext)();
 var video = document.getElementById('monitor');
-var blit_buff = document.getElementById('blit_buff');
 
 var vic = {
 	
@@ -34,8 +33,7 @@ var vic = {
 		pal: (1000/50)
 	},
 
-	screen: video.getContext('2d'),
-	screen_buff: blit_buff.getContext('2d'),
+	screen: video.getContext('2d', { alpha: false }),
 	screen_pixel_mul_x: 2,
 	screen_pixel_mul_y: 2,
 	screen_char_x: 40,
@@ -111,7 +109,9 @@ var vic = {
 
 		// initialize the Video Interface Chip video
 		vic.set_border_color(vic.color_border);
-		vic.screen_ram.fill({petscii:0,color:vic.color_fg}),
+		vic.screen_ram.fill({petscii:0,color:vic.color_fg});
+		vic.screen.buff = document.createElement('canvas');
+		vic.screen.buff_ctx = vic.screen.buff.getContext('2d', { alpha: false });
 
 		// setup screen resize handling
 		window.addEventListener("resize", function() {
@@ -217,13 +217,8 @@ var vic = {
 	},
 	
 	_plot_pixel: function(x, y, color) {
-	/*
-		x *= vic.screen_pixel_mul_x;
-		y *= vic.screen_pixel_mul_y;
-		vic.screen.strokeStyle = vic.color_hex(color);
-	*/
-		// line method
 		/*
+		// line method
 		for (var l = 0; l < vic.screen_pixel_mul_y; l++) {
 			vic.screen.beginPath();
 			vic.screen.moveTo(x, y + l);
@@ -233,46 +228,30 @@ var vic = {
 		*/
 		// rectangle method
 		color = vic.color_hex(color);
-		vic.screen_buff.fillStyle = color;
-		vic.screen_buff.fillRect(x, y, 1, 1);
-	/*
-		color = vic.color_hex(color);
-		var xmul = vic.screen_pixel_mul_x;
-		var ymul = vic.screen_pixel_mul_y;
-		vic.screen.fillStyle = color;
-		vic.screen.fillRect(x * xmul, y * ymul, xmul, ymul);
-		*/
+		vic.screen.buff_ctx.fillStyle = color;
+		vic.screen.buff_ctx.fillRect(x, y, 1, 1);
 	},
 
 	_screen_blit: function() {
-		vic.screen.drawImage(blit_buff, 0, 0, vic.screen.width, vic.screen.height);
-		var copy = vic.screen_buff.getImageData(0, 0, blit_buff.width - 1, blit_buff.height - 1);
-
-		//apply the image data
-		//vic.screen.scale(vic.screen_pixel_mul_x, vic.screen_pixel_mul_y);
-		vic.screen.scale(vic.screen_pixel_mul_x, vic.screen_pixel_mul_y);
-		vic.screen.putImageData(copy, 0, 0);
-		//vic.screen.setTransform(vic.screen_pixel_mul_x, 0, 0, 1, 0, 0);
+		vic.screen.drawImage(vic.screen.buff, 0, 0);
 	},
 
 	_screen_refresh: function() {
-		// XXX working on blit_buffer
 		var w = vic.screen_char_x * 8;
-		blit_buff.setAttribute('width', w);
-		blit_buff.style.width = w;
+		var w_mul = vic.screen_pixel_mul_x * vic.screen_char_x * 8;
 		var h = vic.screen_char_y * 8;
-		blit_buff.setAttribute('height', h);
-		blit_buff.style.height = h;
-
-		var w = vic.screen_pixel_mul_x * vic.screen_char_x * 8;
-		video.setAttribute('width', w);
-		video.style.width = video.screen_x = w;
-		var h = vic.screen_pixel_mul_y * vic.screen_char_y * 8;
-		video.setAttribute('height', h);
-		video.style.height = video.screen_y = h;
+		var h_mul = vic.screen_pixel_mul_y * vic.screen_char_y * 8;
+		// set buffer
+		vic.screen.buff.setAttribute('width', w);
+		vic.screen.buff.setAttribute('height', h);
 		// wipe the background
-		vic.screen.fillStyle = vic.color_hex(vic.color_bg);
-		vic.screen.fillRect(0, 0, w, h);
+		vic.screen.buff_ctx.fillStyle = vic.color_hex(vic.color_bg);
+		vic.screen.buff_ctx.fillRect(0, 0, w, h);
+		// set monitor
+		video.setAttribute('width', w);
+		video.style.width = video.screen_x = w_mul;
+		video.setAttribute('height', h);
+		video.style.height = video.screen_y = h_mul;
 		// redraw screen ram
 		var i = 0;
 		for (var y = 0; y < vic.screen_char_y; y++){
