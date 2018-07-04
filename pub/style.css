@@ -4,10 +4,6 @@ body {
 	justify-content: center;
 }
 
-#blit_buff {
-	display: none;
-}
-
 #monitor {
 	image-rendering: pixelated;
 }

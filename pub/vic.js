@@ -111,8 +111,8 @@ var vic = {
 		// initialize character table cache
 		vic.char_table = document.createElement('canvas');
 		vic.char_table_ctx = vic.char_table.getContext('2d', { alpha: false });
-		vic.char_table_ctx.width = 256 * 8;
-		vic.char_table_ctx.height = 256 * 128;
+		vic.char_table_ctx.width = vic.char_table.width = 512 * 8;
+		vic.char_table_ctx.height = vic.char_table.height = 16 * 8 * 8;
 // XXX maybe make this its own method
 // should be called when using a new char set
 		vic.char_table.tracker = Array(128).fill(null).map(()=>Array(256).fill(0));
@@ -154,25 +154,23 @@ var vic = {
 			var color_bg = vic.color_hex(vic.color_bg);
 			var color_fg = vic.color_hex(color);
 			vic.char_table.tracker[table_y][table_x] = true;
-			table_x *= 8;
-			table_y *= 8;
+			var table_x_loc = table_x * 8;
+			var table_y_loc = table_y * 8;
 			for (var y=0; y<8; y++) {
 				for (var x=0; x<8; x++) {
 					if (char_rom[char_start] & (1 << (7-x))) {
-		//				vic._plot_pixel(char_x+x, char_y+y, color);
 						vic.char_table_ctx.fillStyle = color_fg;
 					}
 					else {
-		//				vic._plot_pixel(char_x+x, char_y+y, vic.color_bg);
 						vic.char_table_ctx.fillStyle = color_bg;
 					}
-					vic.char_table_ctx.fillRect(table_x + x, table_y + y, 1, 1);
+					vic.char_table_ctx.fillRect(table_x_loc + x, table_y_loc + y, 1, 1);
 				}	
 				char_start++;
 			}
 		}
 		// copy render to screen buff
-		var character = vic.char_table_ctx.getImageData(table_x, table_y, 8, 8);
+		var character = vic.char_table_ctx.getImageData(table_x * 8, table_y * 8, 8, 8);
 		vic.screen.buff_ctx.putImageData(character, char_x * 8, char_y * 8);
 	},
 
