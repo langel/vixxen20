@@ -52,8 +52,10 @@ function init_window() {
 	Menu.setApplicationMenu(menu);
 	// set window size
 	win = new BrowserWindow({
+		title: 'VIXXEN20',
 		width: 1200,
-		height: 800
+		height: 800,
+		backgroundColor: '#000000'
 	});
 	// load application
 	win.loadURL(url.format({
@@ -61,7 +63,7 @@ function init_window() {
 		protocol: 'file:',
 		slashes: true
 	}));
-	//win.webContents.openDevTools();
+	win.webContents.openDevTools();
 	win.on('closed', () => {
 		win = null;
 	});
@@ -78,5 +80,4 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
 	if (win === null) init_window();
 });
-
 

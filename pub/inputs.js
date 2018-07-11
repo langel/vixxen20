@@ -2,6 +2,14 @@
 /*
  * hell yeah keyboard shortcuts like a real tracker
  */
+
+window.addEventListener('blur', function() {
+	console.log('blur')
+		inputs.mod.shift = false;
+		inputs.mod.control = false;
+		inputs.key_state = [];
+});
+
 document.body.onkeydown = function(e) {
 	e.preventDefault();
 	if (typeof inputs.key_state[e.keyCode] === 'undefined') {
@@ -69,6 +77,9 @@ var inputs = {
 	mod: {
 		shift: false,
 		control: false,
+	},
+
+	clear_mod: {
 	},
 
 	draw: function(x, y, display, style) {

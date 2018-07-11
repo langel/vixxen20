@@ -19,6 +19,18 @@ var baby_k_inputs = {
 			else baby_k.octave = 0;
 			inputs.set_value('OCTAVE', baby_k.octave);
 		}
+	},{
+		// Ctrl-O open
+		key: 'CONTROL_79',
+		on_update: function() {
+			baby_k.song = JSON.parse(disk.open());
+		}
+	},{
+		// Ctrl-S save
+		key: 'CONTROL_83',
+		on_update: function() {
+			disk.save_new(JSON.stringify(baby_k.song));
+		}
 	}],
 
 
