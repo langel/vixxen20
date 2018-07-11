@@ -23,7 +23,9 @@ var baby_k_inputs = {
 		// Ctrl-O open
 		key: 'CONTROL_79',
 		on_update: function() {
-			baby_k.song = JSON.parse(disk.open());
+			disk.open(function(data) {
+				baby_k.song = JSON.parse(data);
+			});
 		}
 	},{
 		// Ctrl-S save
@@ -82,7 +84,7 @@ var baby_k_inputs = {
 			on_key: function(key) {
 				var advance = 'down';
 				// note inputs
-				var note = baby_k_note_keycodes.indexOf(parseInt(key.code, 10));
+				var note = baby_k_note_keycodes.indexOf(parseInt(key.label, 10));
 				if (note != -1) {
 					if (baby_k.octave > 0) note += baby_k.octave * 12;
 					this.value = baby_k_note_values[note];
