@@ -108,6 +108,7 @@ inputs.types.grid = {
 			field.data.push(column);
 		}
 		field.cell.display = field.data[field.cell.x][field.cell.y];
+		field.hexkeycount = 0;
 		this.draw_all(field);
 	},
 
@@ -149,12 +150,12 @@ inputs.types.grid = {
 		}
 		// cell value adjustment
 		else if (key.label == 'CONTROL_' + SPKEY.ARROW_DOWN) {
-			if (field.data[field.cell.x][field.cell.y] > field.value_min) {;
+			if (field.data[field.cell.x][field.cell.y] > field.value_min) {
 				field.data[field.cell.x][field.cell.y]--;
 			}
 		}
 		else if (key.label == 'CONTROL_' + SPKEY.ARROW_UP) {
-			if (field.data[field.cell.x][field.cell.y] < field.value_max) {;
+			if (field.data[field.cell.x][field.cell.y] < field.value_max) {
 				field.data[field.cell.x][field.cell.y]++;
 			}
 		}
