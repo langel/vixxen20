@@ -34,19 +34,19 @@ var baby_k_inputs = {
 			disk.save_new(JSON.stringify(baby_k.song));
 		}
   },{
-    // apastrophe ''' 
-    // rotate through tunings
-    key: 222,
-    on_update: function() {
-      baby_k.tuning++;
-      if (baby_k.tuning > baby_k_scales.length - 1) baby_k.tuning = 0;
-      baby_k.song.tuning = baby_k.tuning;
-      var pattern = inputs.get_field_by_label('PATTERN');
-      inputs.types.grid.draw_all(pattern);
-      var text = baby_k_scales[baby_k.tuning].display_name + ' tuning now in use.';
-      console.log(text);
-      baby_k.notice(text);
-    }
+		// apastrophe ''' 
+		// rotate through tunings
+		key: 222,
+		on_update: function() {
+			baby_k.tuning++;
+			if (baby_k.tuning > baby_k_scales.length - 1) baby_k.tuning = 0;
+			baby_k.song.tuning = baby_k.tuning;
+			var pattern = inputs.get_field_by_label('PATTERN');
+			inputs.types.grid.draw_all(pattern);
+			var text = baby_k_scales[baby_k.tuning].display_name + ' tuning now in use.';
+			console.log(text);
+			baby_k.notice(text);
+		}
 	}],
 
 	init: function() {
@@ -69,7 +69,7 @@ var baby_k_inputs = {
 			value_max: 255,
 
 			cell_display: function(value, x, y) {
-        var display, note = baby_k_scales[baby_k.tuning].notes.indexOf(value);
+				var display, note = baby_k_scales[baby_k.tuning].notes.indexOf(value);
 				if (note !== -1 && value !== 0) 
 					display = baby_k_note_names[note%12] + '' + (Math.floor(note/12) + x);
 				else if (value > 127) display = value;
@@ -108,18 +108,18 @@ var baby_k_inputs = {
 					}
 				}
 				// special note inputs
-        // note delete
+				// note delete
 				else if (key.input == 'Delete') this.value = 0;
-        // note off
+				// note off
 				else if (key.input == '1') this.value = 1;
-        // next pattern
+				// next pattern
 				else if (key.input == '`') this.value = 2;
-        // end song
+				// end song
 				else if (key.input == '~') this.value = 3;
 				// cursor does not advance with keys below
 				else {
 					var advance = false;
-          // ADJUST PATTERN NUMBERS KEYCOMBOS
+					// ADJUST PATTERN NUMBERS KEYCOMBOS
 					// decrease pattern number
 					if (key.label == SPKEY.DASH) {
 					}
@@ -145,12 +145,12 @@ var baby_k_inputs = {
 					else if (key.label == 'CONTROL_SHIFT_' + SPKEY.EQUAL) {
 					}
 				}
-        // only update cell value if a value is found
-        if (typeof this.value !== "undefined") {
-          this.data[this.cell.x][this.cell.y] = this.value;
-				  var pattern_id = baby_k.song.pattern_order[baby_k.pattern_order_pos][this.cell.x];
-				  baby_k.song.patterns[pattern_id][this.cell.y] = this.value;
-        }
+				// only update cell value if a value is found
+				if (typeof this.value !== "undefined") {
+					this.data[this.cell.x][this.cell.y] = this.value;
+					var pattern_id = baby_k.song.pattern_order[baby_k.pattern_order_pos][this.cell.x];
+					baby_k.song.patterns[pattern_id][this.cell.y] = this.value;
+				}
 				return advance;
 			},
 		},	{

@@ -5,14 +5,14 @@
 
 window.addEventListener('blur', function() {
 	console.log('blur')
-		inputs.mod.shift = false;
-		inputs.mod.control = false;
-		inputs.key_state = [];
+	inputs.mod.shift = false;
+	inputs.mod.control = false;
+	inputs.key_state = [];
 });
 
 document.body.onkeydown = function(e) {
 	e.preventDefault();
-  inputs.key_last = e.keyCode;
+	inputs.key_last = e.keyCode;
 	if (typeof inputs.key_state[e.keyCode] === 'undefined') {
 		if (e.keyCode == SPKEY.SHIFT) inputs.mod.shift = true;
 		else if (e.keyCode == SPKEY.CONTROL || e.keyCode == SPKEY.META) inputs.mod.control = true;
@@ -69,7 +69,7 @@ var inputs = {
 
 	field_index: 0,
 	fields: [],
-  key_last: '',
+	key_last: '',
 	key_repeat_threshold: 18,
 	key_repeat_rate: 6,
 	key_state: {},
@@ -147,7 +147,7 @@ var inputs = {
 					field_type.on_key(field, this.key_state[index]);
 				}
 				if (typeof field_type.on_update !== 'undefined') {
-					field_type.update(field);
+					field_type.on_update(field);
 				}
 				else if (value != field.value) this.update(field);
 			}

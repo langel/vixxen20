@@ -14,7 +14,7 @@ var baby_k = {
 	frame_counter: 0,
 	frame_rate: 6,
 	inputs: {},
-  notice_counter: 0,
+	notice_counter: 0,
 	octave: 0,
 	pattern_length: 16,
 	pattern_pos: 0,
@@ -28,7 +28,7 @@ var baby_k = {
 	],
 	pause: true,
 	song: 'load a song dummy',
-  tuning: 0,
+	tuning: 0,
 
 
 	/*
@@ -79,16 +79,16 @@ var baby_k = {
 			}
 		}
 		baby_k.frame_counter++;
-    // handle notice text row
-    if (baby_k.notice_counter == 0) {
-      kernel.plot_str(1, 28, `FRAME ${baby_k.frame_counter} `, 2);
-      kernel.plot_str(27, 28, 'LAST KEY ' + inputs.key_last + ' ', 2);
-    }
-    else baby_k.notice_counter--
-    if (baby_k.notice_counter == 1) {
-      baby_k.notice_counter = 0;
-      kernel.plot_str(1, 28, '                                  ', 0);
-    }
+		// handle notice text row
+		if (baby_k.notice_counter == 0) {
+			kernel.plot_str(1, 28, `FRAME ${baby_k.frame_counter} `, 2);
+			kernel.plot_str(27, 28, 'LAST KEY ' + inputs.key_last + ' ', 2);
+		}
+		else baby_k.notice_counter--
+		if (baby_k.notice_counter == 1) {
+			baby_k.notice_counter = 0;
+			kernel.plot_str(1, 28, '                                  ', 0);
+		}
 	},
 
   notice: function(text) {
