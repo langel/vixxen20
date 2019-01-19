@@ -27,6 +27,7 @@ var baby_k = {
 	],
 	pause: true,
 	song: 'load a song dummy',
+  tuning: 0,
 
 
 
