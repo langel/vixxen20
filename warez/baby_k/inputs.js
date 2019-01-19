@@ -43,10 +43,11 @@ var baby_k_inputs = {
       baby_k.song.tuning = baby_k.tuning;
       var pattern = inputs.get_field_by_label('PATTERN');
       inputs.types.grid.draw_all(pattern);
-      console.log(baby_k_scales[baby_k.tuning].display_name + ' tuning now in use.');
+      var text = baby_k_scales[baby_k.tuning].display_name + ' tuning now in use.';
+      console.log(text);
+      baby_k.notice(text);
     }
 	}],
-
 
 	init: function() {
 

@@ -12,6 +12,7 @@ window.addEventListener('blur', function() {
 
 document.body.onkeydown = function(e) {
 	e.preventDefault();
+  inputs.key_last = e.keyCode;
 	if (typeof inputs.key_state[e.keyCode] === 'undefined') {
 		if (e.keyCode == SPKEY.SHIFT) inputs.mod.shift = true;
 		else if (e.keyCode == SPKEY.CONTROL || e.keyCode == SPKEY.META) inputs.mod.control = true;
@@ -20,7 +21,6 @@ document.body.onkeydown = function(e) {
 			input: e.key,
 			code: e.keyCode,
 		};
-		kernel.plot_str(24, 28, 'KEY PRESSED ' + e.keyCode + ' ', 2);
 	}
 };
 
@@ -69,6 +69,7 @@ var inputs = {
 
 	field_index: 0,
 	fields: [],
+  key_last: '',
 	key_repeat_threshold: 18,
 	key_repeat_rate: 6,
 	key_state: {},
