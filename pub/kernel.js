@@ -62,6 +62,10 @@ var kernel = {
 		hex: function(n) {
 			return n.toString(16).toUpperCase();
 		},
+		// return hex string from integer in byte form
+		hex_byte: function(n) {
+			return n.toString(16).toUpperCase().padStart(2, '0');;
+		},
 		// return integer from hex string
 		num: function(n) {
 			return parseInt(n, 16);

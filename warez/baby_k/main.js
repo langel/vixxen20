@@ -44,7 +44,7 @@ var baby_k = {
 		kernel.plot_str(20, 4, 'VOLUME', 1);
 		// 'OCTAVE' on row 5
 		kernel.plot_str(20, 6, 'S.ROW', 1);
-		this.update_song_row_display();
+		this.update_song_row_display(0);
 
 		kernel.plot_str(30, 3, ' ALTO ', 1);
 		kernel.plot_str(30, 4, ' TENR ', 1);
@@ -66,9 +66,20 @@ var baby_k = {
 	frame: function() {
 		// display video mode
 		kernel.plot_str(35, 1, vic.video_mode.toUpperCase()+' ', 6);
+		// handle notice text row
+		if (baby_k.notice_counter == 0) {
+			kernel.plot_str(1, 28, `PR ${kernel.display.hex(baby_k.pattern_pos - 1)} SR ${kernel.display.hex_byte(baby_k.pattern_order_pos)} FRAME ${baby_k.frame_counter - 1} `, 2);
+			kernel.plot_str(27, 28, 'LAST KEY ' + inputs.key_last + ' ', 2);
+		}
+		else baby_k.notice_counter--
+		if (baby_k.notice_counter == 1) {
+			baby_k.notice_counter = 0;
+			kernel.plot_str(1, 28, '                                  ', 0);
+		}
+		// handle playback
 		if (baby_k.pause !== true) {
 			// play next row after frame count
-			if (this.frame_counter >= baby_k.frame_rate * 2) {
+			if (this.frame_counter >= baby_k.frame_rate) {
 				this.frame_counter = 0;
 				this.play_next_row();
 				// update displays
@@ -79,16 +90,6 @@ var baby_k = {
 			}
 		}
 		baby_k.frame_counter++;
-		// handle notice text row
-		if (baby_k.notice_counter == 0) {
-			kernel.plot_str(1, 28, `FRAME ${baby_k.frame_counter} `, 2);
-			kernel.plot_str(27, 28, 'LAST KEY ' + inputs.key_last + ' ', 2);
-		}
-		else baby_k.notice_counter--
-		if (baby_k.notice_counter == 1) {
-			baby_k.notice_counter = 0;
-			kernel.plot_str(1, 28, '                                  ', 0);
-		}
 	},
 
   notice: function(text) {
@@ -110,7 +111,8 @@ var baby_k = {
 		if (pop > 0) this.pattern_order_pos++;
 		else this.pattern_order_pos = 0;
 		inputs.get_field_by_label('PATTERN').load_patterns(this.pattern_order_pos);
-		this.update_song_row_display();
+		// XXX only in follow mode!
+		//this.update_song_row_display(this.pattern_order_pos);
 		inputs.types.grid.row_highlight(inputs.get_field_by_label('SONG'), this.pattern_order_pos);
 	},
 	
@@ -190,8 +192,8 @@ var baby_k = {
 		this.play_status('STOPPED');
 	},
 
-	update_song_row_display: function() {
-		kernel.plot_str(27, 6, kernel.display.pad(kernel.display.hex(this.pattern_order_pos), 2, '0'), 1);
+	update_song_row_display: function(value) {
+		kernel.plot_str(27, 6, kernel.display.pad(kernel.display.hex(value), 2, '0'), 1);
 	},
 
 	play_position: {

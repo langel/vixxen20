@@ -169,6 +169,10 @@ var baby_k_inputs = {
 			value_default: 255,
 			value_min: 0,
 			value_max: 127,
+			scroll: {
+				x: { length: 4, pos: 0 },
+				y: { length: 127, pos: 0 }
+			},
 
 			cell_display: function(value) {
 				if (value >= 128) return '--';
@@ -192,6 +196,9 @@ var baby_k_inputs = {
 			on_update: function() {
 				// put new value in song data
 				baby_k.song.pattern_order[this.cell.y][this.cell.x] = this.value;
+				// update song row in hud
+				// XXX not while follow mode is on?!?!?
+				if (typeof this.cell.y !== 'undefined') baby_k.update_song_row_display(this.cell.y);
 			},
 		}, {
 
