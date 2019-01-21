@@ -39,4 +39,20 @@ inputs.global_keys = [{
 	on_update: function() {
 		location.reload();
 	},
+},{
+	// control open bracket
+	// decrease audio buffer
+	key: 'CONTROL_SHIFT_219',
+	on_update: function() {
+		vic.audio_buffer_size--;
+		vic.build_audio_buffer();
+	}
+},{
+	// control closing bracket
+	// increase audio buffer
+	key: 'CONTROL_SHIFT_221',
+	on_update: function() {
+		vic.audio_buffer_size++;
+		vic.build_audio_buffer();
+	}
 }];

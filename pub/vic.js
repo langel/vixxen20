@@ -12,7 +12,8 @@ var vic = {
 	 * Properties
 	 */
 
-	audio_buffer_size: 2048,
+	audio_buffer_options: [256, 512, 1024, 2048, 4096, 8192, 16384],
+	audio_buffer_size: 2,
 
 	char_rom_block: 1,
 	char_rom_block_size: 2048,
@@ -103,9 +104,7 @@ var vic = {
 		// initialize the Video Interface Chip audio
 		vic.volume_node.gain.setValueAtTime(0, 0);
 		vic.volume_node.connect(audio.destination);
-		vic.audio_node = audio.createScriptProcessor(vic.audio_buffer_size, 1, 1);
-		vic.audio_node.onaudioprocess = vic._buffer_gen;
-		vic.audio_node.connect(vic.volume_node);
+		vic.build_audio_buffer();
 		console.log(`audio synthesis running at ${audio.sampleRate}Hz`);
 
 		// initialize character table cache
@@ -128,6 +127,31 @@ var vic = {
 			vic._screen_resize();
 		});
 		vic._screen_resize();
+	},
+
+
+	build_audio_buffer() {
+		let buffer = vic.audio_buffer_size;
+		let max = vic.audio_buffer_options.length - 1;
+		// make sure the buffer value is within range
+		if (buffer < 0) {
+			console.log('VIXXEN audio buffer already at minimum.');
+			vic.audio_buffer_size = 0;
+		}
+		else if (buffer > max) {
+			console.log('VIXXEN audio buffer already at maximum.');
+			vic.audio_buffer_size = max;
+		}
+		// (re)build 
+		else {
+			buffer_size = vic.audio_buffer_options[buffer];
+			// remove old crusty node if it exists
+			if (typeof vic.audio_node !== 'undefined') vic.audio_node.disconnect();
+			vic.audio_node = audio.createScriptProcessor(buffer_size, 0, 1);
+			vic.audio_node.onaudioprocess = vic._buffer_gen;
+			vic.audio_node.connect(vic.volume_node);
+			console.log(`audio buffer size set to ${buffer_size}`);
+		}
 	},
 
 	color_hex: function(color) {
