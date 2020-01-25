@@ -12,6 +12,7 @@ window.addEventListener('blur', function() {
 
 document.body.onkeydown = function(e) {
 	e.preventDefault();
+	audio.resume();
 	inputs.key_last = e.keyCode;
 	if (typeof inputs.key_state[e.keyCode] === 'undefined') {
 		if (e.keyCode == SPKEY.SHIFT) inputs.mod.shift = true;
