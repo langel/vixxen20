@@ -12,6 +12,11 @@ var vic = {
 	 * Properties
 	 */
 
+  /*
+   * number of frames lagged per buffer @ 44.1kHz (rounded)
+   *           NTSC:  0.348 0.696 1.393 2.786 5.572 11.155 22.291
+   *           PAL:   0.290 0.580 1.161 2.322 4.644 9.2889 18.576
+   */
 	audio_buffer_options: [256, 512, 1024, 2048, 4096, 8192, 16384],
 	audio_buffer_size: 2,
 
@@ -31,9 +36,11 @@ var vic = {
 	color_aux: 5,    // 11
 
 	framerate: { // in milliseconds
-		ntsc: (1000/60),
-		pal: (1000/50)
+		ntsc: 60,
+		pal: 50
 	},
+
+  samples_per_frame: null,
 
 	screen: video.getContext('2d', { alpha: false }),
 	screen_pixel_mul_x: 2,
@@ -163,7 +170,7 @@ var vic = {
 	},
 
 	get_frame_ms: function() {
-		return vic.framerate[vic.video_mode];
+		return 1000 / vic.framerate[vic.video_mode];
 	},
 
 	plot_char: function(char_x, char_y, petscii, color) {
@@ -207,10 +214,15 @@ var vic = {
 		document.documentElement.style.background = vic.color_hex(color);
 	},
 
-	set_char_rom_block(block) {
+	set_char_rom_block: function(block) {
 		vic.char_rom_block = block;
 		vic._screen_refresh();
 	},
+
+  set_video_mode: function(mode) {
+    vic.video_mode = mode;
+    vic.samples_per_frame = audio.sampleRate / vic.framerate[vic.video_mode];
+  },
 
 	set_voice_value: function(voice_id, value) {
 		vic.voices[voice_id].value = value;
