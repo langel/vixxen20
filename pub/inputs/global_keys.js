@@ -17,8 +17,8 @@ inputs.global_keys = [{
 	// toggle video refresh rate
 	key: 'CONTROL_192',
 	on_update: function() {	
-    let mode = (vic.video_mode !== 'ntsc') ? 'ntsc' : 'pal';
-    vic.set_video_mode(mode);
+		let mode = (vic.video_mode !== 'ntsc') ? 'ntsc' : 'pal';
+		vic.set_video_mode(mode);
 		console.log('VIDEO MODE ' + vic.video_mode);
 	},
 },{

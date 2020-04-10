@@ -40,7 +40,7 @@ var vic = {
 		pal: 50
 	},
 
-  samples_per_frame: null,
+	samples_per_frame: null,
 
 	screen: video.getContext('2d', { alpha: false }),
 	screen_pixel_mul_x: 2,
@@ -219,10 +219,10 @@ var vic = {
 		vic._screen_refresh();
 	},
 
-  set_video_mode: function(mode) {
-    vic.video_mode = mode;
-    vic.samples_per_frame = audio.sampleRate / vic.framerate[vic.video_mode];
-  },
+	set_video_mode: function(mode) {
+		vic.video_mode = mode;
+		vic.samples_per_frame = audio.sampleRate / vic.framerate[vic.video_mode];
+	},
 
 	set_voice_value: function(voice_id, value) {
 		vic.voices[voice_id].value = value;
