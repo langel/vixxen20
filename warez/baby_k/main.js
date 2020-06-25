@@ -4,6 +4,8 @@ var baby_k = {
 
 	includes: [
 		'song_schema',
+		'input_pattern',
+		'input_song',
 		'inputs',
 	],
 
