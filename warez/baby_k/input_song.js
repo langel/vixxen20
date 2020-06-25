@@ -23,6 +23,7 @@ let baby_k_input_song = {
 		if (value >= 128) return '--';
 		return kernel.display.pad(kernel.display.hex(value), this.cell_width, '0');
 	},
+
 	on_init: function() {
 		this.pattern_grid = inputs.get_field_by_label('PATTERN');
 		this.data = [];

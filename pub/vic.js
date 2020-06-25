@@ -30,6 +30,15 @@ var vic = {
 		'e09fff', '8fe493', '8290ff', 'e5de85'
 	],
 
+	color_black: 0,
+	color_white: 1,
+	color_red: 2,
+	color_cyan: 3,
+	color_purple: 4,
+	color_green: 5,
+	color_blue: 6,
+	color_yellow: 7,
+
 	color_bg: 0,     // 00
 	color_border: 6, // 01
 	color_fg: 1,     // 10
