@@ -71,8 +71,8 @@ var inputs = {
 	field_index: 0,
 	fields: [],
 	key_last: '',
-	key_repeat_threshold: 18,
-	key_repeat_rate: 6,
+	key_repeat_threshold: 12,
+	key_repeat_rate: 3,
 	key_state: {},
 	types: {},
 
