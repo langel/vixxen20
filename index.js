@@ -56,6 +56,8 @@ function init_window() {
 		width: 1200,
 		height: 800,
 		backgroundColor: '#000000'
+		// allow audio autoplay
+		webSecurity: false
 	});
 	// load application
 	win.loadURL(url.format({

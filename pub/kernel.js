@@ -90,26 +90,20 @@ var kernel = {
 		hook_remove_all: function() {
 			kernel.frame.hooks = [];
 		},
-		main: function() {
+		main: async function() {
 			// allow loop speed to be changed by NTSC/PAL setting
-			let this_frame = Date.now();
-			let timeout = Math.floor(vic.get_frame_ms() - (this_frame - kernel.frame.last_frame));
-			kernel.frame.last_frame = this_frame;
-			timeout = (timeout < 1) ? 1 : timeout;
 			kernel.frame.hooks.forEach((hook) => {
 				window[hook.object][hook.method]();
 			});
 			vic._screen_blit();
-			window.setTimeout(kernel.frame.main, timeout);
 		}
 	},
 
 	init: function() {
 		// wut
 		console.log('VIXXEN20 STARTED');
-		this.frame.last_frame = Date.now();
 		vic.init();
-		this.frame.main();
+		vic.set_frame_hook(this.frame.main);
 		// escalate boot process
 		this.load_js(this.autoload);
 	},

@@ -133,6 +133,7 @@ var vic = {
 		vic.char_table.tracker = Array(128).fill(null).map(()=>Array(256).fill(0));
 
 		// initialize the Video Interface Chip video
+		vic.set_video_mode(vic.video_mode);
 		vic.set_border_color(vic.color_border);
 		vic.screen_ram.fill({petscii:0,color:vic.color_fg});
 		vic.screen.buff = document.createElement('canvas');
@@ -228,6 +229,10 @@ var vic = {
 		vic._screen_refresh();
 	},
 
+	set_frame_hook: function(callback) {
+		vic._frame_hook = callback;
+	},
+
 	set_video_mode: function(mode) {
 		vic.video_mode = mode;
 		vic.samples_per_frame = audio.sampleRate / vic.framerate[vic.video_mode];
@@ -283,9 +288,18 @@ var vic = {
 				}
 			}
 			buffer[i] = delta_mix;
+			// look out for frame updates!! D:
+			vic._frame_sample_countdown--;
+			if (vic._frame_sample_countdown < 0) {
+				vic._frame_sample_countdown += vic.samples_per_frame;
+				vic._frame_hook();
+				vic._screen_blit();
+			}
 		}
 	},
 	
+	_frame_sample_countdown: 0,
+
 	// XXX not sure when this would be used outside of char rendering
 	_plot_pixel: function(x, y, color) {
 		color = vic.color_hex(color);
