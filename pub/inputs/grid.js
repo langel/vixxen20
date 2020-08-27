@@ -152,17 +152,20 @@ inputs.types.grid = {
 		else if (key.label == SPKEY.ARROW_UP) {
 			advance = 'up';
 		}
+		// HOME key
 		else if (key.label == SPKEY.HOME) {
 			inputs.blur(field);
 			field.cell.y = field.scroll.y.pos = 0;
 			this.draw_all(field);
 		}
+		// END key
 		else if (key.label == SPKEY.END) {
 			inputs.blur(field);
 			field.cell.y = field.scroll.y.length;
 			field.scroll.y.pos = field.scroll.y.max;
 			this.draw_all(field);
 		}
+		// PAGE DOWN key
 		else if (key.label == SPKEY.PAGE_DOWN) {
 			inputs.blur(field);
 			field.cell.y += 4;
@@ -178,6 +181,7 @@ inputs.types.grid = {
 				this.draw_all(field);
 			}
 		}
+		// PAGE UP key
 		else if (key.label == SPKEY.PAGE_UP) {
 			inputs.blur(field);
 			field.cell.y -= 4;
