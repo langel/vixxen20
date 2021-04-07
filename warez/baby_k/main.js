@@ -54,15 +54,14 @@ var baby_k = {
 		kernel.plot_str(30, 6, ' NUZZ ', 1);
 		kernel.plot_str(2, 8, 'ch1 ch2 ch3 ch4  Songond0NGg  SPD VOL', 1);
 		// setup components
-		baby_k_inputs.init();
 		this.song = this.song_new();
 		this.inputs = baby_k_inputs;
+		this.inputs.init();
 		inputs.init(this.inputs);
 		kernel.frame.hook_add({
 			object: 'baby_k',
 			method: 'frame'
 		});
-		this.song_play_pattern();
 	},
 
 	frame: function() {

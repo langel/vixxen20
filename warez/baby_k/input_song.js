@@ -38,7 +38,7 @@ let baby_k_input_song = {
 
 	on_key: function() {
 		var advance = false;
-		return false;
+		return advance;
 	},
 
 	on_update: function() {

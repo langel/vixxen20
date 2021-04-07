@@ -68,6 +68,9 @@ var baby_k_inputs = {
 				y: 10,
 				value_min: 1,
 				value_max: 15,
+				on_init: function() {
+					this.data[0] = baby_k.song.speed_table;
+				},
 				on_update: function() {
 					baby_k.song.speed_table[this.cell.y] = this.value;
 				},
@@ -86,6 +89,9 @@ var baby_k_inputs = {
 				y: 10,
 				value_min: 0,
 				value_max: 15,
+				on_init: function() {
+					this.data[0] = baby_k.song.volume_table;
+				},
 				on_update: function() {
 					baby_k.song.volume_table[this.cell.y] = this.value;
 				},
@@ -109,7 +115,7 @@ var baby_k_inputs = {
 				on_update: function() {
 					baby_k.song.title = this.string;
 				},
-				value: baby_k_new_song.title,
+				value: baby_k.song.title,
 				length: 16,
 				x: 2,
 				y: 3,
@@ -120,7 +126,7 @@ var baby_k_inputs = {
 				on_update: function() {
 					baby_k.song.artist = this.string;
 				},
-				value: baby_k_new_song.artist,
+				value: baby_k.song.artist,
 				length: 16,
 				x: 2,
 				y: 4,
@@ -131,7 +137,7 @@ var baby_k_inputs = {
 				on_update: function() {
 					baby_k.song.copy_info = this.string;
 				},
-				value: baby_k_new_song.copy_info,
+				value: baby_k.song.copy_info,
 				length: 16,
 				x: 2,
 				y: 5,
