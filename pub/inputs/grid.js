@@ -77,12 +77,14 @@ inputs.types.grid = {
 	},
 
 	draw_column: function(field, x) {
-		field.cell.x = x;
+		var x = field.cell.x;
 		var y = field.cell.y;
+		field.cell.x = x;
 		for (var i = field.height + field.scroll.y.pos - 1; i >= field.scroll.y.pos; i--) {
 			field.cell.y = i;
 			this.cell_update(field);
 		}
+		field.cell.x = x;
 		field.cell.y = y;
 		if (inputs.get_current_field().label == field.label) {
 			this.cell_update(field, 'focus');
@@ -155,6 +157,7 @@ inputs.types.grid = {
 		var advance = false;
 		// tab out
 		if (key.code == 9) return;
+
 		// grid navigate
 		else if (key.label == SPKEY.ARROW_DOWN) {
 			advance = 'down';
@@ -207,6 +210,7 @@ inputs.types.grid = {
 				this.draw_all(field);
 			}
 		}
+
 		// cell value adjustment
 		else if (key.label == 'CONTROL_' + SPKEY.ARROW_DOWN) {
 			if (field.data[field.cell.x][field.cell.y] > field.value_min) {
@@ -234,6 +238,7 @@ inputs.types.grid = {
 				}
 			}
 		}
+
 		// handle hex number keys (currently limited to 8bit values)
 		else if (field.cell_type == 'hex' && HEXKEY.includes(key.code)) {
 			if (field.hexkeycount == 0) {
@@ -255,14 +260,80 @@ inputs.types.grid = {
 			else if (value < field.value_min) value = field.value_min;
 			field.data[field.cell.x][field.cell.y] = value;
 		}
-		// cell deletions
-		else if (key.code == 190) {
+
+		// grid delete/backspace/etc
+		// BACKSPACE key
+		// move current cell and below up one
+		else if (key.label == SPKEY.BACKSPACE) {
+			if (typeof field.value_default != 'undefined') {
+				advance = 'up';
+				field.data[field.cell.x].splice(field.cell.y - 1, 1);
+				if (field.data[field.cell.x].length < field.height) {
+					let value = field.value_default;
+					field.data[field.cell.x].push(value);
+				}
+				inputs.types.grid.draw_column(field, field.cell.x);
+			}
+		}
+		// DELETE key
+		// set cell empty and advance down
+		else if (key.label == SPKEY.DELETE) {
 			if (typeof field.value_default != 'undefined') {
 				advance = 'down';
-				value = field.value_default;
+				let value = field.value_default;
 				field.data[field.cell.x][field.cell.y] = value;
 			}
 		}
+		// INSERT key
+		// insert empty cell at cursor
+		else if (key.label == SPKEY.INSERT) {
+			if (typeof field.value_default != 'undefined') {
+				advance = false;
+				let value = field.value_default;
+				field.data[field.cell.x].splice(field.cell.y, 0, value);
+				inputs.types.grid.draw_column(field, field.cell.x);
+			}
+		}
+		// SHIFT BACKSPACE key
+		// move current cell row and below up one
+		else if (key.label == 'SHIFT_'+SPKEY.BACKSPACE) {
+			if (typeof field.value_default != 'undefined') {
+				advance = 'up';
+				let value = field.value_default;
+				for (let x = 0; x < field.width; x++) {
+					field.data[x].splice(field.cell.y - 1, 1);
+					if (field.data[x].length < field.height) {
+						field.data[x].push(value);
+					}
+				}
+				inputs.types.grid.draw_all(field);
+			}
+		}
+		// SHIFT DELETE key
+		// set cell row empty and advance down
+		else if (key.label == 'SHIFT_'+SPKEY.DELETE) {
+			if (typeof field.value_default != 'undefined') {
+				advance = 'down';
+				let value = field.value_default;
+				for (let x = 0; x < field.width; x++) {
+					field.data[x][field.cell.y] = value;
+				}
+				inputs.types.grid.draw_all(field);
+			}
+		}
+		// SHIFT INSERT key
+		// insert empty cell at cursor
+		else if (key.label == 'SHIFT_'+SPKEY.INSERT) {
+			if (typeof field.value_default != 'undefined') {
+				advance = false;
+				let value = field.value_default;
+				for (let x = 0; x < field.width; x++) {
+					field.data[x].splice(field.cell.y, 0, value);
+				}
+			}
+			inputs.types.grid.draw_all(field);
+		}
+
 		// call custom key handler
 		else if (typeof field.on_key === 'function') {
 			advance = field.on_key(key);

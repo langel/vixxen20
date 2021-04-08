@@ -55,8 +55,6 @@ let baby_k_input_pattern = {
 			}
 		}
 		// special note inputs
-		// note delete
-		else if (key.input == 'Delete') this.value = 0;
 		// note off
 		else if (key.input == '1') this.value = 1;
 		// next pattern
