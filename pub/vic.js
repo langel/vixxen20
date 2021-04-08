@@ -274,20 +274,24 @@ var vic = {
 						freq = vic.voices[v].clock[vic.video_mode] / (128 - (pitch & 127));
 						// handle sqaures
 						if (v != 3) {
-							vic.voices[v].delta_counter = audio.sampleRate / freq / 2;
+							vic.voices[v].delta_counter += audio.sampleRate / freq / 2;
 							vic.voices[v].delta_pos *= -1;
 						}
 						// handle noise
 						else {
-							vic.voices[v].delta_counter = audio.sampleRate / freq;
-							vic.voices[v].delta_pos = (Math.random()*2)-1;
+							vic.voices[v].delta_counter += audio.sampleRate / freq;
+							vic.voices[v].delta_pos = Math.floor(Math.random()*2)*2 - 1;
 						}
 					}
 					delta_mix += vic.voices[v].delta_pos;
 					vic.voices[v].delta_counter--;
 				}
 			}
-			buffer[i] = delta_mix;
+			let mix_down = delta_mix;
+			// bad digital clamp overdrive / distortion
+			mix_down = Math.max(mix_down, -1);
+			mix_down = Math.min(mix_down, 1);
+			buffer[i] = mix_down * 0.8;
 			// look out for frame updates!! D:
 			vic._frame_sample_countdown--;
 			if (vic._frame_sample_countdown < 0) {

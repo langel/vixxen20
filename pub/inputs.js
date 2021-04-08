@@ -51,6 +51,7 @@ const SPKEY = {
 	META: 18,
 	PAGE_DOWN: 34,
 	PAGE_UP: 33,
+	SCROLLLOCK: 145,
 	SHIFT: 16,
 	TAB: 9,
 };

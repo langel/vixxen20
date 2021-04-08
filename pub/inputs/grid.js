@@ -1,7 +1,12 @@
 inputs.types.grid = {
 
 	cell_advance: function(field, direction) {
-		inputs.blur(field);
+		if (field.cell.y == field.row_highlighted) {
+			inputs.highlight(field);
+		}
+		else {
+			inputs.blur(field);
+		}
 		if (direction !== false) field.hexkeycount = 0;
 		if (direction == 'down') {
 			field.cell.y++;
@@ -58,18 +63,29 @@ inputs.types.grid = {
 		var y = field.cell.y;
 		var old_cursor = field.cell;
 		for (var c = field.width-1; c >= 0; c--) {
-			this.draw_column(field, c);
+			field.cell.x = c;
+			for (var r = field.height-1; r >= 0; r--) {
+				field.cell.y = r;
+				this.cell_update(field, 'blur');
+			}
 		}
 		field.cell.x = x;
 		field.cell.y = y;
-		this.cell_update(field, 'focus');
+		if (inputs.get_current_field().label == field.label) {
+			this.cell_update(field, 'focus');
+		}
 	},
 
 	draw_column: function(field, x) {
 		field.cell.x = x;
+		var y = field.cell.y;
 		for (var i = field.height + field.scroll.y.pos - 1; i >= field.scroll.y.pos; i--) {
 			field.cell.y = i;
 			this.cell_update(field);
+		}
+		field.cell.y = y;
+		if (inputs.get_current_field().label == field.label) {
+			this.cell_update(field, 'focus');
 		}
 	},
 

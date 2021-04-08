@@ -13,6 +13,7 @@ var baby_k = {
 	 * parameters
 	 */
 
+	follow_mode: true,
 	frame_counter: 0,
 	frame_rate: 6,
 	inputs: {},
@@ -21,6 +22,8 @@ var baby_k = {
 	pattern_length: 16,
 	pattern_pos: 0,
 	pattern_order_pos: 0,
+	pattern_editor_order_pos: 0,
+	pause: true,
 	play_mode: 0,
 	play_modes: [
 		'LOOPING',
@@ -28,7 +31,6 @@ var baby_k = {
 		'PLAYING',
 		'STOPPED',
 	],
-	pause: true,
 	song: 'load a song dummy',
 	tuning: 0,
 
@@ -93,10 +95,10 @@ var baby_k = {
 		baby_k.frame_counter++;
 	},
 
-  notice: function(text) {
-    kernel.plot_str(1, 28, kernel.display.pad(text, 38, ' '), 2);
-    baby_k.notice_counter = 150;
-  },
+	notice: function(text) {
+		kernel.plot_str(1, 28, kernel.display.pad(text, 38, ' '), 2);
+		baby_k.notice_counter = 100;
+	},
 
 	play_next_order: function() {
 		// loads next order of patterns
@@ -111,9 +113,14 @@ var baby_k = {
 		}
 		if (pop > 0) this.pattern_order_pos++;
 		else this.pattern_order_pos = 0;
-		inputs.get_field_by_label('PATTERN').load_patterns(this.pattern_order_pos);
-		// XXX only in follow mode!
-		//this.update_song_row_display(this.pattern_order_pos);
+		if (this.follow_mode) {
+			this.update_song_row_display(this.pattern_order_pos);
+			this.pattern_editor_order_pos = this.pattern_order_pos;
+			inputs.get_field_by_label('PATTERN').load_patterns(this.pattern_editor_order_pos);
+		}
+		else {
+			inputs.types.grid.row_dehighlight(inputs.get_field_by_label('PATTERN'), 15);
+		}
 		inputs.types.grid.row_highlight(inputs.get_field_by_label('SONG'), this.pattern_order_pos);
 	},
 	
@@ -140,8 +147,8 @@ var baby_k = {
 			// NEXT PATTERN
 			else if (value == 2) {
 				// there's a smarter way to do this...
-				this.pattern_pos = this.pattern_length;
-				this.play_next_row();
+				//this.pattern_pos = this.pattern_length;
+				this.play_next_order();
 			}
 			// END SONG
 			else if (value == 3) {
@@ -154,9 +161,16 @@ var baby_k = {
 			vic.set_volume(this.song.volume_table[this.pattern_pos]);
 			kernel.plot_str(26, 4, kernel.display.pad(vic.volume, 3, ' '), 1);
 			// highlight appropriate rows
-			inputs.types.grid.row_highlight(inputs.get_field_by_label('PATTERN'), this.pattern_pos);
 			inputs.types.grid.row_highlight(inputs.get_field_by_label('SPEED'), this.pattern_pos);
 			inputs.types.grid.row_highlight(inputs.get_field_by_label('VOLUME'), this.pattern_pos);
+			if (this.pattern_order_pos == this.pattern_editor_order_pos) {
+				let field = inputs.get_field_by_label('PATTERN');
+				inputs.types.grid.row_highlight(field, this.pattern_pos);
+				if (this.follow_mode && inputs.get_current_field().label == 'PATTERN') {
+					field.cell.y = this.pattern_pos;
+					inputs.types.grid.draw_column(field, field.cell.x);
+				}
+			}
 		}
 		this.pattern_pos++;
 	},
@@ -191,6 +205,17 @@ var baby_k = {
 		kernel.silent();	
 		this.pattern_pos = 0;
 		this.play_status('STOPPED');
+	},
+
+	toggle_follow_mode: function() {
+		baby_k.follow_mode = !baby_k.follow_mode;
+		let log = 'Follow Mode ';
+		log += (baby_k.follow_mode) ? 'Enabled' : 'Disabled';
+		baby_k.notice(log);
+		if (baby_k.follow_mode && !baby_k.pause) {
+			this.pattern_editor_order_pos = this.pattern_order_pos;
+			inputs.get_field_by_label('PATTERN').load_patterns(this.pattern_editor_order_pos);
+		}
 	},
 
 	update_song_row_display: function(value) {

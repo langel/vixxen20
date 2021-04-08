@@ -45,7 +45,10 @@ let baby_k_input_song = {
 		// put new value in song data
 		baby_k.song.pattern_order[this.cell.y][this.cell.x] = this.value;
 		// update song row in hud
-		// XXX not while follow mode is on?!?!?
-		if (typeof this.cell.y !== 'undefined') baby_k.update_song_row_display(this.cell.y);
+		if (!baby_k.follow_mode) {
+			if (typeof this.cell.y !== 'undefined') {
+				baby_k.update_song_row_display(this.cell.y);
+			}
+		}
 	}
 }

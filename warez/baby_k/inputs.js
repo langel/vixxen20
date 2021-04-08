@@ -11,6 +11,19 @@ var baby_k_inputs = {
 			else baby_k.song_play();
 		}
 	},{
+	// toggle follow mode
+		// scroll lock
+		key: 145,
+		on_update: function() {
+			baby_k.toggle_follow_mode();
+		}
+	},{
+		// comma
+		key: 188,
+		on_update: function() {
+			baby_k.toggle_follow_mode();
+		}
+	},{
 		// backslash '\'
 		// toggle root octave
 		key: 220,
