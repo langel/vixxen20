@@ -117,6 +117,7 @@ var baby_k = {
 			this.update_song_row_display(this.pattern_order_pos);
 			this.pattern_editor_order_pos = this.pattern_order_pos;
 			inputs.get_field_by_label('PATTERN').load_patterns(this.pattern_editor_order_pos);
+			inputs.types.grid.cell_advance(inputs.get_field_by_label('SONG'), 'down');
 		}
 		else {
 			inputs.types.grid.row_dehighlight(inputs.get_field_by_label('PATTERN'), 15);
@@ -193,6 +194,7 @@ var baby_k = {
 	song_play: function() {
 		baby_k.pause = false;
 		this.play_status('PLAYING');
+		inputs.types.grid.row_highlight(inputs.get_field_by_label('SONG'), this.pattern_order_pos);
 	},
 
 	song_play_pattern: function() {
