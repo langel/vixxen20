@@ -296,7 +296,8 @@ inputs.types.grid = {
 		}
 		// SHIFT BACKSPACE key
 		// move current cell row and below up one
-		else if (key.label == 'SHIFT_'+SPKEY.BACKSPACE) {
+		else if (key.label == 'SHIFT_' + SPKEY.BACKSPACE
+		|| key.label == 'CONTROL_' + SPKEY.BACKSPACE) {
 			if (typeof field.value_default != 'undefined') {
 				advance = 'up';
 				let value = field.value_default;
@@ -311,7 +312,8 @@ inputs.types.grid = {
 		}
 		// SHIFT DELETE key
 		// set cell row empty and advance down
-		else if (key.label == 'SHIFT_'+SPKEY.DELETE) {
+		else if (key.label == 'SHIFT_' + SPKEY.DELETE
+		|| key.label == 'CONTROL_' + SPKEY.DELETE) {
 			if (typeof field.value_default != 'undefined') {
 				advance = 'down';
 				let value = field.value_default;
@@ -323,7 +325,8 @@ inputs.types.grid = {
 		}
 		// SHIFT INSERT key
 		// insert empty cell at cursor
-		else if (key.label == 'SHIFT_'+SPKEY.INSERT) {
+		else if (key.label == 'SHIFT_' + SPKEY.INSERT
+		|| key.label == 'CONTROL_' + SPKEY.INSERT) {
 			if (typeof field.value_default != 'undefined') {
 				advance = false;
 				let value = field.value_default;
