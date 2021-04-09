@@ -2,34 +2,45 @@ var baby_k_inputs = {
 
 	
 	global_keys: [{
-		// space
-		// pause song
-		key: 32,
+		// pause 
+		key: SPKEY.SPACE,
 		on_update: function() {
 			baby_k.pause = !baby_k.pause;
 			if (baby_k.pause == true) baby_k.song_pause();
 			else baby_k.song_play();
 		}
 	},{
-	// toggle follow mode
-		// scroll lock
-		key: 145,
+		// toggle follow mode
+		key: SPKEY.SCROLLLOCK,
 		on_update: function() {
 			baby_k.toggle_follow_mode();
 		}
 	},{
-		// comma
-		key: 188,
+		// toggle follow mode
+		key: SPKEY.COMMA,
 		on_update: function() {
 			baby_k.toggle_follow_mode();
 		}
 	},{
-		// backslash '\'
 		// toggle root octave
-		key: 220,
+		key: SPKEY.BACKSLASH,
 		on_update: function() {
 			if (baby_k.octave == 0) baby_k.octave = 1;
 			else baby_k.octave = 0;
+			inputs.set_value('OCTAVE', baby_k.octave);
+		}
+	},{
+		// set root octave to 0
+		key: SPKEY.NUM_SLASH,
+		on_update: function() {
+			baby_k.octave = 0;
+			inputs.set_value('OCTAVE', baby_k.octave);
+		}
+	},{
+		// set root octave to 1
+		key: SPKEY.NUM_ASTERISK,
+		on_update: function() {
+			baby_k.octave = 1;
 			inputs.set_value('OCTAVE', baby_k.octave);
 		}
 	},{
@@ -49,7 +60,7 @@ var baby_k_inputs = {
   },{
 		// apastrophe ''' 
 		// rotate through tunings
-		key: 222,
+		key: SPKEY.APOSTROPHE,
 		on_update: function() {
 			baby_k.tuning++;
 			if (baby_k.tuning > baby_k_scales.length - 1) baby_k.tuning = 0;

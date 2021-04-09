@@ -8,11 +8,11 @@
 Known Issues
 ~ no idea how well this runs on slower machines
 ~ audio emulation is not close to perfect (issue #19)
-~ faster frame rates have inaccurate timing (issue #2)
 
 Keys
 ~ Meta Key is Ctrl for Windows/Linux and Option/Alt on OSX
 ~ Keys marked with * are not yet implementd
+
 
 Global Keys
 
@@ -43,6 +43,7 @@ Shift Backspace   - move cell values up one cell across row
 Shift Delete      - empty cells across row, move cursor down
 Shift Insert      - insert empty cells across row
 
+
 BABY-K Global Keys
 
 *F5               - play song from begining
@@ -51,22 +52,29 @@ BABY-K Global Keys
 *F8               - stop
 Space             - toggle play/pause
 \                 - toggle root octave
+/                 - set root octave to 0
+*                 - set root octave to 1
 *Meta L           - load song
 *Meta N           - new song
 *Meta S           - save song
 Scroll Lock or ,  - follow mode toggle
 
 
-Pattern and Song Editor Keys
+Pattern Editor Song Editing Keys
 
--                 - 1 pattern backward
-=                 - 1 pattern forawrd
-Shift -           - 16 patterns backward
-Shift =           - 16 patterns forward
-Meta -            - 1 pattern backward whole row
-Meta =            - 1 pattern forward whole row
-Meta Shift -      - 16 patterns backward whole row
-Meta Shift =      - 16 patterns forword whole row
+Meta Shift Down   - next row of song
+Meta Shift Up     - previous row of song
+Meta Shift Right  - skip 4 rows ahead in song
+Meta Shift Left   - skip 4 rows previous in song
+-                 - decrease pattern number
+=                 - increase pattern number
+Meta -            - decrease pattern by 16
+Meta =            - increase pattern by 16
+Shift -           - decrease pattern numbers in row
+Shift =           - increase pattern numbers in row
+Meta Shift -      - decrease patterns in row by 16
+Meta Shift =      - increase patterns in row by 16
+
 
 Hex Value Inputs
 

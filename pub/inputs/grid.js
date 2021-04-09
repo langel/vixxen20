@@ -62,10 +62,10 @@ inputs.types.grid = {
 		var x = field.cell.x;
 		var y = field.cell.y;
 		var old_cursor = field.cell;
-		for (var c = field.width-1; c >= 0; c--) {
-			field.cell.x = c;
-			for (var r = field.height-1; r >= 0; r--) {
-				field.cell.y = r;
+		for (let cx = field.width + field.scroll.x.pos - 1; cx >= field.scroll.x.pos; cx --) {
+			field.cell.x = cx;
+			for (var cy = field.height + field.scroll.y.pos - 1; cy >= field.scroll.y.pos; cy--) {
+				field.cell.y = cy;
 				this.cell_update(field, 'blur');
 			}
 		}
