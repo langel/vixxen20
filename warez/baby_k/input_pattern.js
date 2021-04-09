@@ -64,6 +64,19 @@ let baby_k_input_pattern = {
 		// cursor does not advance with keys below
 		else {
 			var advance = false;
+			// MOVE AROUND SONG
+			// next row of song
+			if (key.label == 'CONTROL_SHIFT_' + SPKEY.ARROW_DOWN) {
+			}
+			// previous row of song
+			if (key.label == 'CONTROL_SHIFT_' + SPKEY.ARROW_UP) {
+			}
+			// skip ahead 4 rows of song
+			if (key.label == 'CONTROL_SHIFT_' + SPKEY.ARROW_RIGHT) {
+			}
+			// skip behind 4 rows of song
+			if (key.label == 'CONTROL_SHIFT_' + SPKEY.ARROW_LEFT) {
+			}
 			// ADJUST PATTERN NUMBERS KEYCOMBOS
 			// decrease pattern number
 			if (key.label == SPKEY.DASH
