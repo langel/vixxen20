@@ -21,8 +21,9 @@ var baby_k = {
 	octave: 0,
 	pattern_length: 16,
 	pattern_pos: 0,
-	pattern_order_pos: 0,
-	pattern_editor_order_pos: 0,
+	song_pos: 0,
+	song_max_length: 127,
+	pattern_grid_song_pos: 0,
 	pause: true,
 	play_mode: 0,
 	play_modes: [
@@ -71,7 +72,7 @@ var baby_k = {
 		kernel.plot_str(35, 1, vic.video_mode.toUpperCase()+' ', 6);
 		// handle notice text row
 		if (baby_k.notice_counter == 0) {
-			kernel.plot_str(1, 28, `PR ${kernel.display.hex(baby_k.pattern_pos - 1)} SR ${kernel.display.hex_byte(baby_k.pattern_order_pos)} FRAME ${baby_k.frame_counter - 1} `, 2);
+			kernel.plot_str(1, 28, `PR ${kernel.display.hex(baby_k.pattern_pos - 1)} SR ${kernel.display.hex_byte(baby_k.song_pos)} FRAME ${baby_k.frame_counter - 1} `, 2);
 			kernel.plot_str(27, 28, 'LAST KEY ' + inputs.key_last + ' ', 2);
 		}
 		else baby_k.notice_counter--
@@ -101,28 +102,16 @@ var baby_k = {
 	},
 
 	play_next_order: function() {
-		// loads next order of patterns
-		// check if playing in song or pattern mode
-
-		// get next pattern order row
-		var next_order_row = baby_k.song.pattern_order[this.pattern_order_pos + 1];
-		// make sure at least one pattern in row is populated
-		var pop = 0;
-		for (var i = 0; i < 4; i++) {
-			if (next_order_row[i] != 255) pop++;
-		}
-		if (pop > 0) this.pattern_order_pos++;
-		else this.pattern_order_pos = 0;
+		let next_row = this.song_grid.get_next_row();
 		if (this.follow_mode) {
-			this.update_song_row_display(this.pattern_order_pos);
-			this.pattern_editor_order_pos = this.pattern_order_pos;
-			inputs.get_field_by_label('PATTERN').load_patterns(this.pattern_editor_order_pos);
-			inputs.types.grid.cell_advance(inputs.get_field_by_label('SONG'), 'down');
+			this.song_grid.set_current_row(next_row);
+			this.pattern_grid_song_pos = this.song_pos;
+			this.pattern_grid.load_patterns(this.pattern_grid_song_pos);
+			inputs.types.grid.cell_advance(this.song_grid, 'down');
 		}
 		else {
-			inputs.types.grid.row_dehighlight(inputs.get_field_by_label('PATTERN'), 15);
+			inputs.types.grid.row_dehighlight(this.pattern_grid, 15);
 		}
-		inputs.types.grid.row_highlight(inputs.get_field_by_label('SONG'), this.pattern_order_pos);
 	},
 	
 	play_next_row: function() {
@@ -132,7 +121,7 @@ var baby_k = {
 			this.play_next_order();
 		}
 		// get pattern order row
-		var pattern_order_row = baby_k.song.pattern_order[this.pattern_order_pos];
+		var pattern_order_row = baby_k.song.pattern_order[this.song_pos];
 		// act on pattern row data
 		for (var i = 0; i < 4; i++) {
 			var current_pattern = (pattern_order_row[i] != 255) ? this.song.patterns[pattern_order_row[i]] : baby_k_new_pattern;
@@ -164,7 +153,7 @@ var baby_k = {
 			// highlight appropriate rows
 			inputs.types.grid.row_highlight(inputs.get_field_by_label('SPEED'), this.pattern_pos);
 			inputs.types.grid.row_highlight(inputs.get_field_by_label('VOLUME'), this.pattern_pos);
-			if (this.pattern_order_pos == this.pattern_editor_order_pos) {
+			if (this.song_pos == this.pattern_grid_song_pos) {
 				let field = inputs.get_field_by_label('PATTERN');
 				inputs.types.grid.row_highlight(field, this.pattern_pos);
 				if (this.follow_mode && inputs.get_current_field().label == 'PATTERN') {
@@ -194,7 +183,7 @@ var baby_k = {
 	song_play: function() {
 		baby_k.pause = false;
 		this.play_status('PLAYING');
-		inputs.types.grid.row_highlight(inputs.get_field_by_label('SONG'), this.pattern_order_pos);
+		inputs.types.grid.row_highlight(inputs.get_field_by_label('SONG'), this.song_pos);
 	},
 
 	song_play_pattern: function() {
@@ -215,8 +204,8 @@ var baby_k = {
 		log += (baby_k.follow_mode) ? 'Enabled' : 'Disabled';
 		baby_k.notice(log);
 		if (baby_k.follow_mode && !baby_k.pause) {
-			this.pattern_editor_order_pos = this.pattern_order_pos;
-			inputs.get_field_by_label('PATTERN').load_patterns(this.pattern_editor_order_pos);
+			this.pattern_grid_song_pos = this.song_pos;
+			inputs.get_field_by_label('PATTERN').load_patterns(this.pattern_grid_song_pos);
 		}
 	},
 

@@ -16,7 +16,7 @@ let baby_k_input_song = {
 	value_max: 127,
 	scroll: {
 		x: { length: 4, pos: 0 },
-		y: { length: 127, pos: 0 }
+		y: { length: baby_k.song_max_length, pos: 0 }
 	},
 
 	cell_display: function(value) {
@@ -36,6 +36,23 @@ let baby_k_input_song = {
 		}
 	},
 
+	get_current_row: () => {
+		return baby_k.song_pos;
+	},
+
+	get_next_row: () => {
+		let row = baby_k.song_pos;
+		row++;
+		let pattern_data = baby_k.song.pattern_order[row];
+		let pop = 0;
+		for (let i = 0; i < 4; i++) {
+			if (pattern_data[i] != 255) pop++;
+		}
+		if (pop > 0) return row;
+		// XXX should rewind song data instead
+		else return 0;
+	},
+
 	on_key: function() {
 		var advance = false;
 		return advance;
@@ -47,12 +64,17 @@ let baby_k_input_song = {
 		// update song row in hud
 		if (!baby_k.follow_mode || baby_k.pause) {
 			if (typeof this.cell.y !== 'undefined') {
-				baby_k.update_song_row_display(this.cell.y);
-				baby_k.pattern_order_pos = this.cell.y;
+				this.set_current_row(this.cell.y);
 			}
 		}
 		if (baby_k.follow_mode && !baby_k.pause) {
-			this.cell.y = baby_k.pattern_order_pos;
+			this.cell.y = baby_k.song_pos;
 		}
+	},
+
+	set_current_row: function(row) {
+		baby_k.update_song_row_display(row);
+		baby_k.song_pos = row;
+		inputs.types.grid.row_highlight(baby_k.song_grid, baby_k.song_pos);
 	}
 }

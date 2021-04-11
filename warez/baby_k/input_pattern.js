@@ -114,7 +114,7 @@ let baby_k_input_pattern = {
 		// only update cell value if a value is found
 		if (typeof this.value !== "undefined") {
 			this.data[this.cell.x][this.cell.y] = this.value;
-			var pattern_id = baby_k.song.pattern_order[baby_k.pattern_order_pos][this.cell.x];
+			var pattern_id = baby_k.song.pattern_order[baby_k.song_pos][this.cell.x];
 			baby_k.song.patterns[pattern_id][this.cell.y] = this.value;
 		}
 		return advance;

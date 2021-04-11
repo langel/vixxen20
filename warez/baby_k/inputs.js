@@ -58,7 +58,6 @@ var baby_k_inputs = {
 			disk.save_new(JSON.stringify(baby_k.song));
 		}
   },{
-		// apastrophe ''' 
 		// rotate through tunings
 		key: SPKEY.APOSTROPHE,
 		on_update: function() {
@@ -71,13 +70,52 @@ var baby_k_inputs = {
 			console.log(text);
 			baby_k.notice(text);
 		}
+	},{
+		// next row of song
+		key: 'CONTROL_SHIFT_'+SPKEY.ARROW_DOWN,
+		on_update: () => {
+			let row = baby_k.song_pos;
+			row++;
+			if (row > baby_k.song_max_length) row = 0;
+			baby_k.song_grid.set_current_row(row);
+		}
+	},{
+		// previous row of song
+		key: 'CONTROL_SHIFT_'+SPKEY.ARROW_UP,
+		on_update: () => {
+			let row = baby_k.song_pos;
+			row--;
+			if (row < 0) row = baby_k.song_max_length;
+			baby_k.song_grid.set_current_row(row);
+		}
+	},{
+		// skip 4 rows ahead in song
+		key: 'CONTROL_SHIFT_'+SPKEY.ARROW_RIGHT,
+		on_update: () => {
+			let row = baby_k.song_pos;
+			row += 4;
+			if (row > baby_k.song_max_length) row -= baby_k.song_max_length;
+			baby_k.song_grid.set_current_row(row);
+		}
+	},{
+		// skip 4 rows behind in song
+		key: 'CONTROL_SHIFT_'+SPKEY.ARROW_LEFT,
+		on_update: () => {
+			let row = baby_k.song_pos;
+			row -= 4;
+			if (row < 0) row += baby_k.song_max_length;
+			baby_k.song_grid.set_current_row(row);
+		}
 	}],
 
 	init: function() {
 
+		baby_k.pattern_grid = baby_k_input_pattern;
+		baby_k.song_grid = baby_k_input_song;
+
 		this.fields = [
-			baby_k_input_pattern,
-			baby_k_input_song,
+			baby_k.pattern_grid,
+			baby_k.song_grid,
 			{
 				label: 'SPEED',
 				type: 'grid',
