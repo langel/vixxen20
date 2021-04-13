@@ -74,37 +74,37 @@ var baby_k_inputs = {
 		// next row of song
 		key: 'CONTROL_SHIFT_'+SPKEY.ARROW_DOWN,
 		on_update: () => {
-			let row = baby_k.song_pos;
-			row++;
-			if (row > baby_k.song_max_length) row = 0;
-			baby_k.song_grid.set_current_row(row);
+			inputs.types.grid.on_key(baby_k.song_grid, {label:SPKEY.ARROW_DOWN});
 		}
 	},{
 		// previous row of song
 		key: 'CONTROL_SHIFT_'+SPKEY.ARROW_UP,
 		on_update: () => {
-			let row = baby_k.song_pos;
-			row--;
-			if (row < 0) row = baby_k.song_max_length;
-			baby_k.song_grid.set_current_row(row);
+			inputs.types.grid.on_key(baby_k.song_grid, {label:SPKEY.ARROW_UP});
 		}
 	},{
 		// skip 4 rows ahead in song
 		key: 'CONTROL_SHIFT_'+SPKEY.ARROW_RIGHT,
 		on_update: () => {
-			let row = baby_k.song_pos;
-			row += 4;
-			if (row > baby_k.song_max_length) row -= baby_k.song_max_length;
-			baby_k.song_grid.set_current_row(row);
+			inputs.types.grid.on_key(baby_k.song_grid, {label:SPKEY.PAGE_DOWN});
 		}
 	},{
 		// skip 4 rows behind in song
 		key: 'CONTROL_SHIFT_'+SPKEY.ARROW_LEFT,
 		on_update: () => {
-			let row = baby_k.song_pos;
-			row -= 4;
-			if (row < 0) row += baby_k.song_max_length;
-			baby_k.song_grid.set_current_row(row);
+			inputs.types.grid.on_key(baby_k.song_grid, {label:SPKEY.PAGE_UP});
+		}
+	},{
+		// beginning of song
+		key: 'CONTROL_SHIFT_'+SPKEY.HOME,
+		on_update: () => {
+			inputs.types.grid.on_key(baby_k.song_grid, {label:SPKEY.HOME});
+		}
+	},{
+		// skip 4 rows behind in song
+		key: 'CONTROL_SHIFT_'+SPKEY.END,
+		on_update: () => {
+			inputs.types.grid.on_key(baby_k.song_grid, {label:SPKEY.END});
 		}
 	}],
 

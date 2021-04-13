@@ -73,6 +73,8 @@ let baby_k_input_song = {
 	},
 
 	set_current_row: function(row) {
+		let old_row = baby_k.song_pos
+		inputs.types.grid.row_dehighlight(baby_k.song_grid, baby_k.song_pos);
 		baby_k.update_song_row_display(row);
 		baby_k.song_pos = row;
 		inputs.types.grid.row_highlight(baby_k.song_grid, baby_k.song_pos);

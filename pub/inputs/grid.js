@@ -157,7 +157,6 @@ inputs.types.grid = {
 		var advance = false;
 		// tab out
 		if (key.code == 9) return;
-
 		// grid navigate
 		else if (key.label == SPKEY.ARROW_DOWN) {
 			advance = 'down';
