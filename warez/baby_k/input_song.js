@@ -80,13 +80,26 @@ let baby_k_input_song = {
 		inputs.types.grid.row_highlight(baby_k.song_grid, baby_k.song_pos);
 	},
 
-	set_pattern_id: function(id, x) {
+	set_pattern_id: function(id, x, y) {
 		// put new value in song data
 		this.value = id;
 		this.cell.x = x;
+		this.cell.y = y;
 		console.log(id);
 		baby_k.song.pattern_order[this.cell.y][this.cell.x] = this.value;
 		this.data[this.cell.x][this.cell.y] = this.value;
+		// XXX we need a cell state that isn't
+		// focus or blur or highlight or selected/block
+		// preferably inverted focus
 		inputs.types.grid.cell_update(this, 'focus');
+	},
+
+	set_pattern_id_by_adjustment(x, y, amount) {
+		inputs.types.grid.set_position(baby_k.song_grid, this.cell.x, baby_k.song_pos);
+		let id = baby_k.song_grid.value;
+		id += amount;
+		id = Math.max(id, 0);
+		id = Math.min(id, baby_k.pattern_max_id);
+		baby_k.song_grid.set_pattern_id(id, this.cell.x, baby_k.song_pos);
 	}
 }

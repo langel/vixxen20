@@ -68,28 +68,22 @@ let baby_k_input_pattern = {
 			// decrease pattern number
 			if (key.label == SPKEY.DASH
 			|| key.label == SPKEY.NUM_MINUS) {
-				inputs.types.grid.set_position(baby_k.song_grid, this.cell.x, baby_k.song_pos);
-				let id = baby_k.song_grid.value;
-				id--;
-				id = Math.max(id, 0);
-				baby_k.song_grid.set_pattern_id(id, this.cell.x);
+				baby_k.song_grid.set_pattern_id_by_adjustment(this.cell.x, baby_k.song_pos, -1);
 			}
 			// increase pattern number
 			else if (key.label == SPKEY.EQUAL
 			|| key.label == SPKEY.NUM_PLUS) {
-				inputs.types.grid.set_position(baby_k.song_grid, this.cell.x, baby_k.song_pos);
-				let id = baby_k.song_grid.value;
-				id++;
-				id = Math.min(id, baby_k.pattern_max_id);
-				baby_k.song_grid.set_pattern_id(id, this.cell.x);
+				baby_k.song_grid.set_pattern_id_by_adjustment(this.cell.x, baby_k.song_pos, 1);
 			}
 			// decrease pattern number by 16
 			else if (key.label == 'CONTROL_' + SPKEY.DASH
 			|| key.label == 'CONTROL_' + SPKEY.NUM_MINUS) {
+				baby_k.song_grid.set_pattern_id_by_adjustment(this.cell.x, baby_k.song_pos, -16);
 			}
 			// increase pattern number by 16
 			else if (key.label == 'CONTROL_' + SPKEY.EQUAL
 			|| key.label == 'CONTROL_' + SPKEY.NUM_PLUS) {
+				baby_k.song_grid.set_pattern_id_by_adjustment(this.cell.x, baby_k.song_pos, 16);
 			}
 			// decrease pattern number across row
 			else if (key.label == 'SHIFT_' + SPKEY.DASH
