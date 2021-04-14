@@ -53,9 +53,54 @@ let baby_k_input_song = {
 		else return 0;
 	},
 
-	on_key: function() {
+	on_key: function(key) {
 		var advance = false;
+		this.on_key_pattern_adjust(this.cell.x, this.cell.y, key);
 		return advance;
+	},
+
+	on_key_pattern_adjust: function(x, y, key) {
+		// ADJUST PATTERN NUMBERS KEYCOMBOS
+		// decrease pattern number
+		if (key.label == SPKEY.DASH
+		|| key.label == SPKEY.NUM_MINUS) {
+			this.set_pattern_id_by_adjustment(x, y, -1);
+		}
+		// increase pattern number
+		else if (key.label == SPKEY.EQUAL
+		|| key.label == SPKEY.NUM_PLUS) {
+			this.set_pattern_id_by_adjustment(x, y, 1);
+		}
+		// decrease pattern number by 16
+		else if (key.label == 'CONTROL_' + SPKEY.DASH
+		|| key.label == 'CONTROL_' + SPKEY.NUM_MINUS) {
+			this.set_pattern_id_by_adjustment(x, y, -16);
+		}
+		// increase pattern number by 16
+		else if (key.label == 'CONTROL_' + SPKEY.EQUAL
+		|| key.label == 'CONTROL_' + SPKEY.NUM_PLUS) {
+			this.set_pattern_id_by_adjustment(x, y, 16);
+		}
+		// decrease pattern number across row
+		else if (key.label == 'SHIFT_' + SPKEY.DASH
+		|| key.label == 'SHIFT_' + SPKEY.NUM_MINUS) {
+			this.set_pattern_row_by_adjustment(y, -1);
+		}
+		// increase pattern number across row
+		else if (key.label == 'SHIFT_' + SPKEY.EQUAL
+		|| key.label == 'SHIFT_' + SPKEY.NUM_PLUS) {
+			this.set_pattern_row_by_adjustment(y, 1);
+		}
+		// decrease pattern number by 16 across row
+		else if (key.label == 'CONTROL_SHIFT_' + SPKEY.DASH
+		|| key.label == 'CONTROL_SHIFT_' + SPKEY.NUM_MINUS) {
+			this.set_pattern_row_by_adjustment(y, -16);
+		}
+		// increase pattern number by 16 across row
+		else if (key.label == 'CONTROL_SHIFT_' + SPKEY.EQUAL
+		|| key.label == 'CONTROL_SHIFT_' + SPKEY.NUM_PLUS) {
+			this.set_pattern_row_by_adjustment(y, 16);
+		}
 	},
 
 	on_update: function() {
@@ -81,6 +126,8 @@ let baby_k_input_song = {
 	},
 
 	set_pattern_id: function(id, x, y) {
+		let cell_x = this.cell.x;
+		let cell_y = this.cell.y;
 		// put new value in song data
 		this.value = id;
 		this.cell.x = x;
@@ -92,14 +139,23 @@ let baby_k_input_song = {
 		// focus or blur or highlight or selected/block
 		// preferably inverted focus
 		inputs.types.grid.cell_update(this, 'focus');
+		this.cell.x = cell_x;
+		this.cell.y = cell_y;
+		this.value = this.data[cell_x][cell_y];
 	},
 
 	set_pattern_id_by_adjustment(x, y, amount) {
-		inputs.types.grid.set_position(baby_k.song_grid, this.cell.x, baby_k.song_pos);
-		let id = baby_k.song_grid.value;
+		//inputs.types.grid.set_position(baby_k.song_grid, this.cell.x, baby_k.song_pos);
+		let id = this.data[x][y];
 		id += amount;
 		id = Math.max(id, 0);
 		id = Math.min(id, baby_k.pattern_max_id);
-		baby_k.song_grid.set_pattern_id(id, this.cell.x, baby_k.song_pos);
+		this.set_pattern_id(id, x, baby_k.song_pos);
+	},
+
+	set_pattern_row_by_adjustment(y, amount) {
+		for (let x = 0; x < 4; x++) {
+			this.set_pattern_id_by_adjustment(x, y, amount);	
+		}
 	}
 }

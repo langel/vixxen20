@@ -64,43 +64,7 @@ let baby_k_input_pattern = {
 		// cursor does not advance with keys below
 		else {
 			var advance = false;
-			// ADJUST PATTERN NUMBERS KEYCOMBOS
-			// decrease pattern number
-			if (key.label == SPKEY.DASH
-			|| key.label == SPKEY.NUM_MINUS) {
-				baby_k.song_grid.set_pattern_id_by_adjustment(this.cell.x, baby_k.song_pos, -1);
-			}
-			// increase pattern number
-			else if (key.label == SPKEY.EQUAL
-			|| key.label == SPKEY.NUM_PLUS) {
-				baby_k.song_grid.set_pattern_id_by_adjustment(this.cell.x, baby_k.song_pos, 1);
-			}
-			// decrease pattern number by 16
-			else if (key.label == 'CONTROL_' + SPKEY.DASH
-			|| key.label == 'CONTROL_' + SPKEY.NUM_MINUS) {
-				baby_k.song_grid.set_pattern_id_by_adjustment(this.cell.x, baby_k.song_pos, -16);
-			}
-			// increase pattern number by 16
-			else if (key.label == 'CONTROL_' + SPKEY.EQUAL
-			|| key.label == 'CONTROL_' + SPKEY.NUM_PLUS) {
-				baby_k.song_grid.set_pattern_id_by_adjustment(this.cell.x, baby_k.song_pos, 16);
-			}
-			// decrease pattern number across row
-			else if (key.label == 'SHIFT_' + SPKEY.DASH
-			|| key.label == 'SHIFT_' + SPKEY.NUM_MINUS) {
-			}
-			// increase pattern number across row
-			else if (key.label == 'SHIFT_' + SPKEY.EQUAL
-			|| key.label == 'SHIFT_' + SPKEY.NUM_PLUS) {
-			}
-			// decrease pattern number by 16 across row
-			else if (key.label == 'CONTROL_SHIFT_' + SPKEY.DASH
-			|| key.label == 'CONTROL_SHIFT_' + SPKEY.NUM_MINUS) {
-			}
-			// increase pattern number by 16 across row
-			else if (key.label == 'CONTROL_SHIFT_' + SPKEY.EQUAL
-			|| key.label == 'CONTROL_SHIFT_' + SPKEY.NUM_PLUS) {
-			}
+			baby_k.song_grid.on_key_pattern_adjust(this.cell.x, baby_k.song_pos, key);
 		}
 		// only update cell value if a value is found
 		if (typeof this.value !== "undefined") {
