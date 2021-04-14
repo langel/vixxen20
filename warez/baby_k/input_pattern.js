@@ -64,27 +64,24 @@ let baby_k_input_pattern = {
 		// cursor does not advance with keys below
 		else {
 			var advance = false;
-			// MOVE AROUND SONG
-			// next row of song
-			if (key.label == 'CONTROL_SHIFT_' + SPKEY.ARROW_DOWN) {
-			}
-			// previous row of song
-			if (key.label == 'CONTROL_SHIFT_' + SPKEY.ARROW_UP) {
-			}
-			// skip ahead 4 rows of song
-			if (key.label == 'CONTROL_SHIFT_' + SPKEY.ARROW_RIGHT) {
-			}
-			// skip behind 4 rows of song
-			if (key.label == 'CONTROL_SHIFT_' + SPKEY.ARROW_LEFT) {
-			}
 			// ADJUST PATTERN NUMBERS KEYCOMBOS
 			// decrease pattern number
 			if (key.label == SPKEY.DASH
 			|| key.label == SPKEY.NUM_MINUS) {
+				inputs.types.grid.set_position(baby_k.song_grid, this.cell.x, baby_k.song_pos);
+				let id = baby_k.song_grid.value;
+				id--;
+				id = Math.max(id, 0);
+				baby_k.song_grid.set_pattern_id(id, this.cell.x);
 			}
 			// increase pattern number
 			else if (key.label == SPKEY.EQUAL
 			|| key.label == SPKEY.NUM_PLUS) {
+				inputs.types.grid.set_position(baby_k.song_grid, this.cell.x, baby_k.song_pos);
+				let id = baby_k.song_grid.value;
+				id++;
+				id = Math.min(id, baby_k.pattern_max_id);
+				baby_k.song_grid.set_pattern_id(id, this.cell.x);
 			}
 			// decrease pattern number by 16
 			else if (key.label == 'CONTROL_' + SPKEY.DASH

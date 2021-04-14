@@ -20,6 +20,7 @@ var baby_k = {
 	notice_counter: 0,
 	octave: 0,
 	pattern_length: 16,
+	pattern_max_id: 127,
 	pattern_pos: 0,
 	song_pos: 0,
 	song_max_length: 127,
@@ -205,7 +206,7 @@ var baby_k = {
 		baby_k.notice(log);
 		if (baby_k.follow_mode && !baby_k.pause) {
 			this.pattern_grid_song_pos = this.song_pos;
-			inputs.get_field_by_label('PATTERN').load_patterns(this.pattern_grid_song_pos);
+			this.pattern_grid.load_patterns(this.pattern_grid_song_pos);
 		}
 	},
 

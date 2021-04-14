@@ -372,4 +372,10 @@ inputs.types.grid = {
 
 	set_block: function(field, x1, y1, x2, y2) {
 	},
+
+	set_position: function(field, x, y) {
+		field.cell.x = x;
+		field.cell.y = y;
+		field.value = field.data[x][y];
+	}
 }

@@ -73,10 +73,20 @@ let baby_k_input_song = {
 	},
 
 	set_current_row: function(row) {
-		let old_row = baby_k.song_pos
 		inputs.types.grid.row_dehighlight(baby_k.song_grid, baby_k.song_pos);
-		baby_k.update_song_row_display(row);
 		baby_k.song_pos = row;
+		baby_k.update_song_row_display(row);
+		baby_k.pattern_grid.load_patterns(row);
 		inputs.types.grid.row_highlight(baby_k.song_grid, baby_k.song_pos);
+	},
+
+	set_pattern_id: function(id, x) {
+		// put new value in song data
+		this.value = id;
+		this.cell.x = x;
+		console.log(id);
+		baby_k.song.pattern_order[this.cell.y][this.cell.x] = this.value;
+		this.data[this.cell.x][this.cell.y] = this.value;
+		inputs.types.grid.cell_update(this, 'focus');
 	}
 }
