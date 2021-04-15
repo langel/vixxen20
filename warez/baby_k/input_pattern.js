@@ -6,7 +6,7 @@ let baby_k_input_pattern = {
 	cell_height: 1,
 	cell_margin: 1,
 	cell_type: 'custom',
-	cell_value: 0,
+	value_default: 0,
 	width: 4,
 	height: 16,
 	x: 2,
@@ -73,5 +73,13 @@ let baby_k_input_pattern = {
 			baby_k.song.patterns[pattern_id][this.cell.y] = this.value;
 		}
 		return advance;
-	}	
+	},
+
+	on_update: function() {
+		if (baby_k.follow_mode && baby_k.song_grid.cell ) {
+			baby_k.song_grid.cell.x = this.cell.x;
+			inputs.types.grid.draw_all(baby_k.song_grid);
+		}
+	}
+
 };

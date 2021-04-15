@@ -6,7 +6,7 @@ let baby_k_input_song = {
 	cell_height: 1,
 	cell_margin: 1,
 	cell_type: 'hex',
-	cell_value: 0,
+	value_default: 0,
 	width: 4,
 	height: 16,
 	x: 19,
@@ -114,6 +114,10 @@ let baby_k_input_song = {
 		}
 		if (baby_k.follow_mode && !baby_k.pause) {
 			this.cell.y = baby_k.song_pos;
+		}
+		if (baby_k.follow_mode && baby_k.pattern_grid.cell ) {
+			baby_k.pattern_grid.cell.x = this.cell.x;
+			inputs.types.grid.draw_all(baby_k.pattern_grid);
 		}
 	},
 

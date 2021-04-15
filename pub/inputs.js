@@ -72,7 +72,7 @@ var inputs = {
 	
 	style: {
 		// color, inverse
-		block: [3, 1],
+		block: [7, 1],
 		block_high: [2, 1],
 		blur: [1, 0],
 		focus: [5, 1],

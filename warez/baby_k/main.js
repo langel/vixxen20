@@ -111,7 +111,7 @@ var baby_k = {
 			inputs.types.grid.cell_advance(this.song_grid, 'down');
 		}
 		else {
-			inputs.types.grid.row_dehighlight(this.pattern_grid, 15);
+			inputs.types.grid.row_dehighlight(this.pattern_grid);
 		}
 	},
 	
@@ -158,10 +158,8 @@ var baby_k = {
 		if (this.song_pos == this.pattern_grid_song_pos) {
 			let field = inputs.get_field_by_label('PATTERN');
 			inputs.types.grid.row_highlight(field, this.pattern_pos);
-			if (this.follow_mode && inputs.get_current_field().label == field.label) {
-				field.cell.y = this.pattern_pos;
-				inputs.types.grid.draw_all(field);
-			}
+			field.cell.y = this.pattern_pos;
+			inputs.types.grid.draw_all(field);
 		}
 		this.pattern_pos++;
 	},

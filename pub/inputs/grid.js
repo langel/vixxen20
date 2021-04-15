@@ -35,6 +35,8 @@ inputs.types.grid = {
 		field.value = field.data[field.cell.x][field.cell.y];
 		// call inputs on_update if defined
 		if (typeof field.on_update == 'function') field.on_update();
+		// check for block marking
+		if (field.block && field.block.marking) this.block_update(field);
 		// redraw whole grid
 		this.draw_all(field);
 	},
@@ -62,8 +64,18 @@ inputs.types.grid = {
 			for (var cy = field.height + field.scroll.y.pos - 1; cy >= field.scroll.y.pos; cy--) {
 				field.cell.y = cy;
 				let style = 'blur';
-				if (cy == field.highlight) style = 'highlight';
-				if (cx == x && cy == y) style = 'focus';
+				let is_marked = this.block_cell_is_marked(field, field.cell.x, field.cell.y);
+				if (is_marked) style = 'block';
+				if (cy == field.highlight) {
+					if (is_marked) style = 'block_high';
+					else style = 'highlight';
+				}
+				if (cx == x && cy == y) {
+					if (inputs.get_current_field().label == field.label || is_marked) {
+						style = 'focus';
+					}
+					else style = 'pose';
+				}
 				this.cell_update(field, style);
 			}
 		}
@@ -115,7 +127,7 @@ inputs.types.grid = {
 		else for (var x = field.width; x > 0; x--) {
 			var column = [];
 			for (var y = field.height; y > 0; y--) {
-				column.push(field.cell_value);
+				column.push(field.value_default);
 			}
 			field.data.push(column);
 		}
@@ -127,6 +139,8 @@ inputs.types.grid = {
 	on_key: function(field, key) {
 		// flag for cell advancement
 		var advance = false;
+		// disable block marking if shift depressed
+		this.block_marking(field);
 		// tab out
 		if (key.code == 9) return;
 		// grid navigate
@@ -309,16 +323,21 @@ inputs.types.grid = {
 		// BLOCK FUNCTIONS
 		else if (key.label == 'SHIFT_'+SPKEY.ARROW_DOWN) {
 			advance = 'down';
+			this.block_set(field);
 		}
 		else if (key.label == 'SHIFT_'+SPKEY.ARROW_LEFT) {
 			advance = 'left';
+			this.block_set(field);
 		}
 		else if (key.label == 'SHIFT_'+SPKEY.ARROW_RIGHT) {
 			advance = 'right';
+			this.block_set(field);
 		}
 		else if (key.label == 'SHIFT_'+SPKEY.ARROW_UP) {
 			advance = 'up';
+			this.block_set(field);
 		}
+		// XXX not sure if 'D' will work
 		else if (key.label == 'CONTROL_D') {
 			this.unset_block(field);
 		}
@@ -344,13 +363,23 @@ inputs.types.grid = {
 		else return false;
 	},
 
-	block_is_marked: function(field, x, y) {
+	block_cell_is_marked: function(field, x, y) {
+		if (typeof field.block == 'undefined') return false;
 		let b = field.block;
+		if (x >= b.mx1 && x <= b.mx2
+		&& y >= b.my1 && y <= b.my2) return true;
+		return false;
+	},
 
+	block_marking: function(field) {
+		if (inputs.mod.shift && field.block && field.block.marking) return true;
+		if (field.block) field.block.marking = false;
+		return false;
 	},
 
 	block_set: function(field) {
-		if (typeof field.block == 'undefined') {
+		if (typeof field.block == 'undefined'
+		|| field.block.marking == false) {
 			field.block = {
 				marking: true,
 				x1: field.cell.x,
@@ -359,6 +388,17 @@ inputs.types.grid = {
 				y2: field.cell.y,
 			};
 		}
+	},
+
+	block_update: function (field) {
+		// update block data
+		field.block.x2 = field.cell.x;
+		field.block.y2 = field.cell.y;
+		// create usable mirror
+		field.block.mx1 = Math.min(field.block.x1, field.block.x2);
+		field.block.mx2 = Math.max(field.block.x1, field.block.x2);
+		field.block.my1 = Math.min(field.block.y1, field.block.y2);
+		field.block.my2 = Math.max(field.block.y1, field.block.y2);
 	},
 
 	block_unset: function(field) {
