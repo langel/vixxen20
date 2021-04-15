@@ -154,13 +154,13 @@ var baby_k = {
 			// highlight appropriate rows
 			inputs.types.grid.row_highlight(inputs.get_field_by_label('SPEED'), this.pattern_pos);
 			inputs.types.grid.row_highlight(inputs.get_field_by_label('VOLUME'), this.pattern_pos);
-			if (this.song_pos == this.pattern_grid_song_pos) {
-				let field = inputs.get_field_by_label('PATTERN');
-				inputs.types.grid.row_highlight(field, this.pattern_pos);
-				if (this.follow_mode && inputs.get_current_field().label == 'PATTERN') {
-					field.cell.y = this.pattern_pos;
-					inputs.types.grid.draw_column(field, field.cell.x);
-				}
+		}
+		if (this.song_pos == this.pattern_grid_song_pos) {
+			let field = inputs.get_field_by_label('PATTERN');
+			inputs.types.grid.row_highlight(field, this.pattern_pos);
+			if (this.follow_mode && inputs.get_current_field().label == field.label) {
+				field.cell.y = this.pattern_pos;
+				inputs.types.grid.draw_all(field);
 			}
 		}
 		this.pattern_pos++;
@@ -227,27 +227,6 @@ var baby_k = {
 		},
 	},
 
-
-	/* change order cell value; update view
-	 * row - song order position of change
-	 * channel - values 0..4
-	 * pattern_id - new pattern value for cell
-	 */
-	update_order_cell: function(row, col, value) {
-		beta_k.song.pattern_order[row][col] = value;
-		inputs.types.grid.draw_column(inputs.get_field_by_label('PATTERN'), col);
-		inputs.types.grid.cell_draw(inputs.get_field_by_label('SONG'), col, row, 'blur');
-	},
-
-	/* change entire order row; update view
-	 * row - song order position of change
-	 * values - an array with a pattern id for each channel
-	 */
-	update_order_row: function(row, values) {
-		for (var i = 0; i < 4; i++) {
-			this.update_order_cell(row, i, values[i]);
-		}
-	},
 
 }
 

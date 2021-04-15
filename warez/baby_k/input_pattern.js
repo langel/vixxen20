@@ -33,7 +33,7 @@ let baby_k_input_pattern = {
 			var pattern_id = baby_k.song.pattern_order[pattern_order_row][i];
 			this.data.push((pattern_id != 255) ? baby_k.song.patterns[pattern_id] : baby_k_new_pattern);
 		};
-		inputs.types.grid.draw_all(inputs.get_field_by_label('PATTERN'));
+		inputs.types.grid.draw_all(this);
 	},
 
 	on_init: function() {

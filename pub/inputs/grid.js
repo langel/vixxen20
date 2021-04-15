@@ -1,13 +1,9 @@
 inputs.types.grid = {
 
 	cell_advance: function(field, direction) {
-		if (field.cell.y == field.row_highlighted) {
-			inputs.highlight(field);
-		}
-		else {
-			inputs.blur(field);
-		}
+		let marking = (typeof field.block !== 'undefined');
 		if (direction !== false) field.hexkeycount = 0;
+		// set new  position
 		if (direction == 'down') {
 			field.cell.y++;
 			if (field.cell.y - field.scroll.y.pos >= field.height) {
@@ -16,7 +12,6 @@ inputs.types.grid = {
 					field.scroll.y.pos = 0;
 					field.cell.y = 0;
 				}
-				this.draw_all(field);
 			}
 		}
 		if (direction == 'left') {
@@ -32,22 +27,21 @@ inputs.types.grid = {
 			if (field.cell.y < 0) {
 				field.scroll.y.pos = field.scroll.y.length - field.height + 1;
 				field.cell.y = field.scroll.y.length;
-				this.draw_all(field);
 			}
 			else if (field.scroll.y.pos > field.cell.y) {
 				field.scroll.y.pos--;
-				this.draw_all(field);
 			}
 		}
-		this.cell_update(field);
-		inputs.focus(field);
+		field.value = field.data[field.cell.x][field.cell.y];
+		// call inputs on_update if defined
+		if (typeof field.on_update == 'function') field.on_update();
+		// redraw whole grid
+		this.draw_all(field);
 	},
 
 	cell_update: function(field, style='blur') {
 		// update cell value
 		field.value = field.data[field.cell.x][field.cell.y];
-		// call inputs on_update if defined
-		if (typeof field.on_update == 'function') field.on_update();
 		// update cell display
 		field.display = this.get_cell_display(field, field.cell.x, field.cell.y);
 		// position the cell correctly
@@ -59,46 +53,24 @@ inputs.types.grid = {
 	},
 
 	draw_all: function(field) {
+//console.log('draw_all:' + field.label);
 		var x = field.cell.x;
 		var y = field.cell.y;
 		var old_cursor = field.cell;
-		for (let cx = field.width + field.scroll.x.pos - 1; cx >= field.scroll.x.pos; cx --) {
+		for (let cx = field.width + field.scroll.x.pos - 1; cx >= field.scroll.x.pos; cx--) {
 			field.cell.x = cx;
 			for (var cy = field.height + field.scroll.y.pos - 1; cy >= field.scroll.y.pos; cy--) {
 				field.cell.y = cy;
-				this.cell_update(field, 'blur');
+				let style = 'blur';
+				if (cy == field.highlight) style = 'highlight';
+				if (cx == x && cy == y) style = 'focus';
+				this.cell_update(field, style);
 			}
 		}
 		field.cell.x = x;
 		field.cell.y = y;
-		if (inputs.get_current_field().label == field.label) {
-			this.cell_update(field, 'focus');
-		}
 	},
 
-	draw_column: function(field, x) {
-		var x = field.cell.x;
-		var y = field.cell.y;
-		field.cell.x = x;
-		for (var i = field.height + field.scroll.y.pos - 1; i >= field.scroll.y.pos; i--) {
-			field.cell.y = i;
-			this.cell_update(field);
-		}
-		field.cell.x = x;
-		field.cell.y = y;
-		if (inputs.get_current_field().label == field.label) {
-			this.cell_update(field, 'focus');
-		}
-	},
-
-	draw_row: function(field, y) {
-		field.cell.y = y;
-		for (var x = field.width-1; x >= 0; x--) {
-			field.cell.x = x;
-			this.cell_update(field);
-		}
-	},
-	
 	get_cell_display: function(field, x, y) {
 		var value = field.data[x][y];
 		// handle custom cell display
@@ -271,7 +243,6 @@ inputs.types.grid = {
 					let value = field.value_default;
 					field.data[field.cell.x].push(value);
 				}
-				inputs.types.grid.draw_column(field, field.cell.x);
 			}
 		}
 		// DELETE key
@@ -290,7 +261,6 @@ inputs.types.grid = {
 				advance = false;
 				let value = field.value_default;
 				field.data[field.cell.x].splice(field.cell.y, 0, value);
-				inputs.types.grid.draw_column(field, field.cell.x);
 			}
 		}
 		// SHIFT BACKSPACE key
@@ -336,33 +306,37 @@ inputs.types.grid = {
 			inputs.types.grid.draw_all(field);
 		}
 
+		// BLOCK FUNCTIONS
+		else if (key.label == 'SHIFT_'+SPKEY.ARROW_DOWN) {
+			advance = 'down';
+		}
+		else if (key.label == 'SHIFT_'+SPKEY.ARROW_LEFT) {
+			advance = 'left';
+		}
+		else if (key.label == 'SHIFT_'+SPKEY.ARROW_RIGHT) {
+			advance = 'right';
+		}
+		else if (key.label == 'SHIFT_'+SPKEY.ARROW_UP) {
+			advance = 'up';
+		}
+		else if (key.label == 'CONTROL_D') {
+			this.unset_block(field);
+		}
+
 		// call custom key handler
 		else if (typeof field.on_key === 'function') {
 			advance = field.on_key(key);
 		}
-		// display cursor updates
-		this.cell_update(field, 'focus');
-		// advance cell if defined
+		// advance / redraw cell
 		this.cell_advance(field, advance);
 	},
 
-	row_dehighlight: function(field, row) {
-		if (this.row_is_visible(field, row)) for (var i = 0; i < field.width; i++) {
-			var pos = this.get_cell_position(field, i, row);
-			var display = this.get_cell_display(field, i, row);
-			inputs.draw(pos[0], pos[1], display, 'blur');
-		}
+	row_dehighlight: function(field) {
+		field.highlight = -1;
 	},
 
 	row_highlight: function(field, row) {
-		this.row_dehighlight(field, field.row_highlighted);
-		field.row_highlighted = row;
-		if (this.row_is_visible(field, row)) for (var i = 0; i < field.width; i++) {
-			var pos = this.get_cell_position(field, i, row);
-			var display = this.get_cell_display(field, i, row);
-			inputs.draw(pos[0], pos[1], display, 'highlight');
-		}
-		if (inputs.field_index == inputs.get_field_by_label(field.label).index) inputs.focus(field);
+		field.highlight = row;
 	},
 
 	row_is_visible: function(field, row) {
@@ -370,7 +344,25 @@ inputs.types.grid = {
 		else return false;
 	},
 
-	set_block: function(field, x1, y1, x2, y2) {
+	block_is_marked: function(field, x, y) {
+		let b = field.block;
+
+	},
+
+	block_set: function(field) {
+		if (typeof field.block == 'undefined') {
+			field.block = {
+				marking: true,
+				x1: field.cell.x,
+				y1: field.cell.y,
+				x2: field.cell.x,
+				y2: field.cell.y,
+			};
+		}
+	},
+
+	block_unset: function(field) {
+		delete field.block;
 	},
 
 	set_position: function(field, x, y) {

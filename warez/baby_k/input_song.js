@@ -118,11 +118,11 @@ let baby_k_input_song = {
 	},
 
 	set_current_row: function(row) {
-		inputs.types.grid.row_dehighlight(baby_k.song_grid, baby_k.song_pos);
 		baby_k.song_pos = row;
 		baby_k.update_song_row_display(row);
 		baby_k.pattern_grid.load_patterns(row);
 		inputs.types.grid.row_highlight(baby_k.song_grid, baby_k.song_pos);
+		inputs.types.grid.draw_all(this);
 	},
 
 	set_pattern_id: function(id, x, y) {
@@ -145,7 +145,6 @@ let baby_k_input_song = {
 	},
 
 	set_pattern_id_by_adjustment(x, y, amount) {
-		//inputs.types.grid.set_position(baby_k.song_grid, this.cell.x, baby_k.song_pos);
 		let id = this.data[x][y];
 		id += amount;
 		id = Math.max(id, 0);
