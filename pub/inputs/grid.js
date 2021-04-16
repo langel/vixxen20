@@ -254,9 +254,9 @@ inputs.types.grid = {
 				}
 			}
 		}
-		// DELETE key
+		// . or DELETE key
 		// set cell empty and advance down
-		else if (key.label == SPKEY.DELETE) {
+		else if (key.label == SPKEY.PERIOD || key.label == SPKEY.DELETE) {
 			if (typeof field.value_default != 'undefined') {
 				advance = 'down';
 				let value = field.value_default;
@@ -332,6 +332,10 @@ inputs.types.grid = {
 			advance = 'up';
 			this.block_set(field);
 		}
+		// select column/all   CONTROL A
+		else if (key.label == 'CONTROL_65') {
+			this.block_method_select_all(field);
+		}
 		// copy                CONTROL C
 		else if (key.label == 'CONTROL_67') {
 			this.block_method_copy(field);
@@ -385,10 +389,6 @@ inputs.types.grid = {
 		return false;
 	},
 
-	block_function: function(field, method) {
-		console.log(method);
-	},
-
 	block_marking: function(field) {
 		if (inputs.mod.shift && field.block && field.block.marking) return true;
 		if (field.block) field.block.marking = false;
@@ -396,15 +396,19 @@ inputs.types.grid = {
 	},
 
 	block_method_copy: function(field) {
-		if (typeof field.block == 'undefined') return false;
-		let b = field.block;
 		let clipboard = [];
-		for (let x = b.mx1; x <= b.mx2; x++) {
-			let column = [];
-			for (let y = b.my1; y <= b.my2; y++) {
-				column.push(field.data[x][y]);
+		if (typeof field.block == 'undefined') {
+			clipboard.push([field.value]);
+		} 
+		else {
+			let b = field.block;
+			for (let x = b.mx1; x <= b.mx2; x++) {
+				let column = [];
+				for (let y = b.my1; y <= b.my2; y++) {
+					column.push(field.data[x][y]);
+				}
+				clipboard.push(column);
 			}
-			clipboard.push(column);
 		}
 		field.clipboard = clipboard;
 		baby_k.notice('Data in clipboard! :D');	
@@ -412,19 +416,24 @@ inputs.types.grid = {
 	},
 	
 	block_method_cut: function(field) {
-		if (typeof field.block == 'undefined') return false;
-		let b = field.block;
 		let clipboard = [];
-		for (let x = b.mx1; x <= b.mx2; x++) {
-			let column = [];
-			for (let y = b.my1; y <= b.my2; y++) {
-				column.push(field.data[x][y]);
-				field.data[x][y] = field.value_default;
+		if (typeof field.block == 'undefined') {
+			clipboard.push([field.value]);
+			field.data[field.cell.x][field.cell.y] = field.value_default;
+		} 
+		else {
+			let b = field.block;
+			for (let x = b.mx1; x <= b.mx2; x++) {
+				let column = [];
+				for (let y = b.my1; y <= b.my2; y++) {
+					column.push(field.data[x][y]);
+					field.data[x][y] = field.value_default;
+				}
+				clipboard.push(column);
 			}
-			clipboard.push(column);
 		}
 		field.clipboard = clipboard;
-		baby_k.notice('DXTX in clipboard! B)');	
+		baby_k.notice('DXTX in clipboard! ;}');	
 		this.block_unset(field);
 	},
 
@@ -447,6 +456,36 @@ inputs.types.grid = {
 		this.draw_all(field);
 	},
 
+	block_method_select_all: function(field) {
+		if (typeof field.block == 'undefined'
+		|| typeof field.block.all == 'undefined') {
+			field.block = {
+				marking: false,
+				all: 'column',
+				x1: field.cell.x,
+				y1: field.scroll.y.pos,
+				x2: field.cell.x,
+				y2: field.scroll.y.pos + field.height - 1,
+			};
+			this.block_usable_mirror(field);
+		}
+		else if (field.block.all == 'column') {
+			field.block = {
+				marking: false,
+				all: 'all',
+				x1: field.scroll.x.pos,
+				y1: field.scroll.y.pos,
+				x2: field.scroll.x.pos + field.width - 1,
+				y2: field.scroll.y.pos + field.height - 1,
+			};
+			this.block_usable_mirror(field);
+		}
+		else if (field.block.all == 'all') {
+			this.block_unset(field);
+		}
+		this.draw_all(field);
+	},
+
 	block_set: function(field) {
 		if (typeof field.block == 'undefined'
 		|| field.block.marking == false) {
@@ -460,19 +499,23 @@ inputs.types.grid = {
 		}
 	},
 
-	block_update: function (field) {
+	block_update: function(field) {
 		// update block data
 		field.block.x2 = field.cell.x;
 		field.block.y2 = field.cell.y;
+		this.block_usable_mirror(field);
+	},
+
+	block_unset: function(field) {
+		delete field.block;
+	},
+
+	block_usable_mirror: function(field) {
 		// create usable mirror
 		field.block.mx1 = Math.min(field.block.x1, field.block.x2);
 		field.block.mx2 = Math.max(field.block.x1, field.block.x2);
 		field.block.my1 = Math.min(field.block.y1, field.block.y2);
 		field.block.my2 = Math.max(field.block.y1, field.block.y2);
-	},
-
-	block_unset: function(field) {
-		delete field.block;
 	},
 
 	set_position: function(field, x, y) {
