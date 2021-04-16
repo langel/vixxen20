@@ -47,15 +47,11 @@ inputs.types.grid = {
 		// update cell display
 		field.display = this.get_cell_display(field, field.cell.x, field.cell.y);
 		// position the cell correctly
-		this.get_cell_position(field, field.cell.x, field.cell.y).map((val, index) => {
-			if (index == 0) field.x = val;
-			else field.y = val;
-		});
+		this.update_cursor_pos(field);
 		inputs.draw_display(field, style);
 	},
 
 	draw_all: function(field) {
-//console.log('draw_all:' + field.label);
 		var x = field.cell.x;
 		var y = field.cell.y;
 		var old_cursor = field.cell;
@@ -64,7 +60,7 @@ inputs.types.grid = {
 			for (var cy = field.height + field.scroll.y.pos - 1; cy >= field.scroll.y.pos; cy--) {
 				field.cell.y = cy;
 				let style = 'blur';
-				let is_marked = this.block_cell_is_marked(field, field.cell.x, field.cell.y);
+				let is_marked = this.block_cell_is_marked(field);
 				if (is_marked) style = 'block';
 				if (cy == field.highlight) {
 					if (is_marked) style = 'block_high';
@@ -81,6 +77,13 @@ inputs.types.grid = {
 		}
 		field.cell.x = x;
 		field.cell.y = y;
+		// draw cursor last
+		let is_marked = this.block_cell_is_marked(field, field.cell.x, field.cell.y);
+		if (inputs.get_current_field().label == field.label || is_marked) {
+			style = 'focus';
+		}
+		else style = 'pose';
+		this.cell_update(field, style);
 	},
 
 	get_cell_display: function(field, x, y) {
@@ -97,14 +100,6 @@ inputs.types.grid = {
 		else {
 			return kernel.display.pad(value, field.cell_width, ' ');
 		}
-	},
-
-	get_cell_position: function(field, x, y) {
-		// returns [x, y]
-		return [
-			(x == 0) ? field.origin_x : field.origin_x + (x - field.scroll.x.pos) * (field.cell_width + field.cell_margin),
-			field.origin_y + y - field.scroll.y.pos
-		];
 	},
 
 	init: function(field) {
@@ -337,9 +332,21 @@ inputs.types.grid = {
 			advance = 'up';
 			this.block_set(field);
 		}
-		// XXX not sure if 'D' will work
-		else if (key.label == 'CONTROL_D') {
-			this.unset_block(field);
+		// copy                CONTROL C
+		else if (key.label == 'CONTROL_67') {
+			this.block_method_copy(field);
+		}
+		// deselect            CONTROL D
+		else if (key.label == 'CONTROL_68') {
+			this.block_unset(field);
+		}
+		// paste               CONTROL V
+		else if (key.label == 'CONTROL_86') {
+			this.block_method_paste(field);
+		}
+		// cut                 CONTROL X
+		else if (key.label == 'CONTROL_88') {
+			this.block_method_cut(field);
 		}
 
 		// call custom key handler
@@ -363,18 +370,81 @@ inputs.types.grid = {
 		else return false;
 	},
 
-	block_cell_is_marked: function(field, x, y) {
+	update_cursor_pos: function(field) {
+		field.x = (field.cell.x == 0) ? field.origin_x : field.origin_x + (field.cell.x - field.scroll.x.pos) * (field.cell_width + field.cell_margin);
+		field.y = field.origin_y + field.cell.y - field.scroll.y.pos;
+	},
+
+	block_cell_is_marked: function(field) {
 		if (typeof field.block == 'undefined') return false;
 		let b = field.block;
+		let x = field.cell.x;
+		let y = field.cell.y;
 		if (x >= b.mx1 && x <= b.mx2
 		&& y >= b.my1 && y <= b.my2) return true;
 		return false;
+	},
+
+	block_function: function(field, method) {
+		console.log(method);
 	},
 
 	block_marking: function(field) {
 		if (inputs.mod.shift && field.block && field.block.marking) return true;
 		if (field.block) field.block.marking = false;
 		return false;
+	},
+
+	block_method_copy: function(field) {
+		if (typeof field.block == 'undefined') return false;
+		let b = field.block;
+		let clipboard = [];
+		for (let x = b.mx1; x <= b.mx2; x++) {
+			let column = [];
+			for (let y = b.my1; y <= b.my2; y++) {
+				column.push(field.data[x][y]);
+			}
+			clipboard.push(column);
+		}
+		field.clipboard = clipboard;
+		baby_k.notice('Data in clipboard! :D');	
+		this.block_unset(field);
+	},
+	
+	block_method_cut: function(field) {
+		if (typeof field.block == 'undefined') return false;
+		let b = field.block;
+		let clipboard = [];
+		for (let x = b.mx1; x <= b.mx2; x++) {
+			let column = [];
+			for (let y = b.my1; y <= b.my2; y++) {
+				column.push(field.data[x][y]);
+				field.data[x][y] = field.value_default;
+			}
+			clipboard.push(column);
+		}
+		field.clipboard = clipboard;
+		baby_k.notice('DXTX in clipboard! B)');	
+		this.block_unset(field);
+	},
+
+	block_method_paste: function(field) {
+		if (typeof field.clipboard == 'undefined') {
+			baby_k.notice('Nothing in clipboard! :O');	
+			return false;
+		}
+		let x = field.cell.x;
+		field.clipboard.forEach((col) => {
+			let y = field.cell.y;
+			col.forEach((val) => {
+				if (x <= field.width	&& y <= field.height) {
+					field.data[x][y] = val;
+				}
+				y++;
+			});
+			x++;
+		});
+		this.draw_all(field);
 	},
 
 	block_set: function(field) {

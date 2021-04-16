@@ -62,6 +62,8 @@ var baby_k = {
 		this.inputs = baby_k_inputs;
 		this.inputs.init();
 		inputs.init(this.inputs);
+		this.speed_grid = inputs.get_field_by_label('SPEED');
+		this.volume_grid = inputs.get_field_by_label('VOLUME');
 		kernel.frame.hook_add({
 			object: 'baby_k',
 			method: 'frame'
@@ -152,8 +154,10 @@ var baby_k = {
 			vic.set_volume(this.song.volume_table[this.pattern_pos]);
 			kernel.plot_str(26, 4, kernel.display.pad(vic.volume, 3, ' '), 1);
 			// highlight appropriate rows
-			inputs.types.grid.row_highlight(inputs.get_field_by_label('SPEED'), this.pattern_pos);
-			inputs.types.grid.row_highlight(inputs.get_field_by_label('VOLUME'), this.pattern_pos);
+			inputs.types.grid.row_highlight(this.speed_grid, this.pattern_pos);
+			inputs.types.grid.draw_all(this.speed_grid);
+			inputs.types.grid.row_highlight(this.volume_grid, this.pattern_pos);
+			inputs.types.grid.draw_all(this.volume_grid);
 		}
 		if (this.song_pos == this.pattern_grid_song_pos) {
 			let field = inputs.get_field_by_label('PATTERN');
