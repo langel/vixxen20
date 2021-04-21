@@ -34,7 +34,7 @@ inputs.types.grid = {
 		}
 		field.value = field.data[field.cell.x][field.cell.y];
 		// call inputs on_update if defined
-		if (typeof field.on_update == 'function') field.on_update();
+		this.on_update(field);
 		// check for block marking
 		if (field.block && field.block.marking) this.block_update(field);
 		// redraw whole grid
@@ -361,6 +361,11 @@ inputs.types.grid = {
 		this.cell_advance(field, advance);
 	},
 
+	on_update: function(field) {
+		// call inputs on_update if defined
+		if (typeof field.on_update == 'function') field.on_update();
+	},
+
 	row_dehighlight: function(field) {
 		field.highlight = -1;
 	},
@@ -443,16 +448,21 @@ inputs.types.grid = {
 			return false;
 		}
 		let x = field.cell.x;
+		let y = field.cell.y;
 		field.clipboard.forEach((col) => {
-			let y = field.cell.y;
+			field.cell.y = y;
 			col.forEach((val) => {
-				if (x <= field.width	&& y <= field.height) {
-					field.data[x][y] = val;
+				if (field.cell.x <= field.scroll.x.length 
+				&& field.cell.y <= field.scroll.y.length) {
+					field.data[field.cell.x][field.cell.y] = val;
+					this.on_update(field);
 				}
-				y++;
+				field.cell.y++;
 			});
-			x++;
+			field.cell.x++;
 		});
+		this.cell.x = x;
+		this.cell.y = y;
 		this.draw_all(field);
 	},
 
