@@ -90,7 +90,7 @@ var kernel = {
 		hook_remove_all: function() {
 			kernel.frame.hooks = [];
 		},
-		main: async function() {
+		main: function() {
 			// allow loop speed to be changed by NTSC/PAL setting
 			kernel.frame.hooks.forEach((hook) => {
 				window[hook.object][hook.method]();

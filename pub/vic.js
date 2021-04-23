@@ -194,7 +194,6 @@ var vic = {
 			var char_start = vic.char_rom_block * vic.char_rom_block_size + petscii * 8;
 			var color_bg = vic.color_hex(vic.color_bg);
 			var color_fg = vic.color_hex(color);
-			vic.char_table.tracker[table_y][table_x] = true;
 			var table_x_loc = table_x * 8;
 			var table_y_loc = table_y * 8;
 			for (var y=0; y<8; y++) {
@@ -209,10 +208,10 @@ var vic = {
 				}	
 				char_start++;
 			}
+			vic.char_table.tracker[table_y][table_x] = vic.char_table_ctx.getImageData(table_x * 8, table_y * 8, 8, 8);
 		}
 		// copy render to screen buff
-		var character = vic.char_table_ctx.getImageData(table_x * 8, table_y * 8, 8, 8);
-		vic.screen.buff_ctx.putImageData(character, char_x * 8, char_y * 8);
+		vic.screen.buff_ctx.putImageData(vic.char_table.tracker[table_y][table_x], char_x * 8, char_y * 8);
 	},
 
 	set_bg_color: function(color) {
@@ -297,7 +296,7 @@ var vic = {
 			if (vic._frame_sample_countdown < 0) {
 				vic._frame_sample_countdown += vic.samples_per_frame;
 				vic._frame_hook();
-				vic._screen_blit();
+				//vic._screen_blit();
 			}
 		}
 	},

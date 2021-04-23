@@ -6,6 +6,7 @@ let baby_k_input_song = {
 	cell_height: 1,
 	cell_margin: 1,
 	cell_type: 'hex',
+	cell_blur_pose: true,
 	value_default: 0,
 	width: 4,
 	height: 16,
@@ -24,6 +25,24 @@ let baby_k_input_song = {
 		return kernel.display.pad(kernel.display.hex(value), this.cell_width, '0');
 	},
 
+	get_current_row: () => {
+		return baby_k.song_pos;
+	},
+
+	get_next_row: () => {
+		let row = baby_k.song_pos;
+		row++;
+		if (row >= baby_k.song_max_length) row = 0;
+		let pattern_data = baby_k.song.pattern_order[row];
+		let pop = 0;
+		for (let i = 0; i < 4; i++) {
+			if (pattern_data[i] != 255) pop++;
+		}
+		if (pop > 0) return row;
+		// XXX should rewind song data instead
+		else return 0;
+	},
+
 	on_init: function() {
 		this.pattern_grid = inputs.get_field_by_label('PATTERN');
 		this.data = [];
@@ -34,23 +53,6 @@ let baby_k_input_song = {
 			}
 			this.data.push(column);
 		}
-	},
-
-	get_current_row: () => {
-		return baby_k.song_pos;
-	},
-
-	get_next_row: () => {
-		let row = baby_k.song_pos;
-		row++;
-		let pattern_data = baby_k.song.pattern_order[row];
-		let pop = 0;
-		for (let i = 0; i < 4; i++) {
-			if (pattern_data[i] != 255) pop++;
-		}
-		if (pop > 0) return row;
-		// XXX should rewind song data instead
-		else return 0;
 	},
 
 	on_key: function(key) {
@@ -105,7 +107,9 @@ let baby_k_input_song = {
 
 	on_update: function() {
 		// put new value in song data
-		baby_k.song.pattern_order[this.cell.y][this.cell.x] = this.value;
+		if (typeof this.value !== 'undefined') {
+			baby_k.song.pattern_order[this.cell.y][this.cell.x] = this.value;
+		}
 		// update song row in hud
 		if (!baby_k.follow_mode || baby_k.pause) {
 			if (typeof this.cell.y !== 'undefined') {
@@ -115,9 +119,8 @@ let baby_k_input_song = {
 		if (baby_k.follow_mode && !baby_k.pause) {
 			this.cell.y = baby_k.song_pos;
 		}
-		if (baby_k.follow_mode && baby_k.pattern_grid.cell ) {
+		if (baby_k.follow_mode && baby_k.pattern_grid.cell) {
 			baby_k.pattern_grid.cell.x = this.cell.x;
-			inputs.types.grid.draw_all(baby_k.pattern_grid);
 		}
 	},
 
@@ -125,8 +128,9 @@ let baby_k_input_song = {
 		baby_k.song_pos = row;
 		baby_k.update_song_row_display(row);
 		baby_k.pattern_grid.load_patterns(row);
+		if (row < this.scroll.y.pos) this.scroll.y.pos = row;
 		inputs.types.grid.row_highlight(baby_k.song_grid, baby_k.song_pos);
-		inputs.types.grid.draw_all(this);
+		this.draw_this = true;
 	},
 
 	set_pattern_id: function(id, x, y) {
@@ -139,10 +143,6 @@ let baby_k_input_song = {
 		console.log(id);
 		baby_k.song.pattern_order[this.cell.y][this.cell.x] = this.value;
 		this.data[this.cell.x][this.cell.y] = this.value;
-		// XXX we need a cell state that isn't
-		// focus or blur or highlight or selected/block
-		// preferably inverted focus
-		inputs.types.grid.cell_update(this, 'focus');
 		this.cell.x = cell_x;
 		this.cell.y = cell_y;
 		this.value = this.data[cell_x][cell_y];

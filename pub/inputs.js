@@ -94,9 +94,6 @@ var inputs = {
 		control: false,
 	},
 
-	clear_mod: {
-	},
-
 	draw: function(x, y, display, style) {
 		if (this.style[style][1] == 0) kernel.plot_str(x, y, display, this.style[style][0]);
 		else kernel.plot_str_inv(x, y, display, this.style[style][0]);
@@ -166,6 +163,13 @@ var inputs = {
 				else if (value != field.value) this.update(field);
 			}
 		}
+		// check type for frame handler
+		this.fields.forEach((field) => {
+			let type = inputs.types[field.type];
+			if (typeof type.frame === 'function') {
+				type.frame(field);
+			}
+		});
 	},
 
 	get_current_field: function() {
@@ -199,7 +203,6 @@ var inputs = {
 			if (typeof this.fields[i].on_update === 'function') {
 				this.fields[i].on_update();
 			}
-			this.blur(this.fields[i]);
 		}
 		this.update(this.fields[this.field_index]);
 		kernel.frame.hook_add({

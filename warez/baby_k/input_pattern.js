@@ -6,6 +6,7 @@ let baby_k_input_pattern = {
 	cell_height: 1,
 	cell_margin: 1,
 	cell_type: 'custom',
+	cell_blur_pose: true,
 	value_default: 0,
 	width: 4,
 	height: 16,
@@ -33,7 +34,7 @@ let baby_k_input_pattern = {
 			var pattern_id = baby_k.song.pattern_order[pattern_order_row][i];
 			this.data.push((pattern_id != 255) ? baby_k.song.patterns[pattern_id] : baby_k_new_pattern);
 		};
-		inputs.types.grid.draw_all(this);
+		this.draw_this = true;
 	},
 
 	on_init: function() {
@@ -70,6 +71,7 @@ let baby_k_input_pattern = {
 		if (typeof this.value !== "undefined") {
 			this.data[this.cell.x][this.cell.y] = this.value;
 			var pattern_id = baby_k.song.pattern_order[baby_k.song_pos][this.cell.x];
+			// XXX handle undefined pattern in song better
 			baby_k.song.patterns[pattern_id][this.cell.y] = this.value;
 		}
 		return advance;
