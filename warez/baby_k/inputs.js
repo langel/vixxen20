@@ -44,6 +44,12 @@ var baby_k_inputs = {
 			inputs.set_value('OCTAVE', baby_k.octave);
 		}
 	},{
+		// Ctrl-E export prg/bin
+		key: 'CONTROL_69',
+		on_update: function() {
+			disk.method_export(baby_k.song);
+		}
+	},{
 		// Ctrl-O open
 		key: 'CONTROL_79',
 		on_update: function() {

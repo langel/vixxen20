@@ -7,6 +7,7 @@ var baby_k = {
 		'input_pattern',
 		'input_song',
 		'inputs',
+		'disk',
 	],
 
 	/*

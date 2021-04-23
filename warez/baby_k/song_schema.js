@@ -5,6 +5,7 @@
 	BETA-K MEMORY MAP
 
 		1000-1DFF	complete program space address
+      13B0-1DFF   song data address space 2.64kb
 
 		1000-10xx	BASIC SYS call to start program
 		10XX-13AF	~928 bytes for player
