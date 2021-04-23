@@ -199,6 +199,9 @@ var inputs = {
 			if (typeof this.types[this.fields[i].type].init === 'function') {
 				this.types[this.fields[i].type].init(this.fields[i]);
 			}
+			else {
+				this.draw_display(this.fields[i], 'blur');
+			}
 			// run field on_update
 			if (typeof this.fields[i].on_update === 'function') {
 				this.fields[i].on_update();

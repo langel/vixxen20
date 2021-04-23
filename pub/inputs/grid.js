@@ -68,8 +68,8 @@ inputs.types.grid = {
 		field.clipboard.forEach((col) => {
 			field.cell.y = y;
 			col.forEach((val) => {
-	         if (field.cell.x <= field.scroll.x.length
-            && field.cell.y <= field.scroll.y.length) {
+	         if (field.cell.x < field.scroll.x.length
+            && field.cell.y < field.scroll.y.length) {
 					field.data[field.cell.x][field.cell.y] = val;
 					field.value = val;
 					this.on_update(field);

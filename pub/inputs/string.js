@@ -34,6 +34,7 @@ inputs.types.string = {
 		inputs.blur(field);
 		this.cell_load_value(field);
 		this.cell_update(field);
+		inputs.blur(field);
 	},
 
 	on_key: function(field, key) {

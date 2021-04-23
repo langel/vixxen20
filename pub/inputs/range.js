@@ -1,4 +1,5 @@
 inputs.types.range = {
+
 	on_key: function(field, key) {
 		if (key.label == SPKEY.ARROW_UP) {
 			field.value++;
@@ -9,4 +10,5 @@ inputs.types.range = {
 			if (field.value < field.value_min) field.value = field.value_min;
 		}
 	}
+
 }

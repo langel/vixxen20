@@ -48,8 +48,7 @@ var baby_k = {
 		kernel.plot_str(0, 1, ' BABY-K on VIXXEN20 ', 5);
 		kernel.plot_str(20, 3, 'SPEED', 1);
 		kernel.plot_str(20, 4, 'VOLUME', 1);
-		//kernel.plot_str(20, 5, 'OCTAVE', 1);
-		// 'OCTAVE' on row 5
+		kernel.plot_str(20, 5, 'OCTAVE', 1);
 		kernel.plot_str(20, 6, 'S.ROW', 1);
 		this.update_song_row_display(0);
 
@@ -63,6 +62,7 @@ var baby_k = {
 		this.inputs = baby_k_inputs;
 		this.inputs.init();
 		inputs.init(this.inputs);
+		inputs.set_value('OCTAVE', baby_k.octave);
 		this.speed_grid = inputs.get_field_by_label('SPEED');
 		this.volume_grid = inputs.get_field_by_label('VOLUME');
 		kernel.frame.hook_add({
