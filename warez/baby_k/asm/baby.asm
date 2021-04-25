@@ -20,12 +20,20 @@
 
 
 ; global variables
+
 SONG_POS          EQU $00
 PATTERN_POS       EQU $01
 FRAME_COUNT       EQU $02
+FRAME_LENGTH      EQU $03
+
+FAST_COUNTER      EQU $fe
+MEGA_COUNTER      EQU $ff
+
 TEXT_TITLE        EQU $13b0
 TEXT_ARTIST       EQU $13c0
 TEXT_COPY         EQU $13d0
+TABLE_SPEED       EQU $13e0
+TABLE_VOLUME      EQU $13f0
 
 SCREEN_CHR_RAM_1  EQU $1e00
 SCREEN_CHR_RAM_2  EQU $1f00
@@ -40,6 +48,12 @@ SCREEN_COL_RAM_2  EQU $9700
 	sta SONG_POS
 	sta PATTERN_POS
 	sta FRAME_COUNT
+	sta MEGA_COUNTER
+
+; load first frame length
+	lda TABLE_SPEED
+	lda #$02
+	sta FRAME_LENGTH
 
 ; set character set
 	lda #%11110010
@@ -88,13 +102,36 @@ DRAW_META_DATA:
 	cpy #$10
 	bne DRAW_META_DATA
 
-
 MAIN_LOOP:
+	; wait for frame
 	jsr RASTER_ZERO
+	; junk
+	inc FAST_COUNTER
+	lda FAST_COUNTER
+	sta SCREEN_CHR_RAM_1
+	; ready for next music frame?
 	inc FRAME_COUNT
 	lda FRAME_COUNT
-	sta SCREEN_CHR_RAM_1
-	sta SCREEN_CHR_RAM_2
+	sta SCREEN_CHR_RAM_1 + 2
+	cmp FRAME_LENGTH
+	bne MAIN_LOOP
+	; update song stuff
+	inc PATTERN_POS
+	lda PATTERN_POS
+	sta SCREEN_CHR_RAM_1 + 4
+	cmp #$10
+	bne .not_next_pattern
+.next_pattern
+	lda #$00
+	sta PATTERN_POS
+	inc SONG_POS
+	lda SONG_POS
+	sta SCREEN_CHR_RAM_1 + 6
+.not_next_pattern
+	; done
+	inc MEGA_COUNTER
+	lda MEGA_COUNTER
+	sta SCREEN_CHR_RAM_1 + 8
 	jmp MAIN_LOOP
 
 
