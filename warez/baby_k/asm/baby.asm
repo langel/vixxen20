@@ -26,9 +26,12 @@ PATTERN_POS       EQU $01
 FRAME_COUNT       EQU $02
 FRAME_LENGTH      EQU $03
 
-NOTE_IS           EQU $20
-NOTE_OFF          EQU $21
+CH1_PATTERN_POS   EQU $20
+CH2_PATTERN_POS   EQU $22
+CH3_PATTERN_POS   EQU $24
+CH4_PATTERN_POS   EQU $26
 
+TEMP_GUY          EQU $f0
 FAST_COUNTER      EQU $fe
 MEGA_COUNTER      EQU $ff
 
@@ -38,6 +41,8 @@ TEXT_COPY         EQU $13d0
 TABLE_SPEED       EQU $13e0
 TABLE_VOLUME      EQU $13f0
 PATTERNS          EQU $1400
+SONG_PAGE_1       EQU $1c00
+SONG_PAGE_2       EQU $1d00
 
 VIC_CHAN_1        EQU $900a
 VIC_CHAN_2        EQU $900b
@@ -50,8 +55,8 @@ SCREEN_CHR_RAM_2  EQU $1f00
 SCREEN_COL_RAM_1  EQU $9600
 SCREEN_COL_RAM_2  EQU $9700
 
-VAL_NOTE_IS       EQU #%10000000
-VAL_NOTE_OFF      EQU #%00000001
+NOTE_IS       EQU %10000000
+NOTE_OFF      EQU %00000001
 
 
 
@@ -62,12 +67,6 @@ VAL_NOTE_OFF      EQU #%00000001
 	sta PATTERN_POS
 	sta FRAME_COUNT
 	sta MEGA_COUNTER
-
-; set zero page constants
-	lda VAL_NOTE_IS
-	sta NOTE_IS
-	lda VAL_NOTE_OFF
-	sta NOTE_OFF
 
 ; load first frame length
 	lda #$01
@@ -85,7 +84,7 @@ VAL_NOTE_OFF      EQU #%00000001
 	ldx #$00
 CLEAR_SCREEN:
 	jsr RASTER_ZERO
-	txa
+	lda #$20
 	sta SCREEN_CHR_RAM_1,x
 	sta SCREEN_CHR_RAM_2,x
 	lda #5
@@ -99,23 +98,17 @@ CLEAR_SCREEN:
 DRAW_META_DATA:
 	jsr RASTER_ZERO
 	lda TEXT_TITLE,y
-	sta SCREEN_CHR_RAM_1+25,y
-	sta SCREEN_CHR_RAM_2+33,y
+	sta SCREEN_CHR_RAM_1+91,y
 	lda #7
-	sta SCREEN_COL_RAM_1+25,y
-	sta SCREEN_COL_RAM_2+33,y
+	sta SCREEN_COL_RAM_1+91,y
 	lda TEXT_ARTIST,y
-	sta SCREEN_CHR_RAM_1+47,y
-	sta SCREEN_CHR_RAM_2+55,y
+	sta SCREEN_CHR_RAM_1+113,y
 	lda #7
-	sta SCREEN_COL_RAM_1+47,y
-	sta SCREEN_COL_RAM_2+55,y
+	sta SCREEN_COL_RAM_1+113,y
 	lda TEXT_COPY,y
-	sta SCREEN_CHR_RAM_1+69,y
-	sta SCREEN_CHR_RAM_2+77,y
+	sta SCREEN_CHR_RAM_1+135,y
 	lda #7
-	sta SCREEN_COL_RAM_1+69,y
-	sta SCREEN_COL_RAM_2+77,y
+	sta SCREEN_COL_RAM_1+135,y
 	iny
 	cpy #$10
 	bne DRAW_META_DATA
@@ -129,6 +122,8 @@ MAIN_LOOP:
 ; set bg and border colors
 	lda #%11000011
 	sta $900f
+	; load them patterns
+	jsr SONG_POS_UPDATE
 	; junk
 	inc FAST_COUNTER
 	lda FAST_COUNTER
@@ -165,28 +160,110 @@ MAIN_LOOP:
 
 ; grab current playback data and push to VIC
 AUDIO_UPDATE:
+	ldy PATTERN_POS
 	lda TABLE_SPEED,y
 	sta FRAME_LENGTH
 	lda TABLE_VOLUME,y
 	sta VIC_VOLUME
-	lda PATTERNS,y
-	and VAL_NOTE_IS
-	sta SCREEN_CHR_RAM_1 + 12
-	cmp VAL_NOTE_IS
+
+	lda (CH1_PATTERN_POS),y
+	jsr AUDIO_PROCESS_CHANNEL
+	sta VIC_CHAN_1
+	adc #$20
+	sta SCREEN_CHR_RAM_2+55,y
+
+	lda (CH2_PATTERN_POS),y
+	jsr AUDIO_PROCESS_CHANNEL
+	sta VIC_CHAN_2
+	adc #$20
+	sta SCREEN_CHR_RAM_2+77,y
+
+	lda (CH3_PATTERN_POS),y
+	jsr AUDIO_PROCESS_CHANNEL
+	sta VIC_CHAN_3
+	adc #$20
+	sta SCREEN_CHR_RAM_2+99,y
+
+	lda (CH4_PATTERN_POS),y
+	jsr AUDIO_PROCESS_CHANNEL
+	sta VIC_CHAN_4
+	adc #$20
+	sta SCREEN_CHR_RAM_2+121,y
+	rts
+
+AUDIO_PROCESS_CHANNEL:
+	sta TEMP_GUY
+	and #NOTE_IS
+	cmp #NOTE_IS
 	bne .not_note
 .is_note
-	lda PATTERNS,y
-	sta VIC_CHAN_1
+	lda TEMP_GUY
 	jmp .note_done
 .not_note
-	and VAL_NOTE_OFF
-	cmp VAL_NOTE_OFF
+	lda TEMP_GUY
+	and #NOTE_OFF
+	cmp #NOTE_OFF
 	bne .note_done
 	lda #$00
-	sta VIC_CHAN_1
 .note_done
-	lda VIC_CHAN_1
-	sta SCREEN_CHR_RAM_1 + 10
+	rts
+
+
+; put pattern addresses in zero page
+; SONG_POS should be set before calling
+SONG_POS_UPDATE:
+	ldx #$00
+.song_pos_loop
+	lda SONG_POS
+	sec
+	sbc #$40
+	bpl .song_page_2
+.song_page_1
+	asl
+	asl
+	sta TEMP_GUY
+	txa
+	lsr
+	clc
+	adc TEMP_GUY
+	tay
+	lda SONG_PAGE_1,y
+	jmp .pattern_found
+.song_page_2
+	asl
+	asl
+	tay
+	lda SONG_PAGE_2,y
+.pattern_found
+	sta TEMP_GUY
+	; lets make sure its not an empty pattern
+	cmp #$ff
+	bne .dont_reset
+.song_reset
+	lda #$00
+	sta SONG_POS
+	jmp SONG_POS_UPDATE
+.dont_reset
+	lda TEMP_GUY
+	; LSB
+	asl
+	asl
+	asl
+	asl
+	sta CH1_PATTERN_POS,x
+	inx
+	; MSB
+	lda TEMP_GUY
+	lsr
+	lsr
+	lsr
+	lsr
+	clc
+	adc #$14
+	sta CH1_PATTERN_POS,x
+	inx
+	cpx #$08
+	bne .song_pos_loop
 	rts
 
 
