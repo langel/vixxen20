@@ -10,11 +10,15 @@ let disk = {
 		console.log(song);
 		// create enough ROM space wow :D/
 		let data = new Uint8Array(2640);
+		// convert strings for vic 20 usage
+		let title = kernel.ascii2petscii(song.title);
+		let artist = kernel.ascii2petscii(song.artist);
+		let copy_info = kernel.ascii2petscii(song.copy_info);
 		// do all the 16 byte fields
 		for (let i = 0; i < 16; i++) {
-			data[i] = song.title.charCodeAt(i);
-			data[16 + i] = song.artist.charCodeAt(i);
-			data[32 + i] = song.copy_info.charCodeAt(i);
+			data[i] = title.charCodeAt(i);
+			data[16 + i] = artist.charCodeAt(i);
+			data[32 + i] = copy_info.charCodeAt(i);
 			data[48 + i] = song.speed_table[i];
 			data[64 + i] = song.volume_table[i];
 		}
