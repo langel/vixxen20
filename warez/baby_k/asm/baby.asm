@@ -130,6 +130,7 @@ MAIN_LOOP:
 	lda #%11000011
 	sta $900f
 	; load them patterns
+	; resets song position if empty pattern
 	jsr SONG_POS_UPDATE
 	; junk
 	inc FAST_COUNTER
@@ -146,6 +147,15 @@ MAIN_LOOP:
 	sta FRAME_COUNT
 	; update song stuff
 	jsr AUDIO_UPDATE
+	; check if NeXT was called
+	lda SONG_NEXT_TRUE
+	cmp #$00
+	beq .not_next_effect_called
+	lda #$00
+	sta SONG_NEXT_TRUE
+	jmp .next_pattern
+.not_next_effect_called
+	; increase pattern position
 	inc PATTERN_POS
 	lda PATTERN_POS
 	sta SCREEN_CHR_RAM_1 + 4
@@ -154,6 +164,7 @@ MAIN_LOOP:
 .next_pattern
 	lda #$00
 	sta PATTERN_POS
+	sta SONG_NEXT_TRUE
 	inc SONG_POS
 	lda SONG_POS
 	sta SCREEN_CHR_RAM_1 + 6
@@ -209,7 +220,6 @@ AUDIO_PROCESS_CHANNEL:
 	rts
 .not_note
 	lda TEMP_GUY
-	and #NOTE_OFF
 	cmp #NOTE_OFF
 	bne .not_note_off
 	lda #$00
@@ -217,7 +227,6 @@ AUDIO_PROCESS_CHANNEL:
 	rts
 .not_note_off
 	lda TEMP_GUY
-	and #NOTE_NEXT
 	cmp #NOTE_NEXT
 	bne .not_note_next
 	; move song to next song row
@@ -230,9 +239,11 @@ AUDIO_PROCESS_CHANNEL:
 	rts
 .not_note_next
 	lda TEMP_GUY
-	and #NOTE_END
 	cmp #NOTE_END
 	bne .not_end_of_song
+	; turn the sound off cheaply :D/
+	lda #$00
+	sta VIC_VOLUME
 	; soft reset the machine!
 	; solution from https://www.c64-wiki.com/wiki/Reset_(Process)
 	jmp $fd22
