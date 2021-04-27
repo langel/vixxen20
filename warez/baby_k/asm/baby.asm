@@ -173,27 +173,27 @@ AUDIO_UPDATE:
 	lda TABLE_VOLUME,y
 	sta VIC_VOLUME
 
+	ldx #$00
 	lda (CH1_PATTERN_POS),y
 	jsr AUDIO_PROCESS_CHANNEL
-	sta VIC_CHAN_1
 	adc #$20
 	sta SCREEN_CHR_RAM_2+55,y
 
+	inx
 	lda (CH2_PATTERN_POS),y
 	jsr AUDIO_PROCESS_CHANNEL
-	sta VIC_CHAN_2
 	adc #$20
 	sta SCREEN_CHR_RAM_2+77,y
 
+	inx
 	lda (CH3_PATTERN_POS),y
 	jsr AUDIO_PROCESS_CHANNEL
-	sta VIC_CHAN_3
 	adc #$20
 	sta SCREEN_CHR_RAM_2+99,y
 
+	inx
 	lda (CH4_PATTERN_POS),y
 	jsr AUDIO_PROCESS_CHANNEL
-	sta VIC_CHAN_4
 	adc #$20
 	sta SCREEN_CHR_RAM_2+121,y
 	rts
@@ -205,14 +205,30 @@ AUDIO_PROCESS_CHANNEL:
 	bne .not_note
 .is_note
 	lda TEMP_GUY
+	sta VIC_CHAN_1,x
 	rts
 .not_note
 	lda TEMP_GUY
 	and #NOTE_OFF
 	cmp #NOTE_OFF
-	bne .note_done
+	bne .not_note_off
 	lda #$00
-.note_done
+	sta VIC_CHAN_1,x
+	rts
+.not_note_off
+	lda TEMP_GUY
+	and #NOTE_NEXT
+	cmp #NOTE_NEXT
+	bne .not_note_next
+; XXX do what here?
+	rts
+.not_note_next
+	lda TEMP_GUY
+	and #NOTE_END
+	cmp #NOTE_END
+	bne .not_end_of_song
+; XXX do what here?
+.not_end_of_song
 	rts
 
 
