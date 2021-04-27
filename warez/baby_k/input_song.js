@@ -146,6 +146,8 @@ let baby_k_input_song = {
 		this.cell.x = cell_x;
 		this.cell.y = cell_y;
 		this.value = this.data[cell_x][cell_y];
+		// update pattern grid
+		baby_k.pattern_grid.load_patterns(y);
 	},
 
 	set_pattern_id_by_adjustment(x, y, amount) {

@@ -50,6 +50,12 @@ var baby_k_inputs = {
 			disk.method_export(baby_k.song);
 		}
 	},{
+		// Ctrl-Shift-E export binary song data only
+		key: 'CONTROL_SHIFT_69',
+		on_update: function() {
+			disk.method_export(baby_k.song);
+		}
+	},{
 		// Ctrl-O open
 		key: 'CONTROL_79',
 		on_update: function() {

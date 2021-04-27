@@ -90,7 +90,7 @@ NOTE_NOTHING      EQU %00000000
 ; clear screen
 	ldx #$00
 CLEAR_SCREEN:
-	jsr RASTER_ZERO
+	;jsr RASTER_ZERO
 	lda #$20
 	sta SCREEN_CHR_RAM_1,x
 	sta SCREEN_CHR_RAM_2,x
@@ -225,6 +225,8 @@ AUDIO_PROCESS_CHANNEL:
 ; XXX do what here?
 	; will update correctly on next frame
 	; if we move where this subroutine gets called
+	lda #$00
+	sta SCREEN_CHR_RAM_1+16
 	rts
 .not_note_next
 	lda TEMP_GUY

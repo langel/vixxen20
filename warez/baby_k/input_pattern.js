@@ -66,6 +66,7 @@ let baby_k_input_pattern = {
 		else {
 			var advance = false;
 			baby_k.song_grid.on_key_pattern_adjust(this.cell.x, baby_k.song_pos, key);
+			this.value = this.data[this.cell.x][this.cell.y];
 		}
 		// only update cell value if a value is found
 		if (typeof this.value !== "undefined") {
