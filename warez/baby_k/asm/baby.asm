@@ -220,14 +220,20 @@ AUDIO_PROCESS_CHANNEL:
 	and #NOTE_NEXT
 	cmp #NOTE_NEXT
 	bne .not_note_next
+	; move song to next song row
+	inc SONG_NEXT_TRUE
 ; XXX do what here?
+	; will update correctly on next frame
+	; if we move where this subroutine gets called
 	rts
 .not_note_next
 	lda TEMP_GUY
 	and #NOTE_END
 	cmp #NOTE_END
 	bne .not_end_of_song
-; XXX do what here?
+	; soft reset the machine!
+	; solution from https://www.c64-wiki.com/wiki/Reset_(Process)
+	jmp $fd22
 .not_end_of_song
 	rts
 
