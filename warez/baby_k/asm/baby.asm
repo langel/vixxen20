@@ -90,7 +90,6 @@ NOTE_NOTHING      EQU %00000000
 ; clear screen
 	ldx #$00
 CLEAR_SCREEN:
-	;jsr RASTER_ZERO
 	lda #$20
 	sta SCREEN_CHR_RAM_1,x
 	sta SCREEN_CHR_RAM_2,x
@@ -129,6 +128,7 @@ MAIN_LOOP:
 ; set bg and border colors
 	lda #%11000011
 	sta $900f
+.main_loop_skip_raster
 	; load them patterns
 	; resets song position if empty pattern
 	jsr SONG_POS_UPDATE
@@ -136,6 +136,20 @@ MAIN_LOOP:
 	inc FAST_COUNTER
 	lda FAST_COUNTER
 	sta SCREEN_CHR_RAM_1
+	; update song stuff
+	jsr AUDIO_UPDATE
+	; check if NeXT was called
+	lda SONG_NEXT_TRUE
+	cmp #$00
+	beq .not_next_effect_called
+	lda #$00
+	sta PATTERN_POS
+	sta SONG_NEXT_TRUE
+	inc SONG_POS
+	jsr SONG_POS_UPDATE
+	jsr AUDIO_PROCESS_CHANNEL
+	jmp .main_loop_skip_raster
+.not_next_effect_called
 	; ready for next music frame?
 	inc FRAME_COUNT
 	lda FRAME_COUNT
@@ -145,16 +159,6 @@ MAIN_LOOP:
 	; reset frame counter
 	lda #$00
 	sta FRAME_COUNT
-	; update song stuff
-	jsr AUDIO_UPDATE
-	; check if NeXT was called
-	lda SONG_NEXT_TRUE
-	cmp #$00
-	beq .not_next_effect_called
-	lda #$00
-	sta SONG_NEXT_TRUE
-	jmp .next_pattern
-.not_next_effect_called
 	; increase pattern position
 	inc PATTERN_POS
 	lda PATTERN_POS
@@ -164,7 +168,6 @@ MAIN_LOOP:
 .next_pattern
 	lda #$00
 	sta PATTERN_POS
-	sta SONG_NEXT_TRUE
 	inc SONG_POS
 	lda SONG_POS
 	sta SCREEN_CHR_RAM_1 + 6
@@ -321,5 +324,5 @@ RASTER_ZERO:
 
 ; song data
 	org $13b0
-	incbin "songdata.bin"
+	;incbin "songdata.bin"
 
