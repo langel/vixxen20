@@ -67,7 +67,13 @@ var baby_k_inputs = {
 		// Ctrl-S save
 		key: 'CONTROL_83',
 		on_update: function() {
-			disk.save_new(JSON.stringify(baby_k.song));
+			disk.method_save_localstorage(baby_k.song);
+		}
+  },{
+		// Ctrl-Shift-S save
+		key: 'CONTROL_SHIFT_83',
+		on_update: function() {
+			disk.method_save_local_drive(baby_k.song);
 		}
   },{
 		// rotate through tunings
