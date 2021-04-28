@@ -193,21 +193,7 @@ var inputs = {
 	init: function(inputs) {
 		this.global_keys = this.global_keys.concat(inputs.global_keys);
 		this.fields = inputs.fields;
-		for (var i = 0; i < this.fields.length; i++) {
-			this.fields[i].index = i;
-			// run input type init
-			if (typeof this.types[this.fields[i].type].init === 'function') {
-				this.types[this.fields[i].type].init(this.fields[i]);
-			}
-			else {
-				this.draw_display(this.fields[i], 'blur');
-			}
-			// run field on_update
-			if (typeof this.fields[i].on_update === 'function') {
-				this.fields[i].on_update();
-			}
-		}
-		this.update(this.fields[this.field_index]);
+		this.update_all();
 		kernel.frame.hook_add({
 			object: 'inputs',
 			method: 'frame'
@@ -251,6 +237,30 @@ var inputs = {
 		if (typeof field.on_update !== 'undefined') field.on_update();
 		this.focus(field);
 	},
+
+	update_all: function() {
+		for (var i = 0; i < this.fields.length; i++) {
+			this.fields[i].index = i;
+			if (this.fields[i].hasOwnProperty('origin_x')) {
+				this.fields[i].x = this.fields[i].origin_x;
+			}
+			if (this.fields[i].hasOwnProperty('origin_y')) {
+				this.fields[i].y = this.fields[i].origin_y;
+			}
+			// run input type init
+			if (typeof this.types[this.fields[i].type].init === 'function') {
+				this.types[this.fields[i].type].init(this.fields[i]);
+			}
+			else {
+				this.draw_display(this.fields[i], 'blur');
+			}
+			// run field on_update
+			if (typeof this.fields[i].on_update === 'function') {
+				this.fields[i].on_update();
+			}
+		}
+		this.update(this.fields[this.field_index]);
+	}
 
 };
 

@@ -5,6 +5,57 @@ let disk = {
 		extensions: ['bks'],
 	},
 
+	init: function() {
+		video.addEventListener('dragover', (e) => {
+			e.preventDefault();
+			baby_k.notice('Drop file to LOAD! :}');
+		});
+		video.addEventListener('drop', (e) => {
+			e.preventDefault();
+			baby_k.notice('A FILE HAS DROPPED! :U');
+			let file;
+			// XXX not sure what happens if there are multiple files
+			// probably only processes the last one :thonk:
+			if (e.dataTransfer.items) {
+				// Use DataTransferItemList interface to access the file(s)
+				for (var i = 0; i < e.dataTransfer.items.length; i++) {
+					// If dropped items aren't files, reject them
+					if (e.dataTransfer.items[i].kind === 'file') {
+						file = e.dataTransfer.items[i].getAsFile();
+						console.log('... file[' + i + '].name = ' + file.name);
+					}
+				}
+			} 
+			else {
+				// Use DataTransfer interface to access the file(s)
+				for (var i = 0; i < e.dataTransfer.files.length; i++) {
+					file = e.dataTransfer.files[i];
+					console.log('... file[' + i + '].name = ' + e.dataTransfer.files[i].name);
+				}
+			}
+			console.log(file);
+			const r = new FileReader();
+			r.readAsText(file);
+			r.onload = () => {
+				console.log(r.result);
+				try {
+					let json = JSON.parse(r.result);
+					console.log(json);
+					baby_k.load_song(json);
+				}
+				catch(e) {
+					console.log(e);
+					baby_k.notice(e.message);
+				}
+			};
+			r.onerror = () => {
+				console.log('error loading file into browser');
+				console.log(r.error);
+				baby_k.notice('error loading file');
+			};
+		});
+	},
+
 	method_export_program: function(song) {
 		console.log('export song program?');
 		// program loads in at $1000

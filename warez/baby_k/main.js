@@ -71,6 +71,7 @@ var baby_k = {
 			object: 'baby_k',
 			method: 'frame'
 		});
+		disk.init();
 	},
 
 	frame: function() {
@@ -100,6 +101,17 @@ var baby_k = {
 			}
 		}
 		baby_k.frame_counter++;
+	},
+
+	load_song: function(song_data) {
+		this.song = song_data;
+		this.song_pos = 0;
+		this.pattern_pos = 0;
+		inputs.get_field_by_label('TITLE').value = this.song.title;
+		inputs.get_field_by_label('ARTIST').value = this.song.artist;
+		inputs.get_field_by_label('COPY INFO').value = this.song.copy_info;
+		inputs.update_all();
+		this.notice('Song loaded from OUTSIDE :o');
 	},
 
 	notice: function(text) {

@@ -61,6 +61,7 @@ var baby_k_inputs = {
 		// Ctrl-O open
 		key: 'CONTROL_79',
 		on_update: function() {
+			baby_k.notice('Drag file into this window! :D');
 		}
 	},{
 		// Ctrl-R revert
