@@ -23,6 +23,7 @@ let disk = {
 //		let compiled = head.concat(data);
 		console.log('compiled');
 //		console.log(compiled);
+//		data = data.slice(0, -4);
 		const song_data = new Blob([head, data], {type: "application/octet-stream"});
 		console.log(song_data);
 		this.save_local(song_data, 'songdata.prg');

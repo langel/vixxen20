@@ -52,7 +52,7 @@ let baby_k_input_pattern = {
 			if (typeof this.value == 'undefined') {
 				if (note == 38) this.value = 245;
 				if (note == 39) this.value = 250;
-				if (note == 40) this.value = 255;
+				if (note == 40) this.value = 254;
 			}
 		}
 		// special note inputs

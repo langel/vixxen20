@@ -268,8 +268,8 @@ var vic = {
 				if (vic.voices[v].value & 128) {
 					if (vic.voices[v].delta_counter <= 0) {
 						var pitch = vic.voices[v].value;
-						//if (pitch == 255) pitch--;
-						//freq = vic.voices[v].clock[vic.video_mode] / (128 - (pitch++ & 127));
+						// the vic did it first! =o
+						if (pitch == 255) pitch = 0;
 						freq = vic.voices[v].clock[vic.video_mode] / (128 - (pitch & 127));
 						// handle sqaures
 						if (v != 3) {
