@@ -8,6 +8,7 @@ var baby_k = {
 		'input_song',
 		'inputs',
 		'disk',
+		'asm/playroutine',
 	],
 
 	/*

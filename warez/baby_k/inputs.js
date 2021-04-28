@@ -47,13 +47,13 @@ var baby_k_inputs = {
 		// Ctrl-E export prg/bin
 		key: 'CONTROL_69',
 		on_update: function() {
-			disk.method_export(baby_k.song);
+			disk.method_export_program(baby_k.song);
 		}
 	},{
 		// Ctrl-Shift-E export binary song data only
 		key: 'CONTROL_SHIFT_69',
 		on_update: function() {
-			disk.method_export(baby_k.song);
+			disk.method_export_data(baby_k.song);
 		}
 	},{
 		// Ctrl-O open

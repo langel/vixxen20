@@ -5,8 +5,57 @@ let disk = {
 		extensions: ['bks'],
 	},
 
-	method_export: function(song) {
-		console.log('export?');
+	method_export_program: function(song) {
+		console.log('export song program?');
+		console.log(playroutine_bin.length);
+		// program loads in at $1000
+		// song data should start at $13b0
+		// add two bytes (word address) for program start position
+		// song data starts at byte 946 in export
+		const song_start_at = 946
+		const forty_two = 42;
+		let head = new Uint8Array(song_start_at).fill(forty_two);
+		console.log(head);
+		playroutine_bin.map((val, i) => { head[i] = val; });
+		console.log(head);
+		let data = this.song_to_blob_ready_data(song);
+		console.log(data.length);
+//		let compiled = head.concat(data);
+		console.log('compiled');
+//		console.log(compiled);
+		const song_data = new Blob([head, data], {type: "application/octet-stream"});
+		console.log(song_data);
+		this.save_local(song_data, 'songdata.prg');
+	},
+
+	method_export_data: function(song) {
+		console.log('export data?');
+		let data = this.song_to_blob_ready_data(song);
+		const song_data = new Blob([data], {type: "application/octet-stream"});
+		console.log(song_data);
+		this.save_local(song_data, 'songdata.bin');
+	},
+
+	save_local: function(blob, filename) {
+		// check for hidden anchor element
+		let a = document.getElementById('save_local');
+		if (a === null) {
+			a = document.createElement('a');
+			a.setAttribute('id', 'save_local');
+			document.body.appendChild(a);
+			a.style = "display: none";
+		}
+		// setup hidden anchor element
+		url = window.URL.createObjectURL(blob);
+		a.href = url;
+		a.download = filename;
+		// force that shit
+		a.click();
+		window.URL.revokeObjectURL(url);
+	},
+
+	song_to_blob_ready_data: function(song) {
+		console.log('convert?');
 		console.log(song);
 		// create enough ROM space wow :D/
 		let data = new Uint8Array(2640);
@@ -34,27 +83,7 @@ let disk = {
 			}
 		}
 		console.log(data);
-		const song_data = new Blob([data], {type: "application/octet-stream"});
-		console.log(song_data);
-		this.save_local(song_data, 'songdata.bin');
-	},
-
-	save_local: function(blob, filename) {
-		// check for hidden anchor element
-		let a = document.getElementById('save_local');
-		if (a === null) {
-			a = document.createElement('a');
-			a.setAttribute('id', 'save_local');
-			document.body.appendChild(a);
-			a.style = "display: none";
-		}
-		// setup hidden anchor element
-		url = window.URL.createObjectURL(blob);
-		a.href = url;
-		a.download = filename;
-		// force that shit
-		a.click();
-		window.URL.revokeObjectURL(url);
+		return data;
 	},
 
 }
