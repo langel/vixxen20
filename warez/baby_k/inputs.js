@@ -48,32 +48,41 @@ var baby_k_inputs = {
 		key: 'CONTROL_69',
 		on_update: function() {
 			disk.method_export_program(baby_k.song);
+			baby_k.notice('Runtime Binary Exported to Cornputer');
 		}
 	},{
 		// Ctrl-Shift-E export binary song data only
 		key: 'CONTROL_SHIFT_69',
 		on_update: function() {
 			disk.method_export_data(baby_k.song);
+			baby_k.notice('Song Data Exported to Cornputer');
 		}
 	},{
 		// Ctrl-O open
 		key: 'CONTROL_79',
 		on_update: function() {
-			disk.open(function(data) {
-				baby_k.song = JSON.parse(data);
-			});
+		}
+	},{
+		// Ctrl-R revert
+		key: 'CONTROL_82',
+		on_update: function() {
+			baby_k.song = disk.method_load_localstorage();
+			baby_k.notice('Song Reverted from Browser');
+			// XXX and some load actions?
 		}
 	},{
 		// Ctrl-S save
 		key: 'CONTROL_83',
 		on_update: function() {
 			disk.method_save_localstorage(baby_k.song);
+			baby_k.notice('Song Saved to Browser');
 		}
   },{
 		// Ctrl-Shift-S save
 		key: 'CONTROL_SHIFT_83',
 		on_update: function() {
 			disk.method_save_local_drive(baby_k.song);
+			baby_k.notice('Song Data Donloaded to Cornputer');
 		}
   },{
 		// rotate through tunings

@@ -18,7 +18,6 @@ let disk = {
 		let data = this.song_to_blob_ready_data(song);
 		const song_data = new Blob([head, data], {type: "application/octet-stream"});
 		this.save_local(song_data, 'songdata.prg');
-		baby_k.notice('Runtime Binary Exported to Cornputer');
 	},
 
 	method_export_data: function(song) {
@@ -27,18 +26,21 @@ let disk = {
 		const song_data = new Blob([data], {type: "application/octet-stream"});
 		console.log(song_data);
 		this.save_local(song_data, 'songdata.bin');
-		baby_k.notice('Song Data Exported to Cornputer');
+	},
+
+	method_load_localstorage: function() {
+		let localstorage = window.localStorage;
+		return JSON.parse(localstorage.getItem('baby_k.song'));
+		// XXX and some load action?
 	},
 
 	method_save_local_drive: function(song) {
 		this.save_local(new Blob([JSON.stringify(baby_k.song)], {type: "application/json"}), 'songdata.json');
-		baby_k.notice('Song Data Donloaded to Cornputer');
 	},
 
 	method_save_localstorage: function(song) {
 		let localstorage = window.localStorage;
-		localstorage.setItem('baby_k.song', song);
-		baby_k.notice('Song Saved to Browser');
+		localstorage.setItem('baby_k.song', JSON.stringify(song));
 	},
 
 	save_local: function(blob, filename) {
