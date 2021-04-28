@@ -45,6 +45,8 @@ let baby_k_input_song = {
 
 	on_init: function() {
 		this.pattern_grid = inputs.get_field_by_label('PATTERN');
+		this.cell.x = 0;
+		this.cell.y = 0;
 		this.data = [];
 		for (var x = 0; x < 4; x++) {
 			var column = [];

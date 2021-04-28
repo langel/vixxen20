@@ -39,6 +39,8 @@ let baby_k_input_pattern = {
 
 	on_init: function() {
 		this.song_grid = inputs.get_field_by_label('SONG');
+		this.cell.x = 0;
+		this.cell.y = 0;
 		this.load_patterns(0);
 	},
 

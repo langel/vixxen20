@@ -103,6 +103,12 @@ var kernel = {
 		// wut
 		console.log('VIXXEN20 STARTED');
 		vic.init();
+
+		// XXX really need this to display on boot
+		this.plot_str(0, 0, 'Press any key...', 7);
+		//vic._screen_refresh();
+		//vic._screen_blit();
+
 		vic.set_frame_hook(this.frame.main);
 		// escalate boot process
 		this.load_js(this.autoload);
