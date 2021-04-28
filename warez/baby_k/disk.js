@@ -7,7 +7,6 @@ let disk = {
 
 	method_export_program: function(song) {
 		console.log('export song program?');
-		console.log(playroutine_bin.length);
 		// program loads in at $1000
 		// song data should start at $13b0
 		// add two bytes (word address) for program start position
@@ -15,17 +14,9 @@ let disk = {
 		const song_start_at = 946
 		const forty_two = 42;
 		let head = new Uint8Array(song_start_at).fill(forty_two);
-		console.log(head);
 		playroutine_bin.map((val, i) => { head[i] = val; });
-		console.log(head);
 		let data = this.song_to_blob_ready_data(song);
-		console.log(data.length);
-//		let compiled = head.concat(data);
-		console.log('compiled');
-//		console.log(compiled);
-//		data = data.slice(0, -4);
 		const song_data = new Blob([head, data], {type: "application/octet-stream"});
-		console.log(song_data);
 		this.save_local(song_data, 'songdata.prg');
 	},
 
