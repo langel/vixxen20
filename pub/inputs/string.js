@@ -59,7 +59,7 @@ inputs.types.string = {
 		}
 		else if (inputs.is_special_key(key)) {}
 		else {
-			field.value = key.input.substr(0, 1);
+			field.value = key.inputKey.substr(0, 1);
 			console.log(field.value);
 			this.cell_update(field);
 			this.cell_next(field);
