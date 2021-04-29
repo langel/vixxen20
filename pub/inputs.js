@@ -4,7 +4,7 @@
  */
 
 window.addEventListener('blur', function() {
-	console.log('blur')
+	console.log('blur');
 	inputs.mod.shift = false;
 	inputs.mod.control = false;
 	inputs.key_state = [];
@@ -15,13 +15,50 @@ document.body.onkeydown = function(e) {
 	audio.resume();
 	inputs.key_last = e.keyCode;
 	if (typeof inputs.key_state[e.keyCode] === 'undefined') {
-		if (e.keyCode == SPKEY.SHIFT) inputs.mod.shift = true;
-		else if (e.keyCode == SPKEY.CONTROL || e.keyCode == SPKEY.META) inputs.mod.control = true;
-		else inputs.key_state[e.keyCode] = {
-			frames: 0,
-			input: e.key,
-			code: e.keyCode,
-		};
+		if (e.keyCode == SPKEY.SHIFT) {
+			inputs.mod.shift = true;
+		} else if (e.keyCode == SPKEY.CONTROL || e.keyCode == SPKEY.META) {
+			inputs.mod.control = true;
+		} else {
+			let input = "";
+			let code = 0;
+
+			let keyCodeLookUp = {
+				"Semicolon":    { key: ";",  keyCode: 186 },
+				"Equal":        { key: "=",  keyCode: 187 },
+				"Comma":        { key: ",",  keyCode: 188 },
+				"Minus":        { key: "-",  keyCode: 189 },
+				"Period":       { key: ".",  keyCode: 190 },
+				"Slash":        { key: "/",  keyCode: 191 },
+				"Backquote":    { key: "`",  keyCode: 192 },
+				"BracketLeft":  { key: "[",  keyCode: 219 },
+				"Backslash":    { key: "\\", keyCode: 220 },
+				"BracketRight": { key: "]",  keyCode: 221 },
+				"Quote":        { key: "'",  keyCode: 222 }
+			};
+
+			if (e.code.includes("Key") || e.code.includes("Digit")) {
+				// we can get the input key and code by using the last character of e.code
+				input = e.code.charAt(e.code.length - 1).toLowerCase();
+				code = e.code.charCodeAt(e.code.length - 1);
+			} else if (keyCodeLookUp[e.code]) {
+				// use the lookup object for characters which are changed on different
+				// keyboard layouts but aren't letters or digits
+				input = keyCodeLookUp[e.code].key;
+				code = keyCodeLookUp[e.code].keyCode;
+			} else {
+				// usually if key is universal, e.g. arrow keys
+				input = e.key;
+				code = e.keyCode;
+			}
+
+			inputs.key_state[e.keyCode] = {
+				frames: 0,
+				input: input,
+				code: code,
+				inputKey: e.key // store the "real" key pressed, used for string inputs
+			};
+		}
 	}
 };
 
@@ -122,7 +159,8 @@ var inputs = {
 	frame: function() {
 		// handle keyboard field
 		var field = this.fields[this.field_index];
-		for (index in this.key_state) {
+
+		for (let index in this.key_state) {
 
 			// key repeat handling
 			var key = this.key_state[index].code;

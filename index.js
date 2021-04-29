@@ -55,7 +55,7 @@ function init_window() {
 		title: 'VIXXEN20',
 		width: 1200,
 		height: 800,
-		backgroundColor: '#000000'
+		backgroundColor: '#000000',
 		// allow audio autoplay
 		webSecurity: false
 	});
