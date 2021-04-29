@@ -154,8 +154,7 @@ var baby_k = {
 			}
 			// NEXT PATTERN
 			else if (value == 2) {
-				// there's a smarter way to do this...
-				//this.pattern_pos = this.pattern_length;
+				this.pattern_pos = 0;
 				this.play_next_order();
 			}
 			// END SONG

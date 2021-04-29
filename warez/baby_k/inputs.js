@@ -44,6 +44,13 @@ var baby_k_inputs = {
 			inputs.set_value('OCTAVE', baby_k.octave);
 		}
 	},{
+		// Ctrl-Shift-D load Demo groove
+		key: 'CONTROL_SHIFT_68',
+		on_update: function() {
+			baby_k.load_song(JSON.parse(JSON.stringify(baby_k_demo_song)));
+			baby_k.notice('New FRESH!! :9');
+		}
+	},{
 		// Ctrl-E export prg/bin
 		key: 'CONTROL_69',
 		on_update: function() {
@@ -56,6 +63,13 @@ var baby_k_inputs = {
 		on_update: function() {
 			disk.method_export_data(baby_k.song);
 			baby_k.notice('Song Data Exported to Cornputer');
+		}
+	},{
+		// Ctrl-F new Fresh song
+		key: 'CONTROL_70',
+		on_update: function() {
+			baby_k.load_song(baby_k.song_new());
+			baby_k.notice('New FRESH!! :9');
 		}
 	},{
 		// Ctrl-O open
