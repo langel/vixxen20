@@ -107,6 +107,7 @@ var baby_k = {
 		this.song = song_data;
 		this.song_pos = 0;
 		this.pattern_pos = 0;
+		this.tuning = this.song.tuning;
 		inputs.get_field_by_label('TITLE').value = this.song.title;
 		inputs.get_field_by_label('ARTIST').value = this.song.artist;
 		inputs.get_field_by_label('COPY INFO').value = this.song.copy_info;

@@ -154,7 +154,8 @@ let baby_k_input_song = {
 
 	set_pattern_id_by_adjustment(x, y, amount) {
 		let id = this.data[x][y];
-		id += amount;
+		if (id == 255) id = amount;
+		else id += amount;
 		id = Math.max(id, 0);
 		id = Math.min(id, baby_k.pattern_max_id);
 		this.set_pattern_id(id, x, baby_k.song_pos);

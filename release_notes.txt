@@ -1,0 +1,12 @@
+
+21.04.29 -- v0.8.1
+
+dvorak (and other?) keyboard support thanks to argarak
+firefox pixels nearest neighbor  (optimization?)
+
+
+
+21.04.28 -- v0.8.0
+
+initial beta release
+the damn thing works more or less
