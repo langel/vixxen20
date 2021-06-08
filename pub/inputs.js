@@ -24,27 +24,37 @@ document.body.onkeydown = function(e) {
 			let code = 0;
 
 			let keyCodeLookUp = {
-				"Semicolon":    { key: ";",  keyCode: 186 },
-				"Equal":        { key: "=",  keyCode: 187 },
-				"Comma":        { key: ",",  keyCode: 188 },
-				"Minus":        { key: "-",  keyCode: 189 },
-				"Period":       { key: ".",  keyCode: 190 },
-				"Slash":        { key: "/",  keyCode: 191 },
-				"Backquote":    { key: "`",  keyCode: 192 },
-				"BracketLeft":  { key: "[",  keyCode: 219 },
-				"Backslash":    { key: "\\", keyCode: 220 },
-				"BracketRight": { key: "]",  keyCode: 221 },
-				"Quote":        { key: "'",  keyCode: 222 }
+				"Semicolon":    { key: ";",  keyCode: 186, shiftKey: ":"},
+				"Equal":        { key: "=",  keyCode: 187, shiftKey: "+"},
+				"Comma":        { key: ",",  keyCode: 188, shiftKey: "<"},
+				"Minus":        { key: "-",  keyCode: 189, shiftKey: "_"},
+				"Period":       { key: ".",  keyCode: 190, shiftKey: ">"},
+				"Slash":        { key: "/",  keyCode: 191, shiftKey: "?"},
+				"Backquote":    { key: "`",  keyCode: 192, shiftKey: "~"},
+				"BracketLeft":  { key: "[",  keyCode: 219, shiftKey: "{"},
+				"Backslash":    { key: "\\", keyCode: 220, shiftKey: "|"},
+				"BracketRight": { key: "]",  keyCode: 221, shiftKey: "}"},
+				"Quote":        { key: "'",  keyCode: 222, shiftKey: "\""}
 			};
 
-			if (e.code.includes("Key") || e.code.includes("Digit")) {
+			if (e.code.includes("Key")) {
 				// we can get the input key and code by using the last character of e.code
-				input = e.code.charAt(e.code.length - 1).toLowerCase();
+				let char = e.code.charAt(e.code.length - 1);
+
+				if (inputs.mod.shift) {
+					input = char;
+				} else {
+					input = char.toLowerCase();
+				}
 				code = e.code.charCodeAt(e.code.length - 1);
 			} else if (keyCodeLookUp[e.code]) {
 				// use the lookup object for characters which are changed on different
 				// keyboard layouts but aren't letters or digits
-				input = keyCodeLookUp[e.code].key;
+				if (inputs.mod.shift) {
+					input = keyCodeLookUp[e.code].shiftKey;
+				} else {
+					input = keyCodeLookUp[e.code].key;
+				}
 				code = keyCodeLookUp[e.code].keyCode;
 			} else {
 				// usually if key is universal, e.g. arrow keys
