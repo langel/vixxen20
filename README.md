@@ -3,4 +3,6 @@ This software is a Commodore VIC 20 simulation environment. This platform focuse
 
 learn more @ https://langel.github.io/vixxen20/
 
+try baby-k here: http://b-knox.com/vixxen20/
+
 baby-k quick totorial video: https://www.youtube.com/watch?v=BBclnLIG3aI
