@@ -311,7 +311,9 @@ var vic = {
 	},
 
 	_screen_blit: function() {
-		vic.screen.drawImage(vic.screen.buff, 0, 0);
+		window.requestAnimationFrame(() => {
+			vic.screen.drawImage(vic.screen.buff, 0, 0);
+		});
 	},
 
 	_screen_refresh: function() {
