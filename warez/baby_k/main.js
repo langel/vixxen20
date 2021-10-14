@@ -85,7 +85,7 @@ var baby_k = {
 		else baby_k.notice_counter--
 		if (baby_k.notice_counter == 1) {
 			baby_k.notice_counter = 0;
-			kernel.plot_str(1, 28, '                                  ', 0);
+			kernel.plot_str(1, 28, '                                   ', 0);
 		}
 		// handle playback
 		if (baby_k.pause !== true) {
@@ -104,6 +104,18 @@ var baby_k = {
 	},
 
 	load_song: function(song_data) {
+		if (song_data.title.length != 16 ||
+			song_data.artist.length != 16 ||
+			song_data.copy_info.length != 16 ||
+			song_data.volume_table.length != 16 ||
+			song_data.speed_table.length != 16 ||
+			song_data.patterns.length != 128 ||
+			song_data.pattern_order.length != 128 
+			) {
+			console.log('bad song data structure');
+			baby_k.notice('bad song data structure');
+			return false;
+		}
 		this.song = song_data;
 		this.song_pos = 0;
 		this.pattern_pos = 0;

@@ -51,7 +51,7 @@ let disk = {
 			r.onerror = () => {
 				console.log('error loading file into browser');
 				console.log(r.error);
-				baby_k.notice('error loading file');
+				baby_k.notice('JSON file needs linting! ;-;');
 			};
 		});
 	},
