@@ -80,38 +80,41 @@ document.body.onkeyup = function(e) {
 
 const SPKEY = {
 	ALT: 18,
-	APOSTROPHE: 222,
 	ARROW_DOWN: 40,
 	ARROW_LEFT: 37,
 	ARROW_RIGHT: 39,
 	ARROW_UP: 38,
 	CAPSLOCK: 20,
-	COMMA: 188,
 	COMMAND: 91,
 	CONTROL: 17,
-	BACKSLASH: 220,
 	BACKSPACE: 8,
-	DASH: 189,
 	DELETE: 46,
 	END: 35,
 	ENTER: 13, 
-	EQUAL: 187,
 	ESCAPE: 27,
 	HOME: 36,
 	INSERT: 45,
 	META: 18,
+	NUMLOCK: 144,
+	PAGE_DOWN: 34,
+	PAGE_UP: 33,
+	SCROLLLOCK: 145,
+	SHIFT: 16,
+	TAB: 9,
+};
+
+const KEYS = {
+	APOSTROPHE: 222,
+	BACKSLASH: 220,
+	COMMA: 188,
+	DASH: 189,
+	EQUAL: 187,
 	NUM_ASTERISK: 106,
 	NUM_MINUS: 109,
 	NUM_PLUS: 107,
 	NUM_SLASH: 111,
-	NUMLOCK: 144,
-	PAGE_DOWN: 34,
-	PAGE_UP: 33,
 	PERIOD: 190,
-	SCROLLLOCK: 145,
-	SHIFT: 16,
 	SPACE: 32,
-	TAB: 9,
 };
 
 const HEXKEY = [192, 49, 50, 51, 52, 53, 54, 55, 56, 57, 81, 87, 69, 82, 84, 89];
@@ -222,6 +225,10 @@ var inputs = {
 
 	get_current_field: function() {
 		return this.fields[this.field_index];
+	},
+
+	get_current_field_type: function() {
+		return this.get_current_field().type;
 	},
 
 	get_field_by_label: function(label) {

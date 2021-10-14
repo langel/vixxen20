@@ -58,6 +58,7 @@ inputs.types.string = {
 			this.cell_previous(field);
 		}
 		else if (inputs.is_special_key(key)) {}
+		else if (inputs.mod.control == true) {}
 		else {
 			field.value = key.inputKey.substr(0, 1);
 			console.log(field.value);

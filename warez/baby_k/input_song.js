@@ -66,43 +66,43 @@ let baby_k_input_song = {
 	on_key_pattern_adjust: function(x, y, key) {
 		// ADJUST PATTERN NUMBERS KEYCOMBOS
 		// decrease pattern number
-		if (key.label == SPKEY.DASH
-		|| key.label == SPKEY.NUM_MINUS) {
+		if (key.label == KEYS.DASH
+		|| key.label == KEYS.NUM_MINUS) {
 			this.set_pattern_id_by_adjustment(x, y, -1);
 		}
 		// increase pattern number
-		else if (key.label == SPKEY.EQUAL
-		|| key.label == SPKEY.NUM_PLUS) {
+		else if (key.label == KEYS.EQUAL
+		|| key.label == KEYS.NUM_PLUS) {
 			this.set_pattern_id_by_adjustment(x, y, 1);
 		}
 		// decrease pattern number by 16
-		else if (key.label == 'CONTROL_' + SPKEY.DASH
-		|| key.label == 'CONTROL_' + SPKEY.NUM_MINUS) {
+		else if (key.label == 'CONTROL_' + KEYS.DASH
+		|| key.label == 'CONTROL_' + KEYS.NUM_MINUS) {
 			this.set_pattern_id_by_adjustment(x, y, -16);
 		}
 		// increase pattern number by 16
-		else if (key.label == 'CONTROL_' + SPKEY.EQUAL
-		|| key.label == 'CONTROL_' + SPKEY.NUM_PLUS) {
+		else if (key.label == 'CONTROL_' + KEYS.EQUAL
+		|| key.label == 'CONTROL_' + KEYS.NUM_PLUS) {
 			this.set_pattern_id_by_adjustment(x, y, 16);
 		}
 		// decrease pattern number across row
-		else if (key.label == 'SHIFT_' + SPKEY.DASH
-		|| key.label == 'SHIFT_' + SPKEY.NUM_MINUS) {
+		else if (key.label == 'SHIFT_' + KEYS.DASH
+		|| key.label == 'SHIFT_' + KEYS.NUM_MINUS) {
 			this.set_pattern_row_by_adjustment(y, -1);
 		}
 		// increase pattern number across row
-		else if (key.label == 'SHIFT_' + SPKEY.EQUAL
-		|| key.label == 'SHIFT_' + SPKEY.NUM_PLUS) {
+		else if (key.label == 'SHIFT_' + KEYS.EQUAL
+		|| key.label == 'SHIFT_' + KEYS.NUM_PLUS) {
 			this.set_pattern_row_by_adjustment(y, 1);
 		}
 		// decrease pattern number by 16 across row
-		else if (key.label == 'CONTROL_SHIFT_' + SPKEY.DASH
-		|| key.label == 'CONTROL_SHIFT_' + SPKEY.NUM_MINUS) {
+		else if (key.label == 'CONTROL_SHIFT_' + KEYS.DASH
+		|| key.label == 'CONTROL_SHIFT_' + KEYS.NUM_MINUS) {
 			this.set_pattern_row_by_adjustment(y, -16);
 		}
 		// increase pattern number by 16 across row
-		else if (key.label == 'CONTROL_SHIFT_' + SPKEY.EQUAL
-		|| key.label == 'CONTROL_SHIFT_' + SPKEY.NUM_PLUS) {
+		else if (key.label == 'CONTROL_SHIFT_' + KEYS.EQUAL
+		|| key.label == 'CONTROL_SHIFT_' + KEYS.NUM_PLUS) {
 			this.set_pattern_row_by_adjustment(y, 16);
 		}
 	},

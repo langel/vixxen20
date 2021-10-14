@@ -3,8 +3,9 @@ var baby_k_inputs = {
 	
 	global_keys: [{
 		// pause 
-		key: SPKEY.SPACE,
+		key: KEYS.SPACE,
 		on_update: function() {
+			if (inputs.get_current_field_type() == 'string') return;
 			baby_k.pause = !baby_k.pause;
 			if (baby_k.pause == true) baby_k.song_pause();
 			else baby_k.song_play();
@@ -17,13 +18,14 @@ var baby_k_inputs = {
 		}
 	},{
 		// toggle follow mode
-		key: SPKEY.COMMA,
+		key: KEYS.COMMA,
 		on_update: function() {
+			if (inputs.get_current_field_type() == 'string') return;
 			baby_k.toggle_follow_mode();
 		}
 	},{
 		// toggle root octave
-		key: SPKEY.BACKSLASH,
+		key: KEYS.BACKSLASH,
 		on_update: function() {
 			if (baby_k.octave == 0) baby_k.octave = 1;
 			else baby_k.octave = 0;
@@ -31,15 +33,17 @@ var baby_k_inputs = {
 		}
 	},{
 		// set root octave to 0
-		key: SPKEY.NUM_SLASH,
+		key: KEYS.NUM_SLASH,
 		on_update: function() {
+			if (inputs.get_current_field_type() == 'string') return;
 			baby_k.octave = 0;
 			inputs.set_value('OCTAVE', baby_k.octave);
 		}
 	},{
 		// set root octave to 1
-		key: SPKEY.NUM_ASTERISK,
+		key: KEYS.NUM_ASTERISK,
 		on_update: function() {
+			if (inputs.get_current_field_type() == 'string') return;
 			baby_k.octave = 1;
 			inputs.set_value('OCTAVE', baby_k.octave);
 		}
@@ -101,8 +105,11 @@ var baby_k_inputs = {
 		}
   },{
 		// rotate through tunings
-		key: SPKEY.APOSTROPHE,
+		key: KEYS.APOSTROPHE,
 		on_update: function() {
+			if (inputs.get_current_field_type() == 'string') return;
+			var field = this.fields[this.field_index];
+			if (field.type == 'string') return;
 			baby_k.tuning++;
 			if (baby_k.tuning > baby_k_scales.length - 1) baby_k.tuning = 0;
 			baby_k.song.tuning = baby_k.tuning;

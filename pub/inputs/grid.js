@@ -403,7 +403,7 @@ inputs.types.grid = {
 		}
 		// . or DELETE key
 		// set cell empty and advance down
-		else if (key.label == SPKEY.PERIOD || key.label == SPKEY.DELETE) {
+		else if (key.label == KEYS.PERIOD || key.label == SPKEY.DELETE) {
 			if (typeof field.value_default != 'undefined') {
 				advance = 'down';
 				let value = field.value_default;
