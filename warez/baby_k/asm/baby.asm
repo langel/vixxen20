@@ -28,15 +28,24 @@ FRAME_LENGTH      EQU $03
 SONG_NEXT_TRUE    EQU $04
 SONG_END_TRUE     EQU $05
 
+; 2 byte address of pattern data
 CH1_PATTERN_POS   EQU $20
 CH2_PATTERN_POS   EQU $22
 CH3_PATTERN_POS   EQU $24
 CH4_PATTERN_POS   EQU $26
+; #$00 == inactive mode
+CH1_ACTIVE        EQU $2c
+CH2_ACTIVE        EQU $2d
+CH3_ACTIVE        EQU $2e
+CH4_ACTIVE        EQU $2f
 
 TEMP_GUY          EQU $f0
+CHAN_NOTE_DATA    EQU $f1
+CHANS_INACTIVE    EQU $f2
 FAST_COUNTER      EQU $fe
 MEGA_COUNTER      EQU $ff
 
+; song data addresses
 TEXT_TITLE        EQU $13b0
 TEXT_ARTIST       EQU $13c0
 TEXT_COPY         EQU $13d0
@@ -46,17 +55,19 @@ PATTERNS          EQU $1400
 SONG_PAGE_1       EQU $1c00
 SONG_PAGE_2       EQU $1d00
 
+; VIC-I chip audio registers
 VIC_CHAN_1        EQU $900a
 VIC_CHAN_2        EQU $900b
 VIC_CHAN_3        EQU $900c
 VIC_CHAN_4        EQU $900d
 VIC_VOLUME        EQU $900e
-
+; more VIC20 hardware addresses
 SCREEN_CHR_RAM_1  EQU $1e00
 SCREEN_CHR_RAM_2  EQU $1f00
 SCREEN_COL_RAM_1  EQU $9600
 SCREEN_COL_RAM_2  EQU $9700
 
+; bit masks for pattern data / effects
 NOTE_IS           EQU %10000000
 NOTE_OFF          EQU %00000001
 NOTE_NEXT         EQU %00000010
@@ -119,6 +130,7 @@ DRAW_META_DATA:
 	cpy #$10
 	bne DRAW_META_DATA
 
+
 MAIN_LOOP:
 ; set bg and border colors
 	lda #%01000111
@@ -130,7 +142,7 @@ MAIN_LOOP:
 	sta $900f
 .main_loop_skip_raster
 	; load them patterns
-	; resets song position if empty pattern
+	; resets song position if 4 empty patterns
 	jsr SONG_POS_UPDATE
 	; junk
 	inc FAST_COUNTER
@@ -181,55 +193,86 @@ MAIN_LOOP:
 
 ; grab current playback data and push to VIC
 AUDIO_UPDATE:
+	; y = pattern position
 	ldy PATTERN_POS
 	lda TABLE_SPEED,y
 	sta FRAME_LENGTH
 	lda TABLE_VOLUME,y
 	sta VIC_VOLUME
-
+	; x = channel counter
 	ldx #$00
+	; CHANNEL 1
+	lda CH1_ACTIVE
+	cmp #$00
+	bne .channel1_active
+	lda #$20
+	jmp .channel1_done
+.channel1_active
 	lda (CH1_PATTERN_POS),y
 	jsr AUDIO_PROCESS_CHANNEL
 	adc #$20
+.channel1_done
 	sta SCREEN_CHR_RAM_2+55,y
-
+	; CHANNEL 2
 	inx
+	lda CH2_ACTIVE
+	cmp #$00
+	bne .channel2_active
+	lda #$20
+	jmp .channel2_done
+.channel2_active
 	lda (CH2_PATTERN_POS),y
 	jsr AUDIO_PROCESS_CHANNEL
 	adc #$20
+.channel2_done
 	sta SCREEN_CHR_RAM_2+77,y
-
+	; CHANNEL 3
 	inx
+	lda CH3_ACTIVE
+	cmp #$00
+	bne .channel3_active
+	lda #$20
+	jmp .channel3_done
+.channel3_active
 	lda (CH3_PATTERN_POS),y
 	jsr AUDIO_PROCESS_CHANNEL
 	adc #$20
+.channel3_done
 	sta SCREEN_CHR_RAM_2+99,y
-
+	; CHANNEL 4
 	inx
+	lda CH4_ACTIVE
+	cmp #$00
+	bne .channel4_active
+	lda #$20
+	jmp .channel4_done
+.channel4_active
 	lda (CH4_PATTERN_POS),y
 	jsr AUDIO_PROCESS_CHANNEL
 	adc #$20
+.channel4_done
 	sta SCREEN_CHR_RAM_2+121,y
 	rts
 
+
 AUDIO_PROCESS_CHANNEL:
-	sta TEMP_GUY
+	sta CHAN_NOTE_DATA
 	and #NOTE_IS
 	cmp #NOTE_IS
 	bne .not_note
 .is_note
-	lda TEMP_GUY
+	lda CHAN_NOTE_DATA
 	sta VIC_CHAN_1,x
 	rts
 .not_note
-	lda TEMP_GUY
+	lda CHAN_NOTE_DATA
 	cmp #NOTE_OFF
 	bne .not_note_off
 	lda #$00
 	sta VIC_CHAN_1,x
 	rts
 .not_note_off
-	lda TEMP_GUY
+	lda CHAN_NOTE_DATA
 	cmp #NOTE_NEXT
 	bne .not_note_next
 	; move song to next song row
@@ -241,7 +284,7 @@ AUDIO_PROCESS_CHANNEL:
 	sta SCREEN_CHR_RAM_1+16
 	rts
 .not_note_next
-	lda TEMP_GUY
+	lda CHAN_NOTE_DATA
 	cmp #NOTE_END
 	bne .not_end_of_song
 	; turn the sound off cheaply :D/
@@ -257,7 +300,14 @@ AUDIO_PROCESS_CHANNEL:
 ; put pattern addresses in zero page
 ; SONG_POS should be set before calling
 SONG_POS_UPDATE:
+	; x = channel pattern position offset
 	ldx #$00
+	stx CHANS_INACTIVE
+	lda #$ff
+	sta CH1_ACTIVE
+	sta CH2_ACTIVE
+	sta CH3_ACTIVE
+	sta CH4_ACTIVE
 .song_pos_loop
 	lda SONG_POS
 	sec
@@ -277,12 +327,28 @@ SONG_POS_UPDATE:
 .song_page_2
 	asl
 	asl
+	sta TEMP_GUY
+	txa
+	lsr
+	clc
+	adc TEMP_GUY
 	tay
 	lda SONG_PAGE_2,y
 .pattern_found
 	sta TEMP_GUY
 	; lets make sure its not an empty pattern
 	cmp #$ff
+	bne .dont_reset
+	; set channel to inactive mode
+	txa
+	lsr
+	tay
+	lda #$00
+	sta CH1_ACTIVE,y
+	; reset song if there are 4 empty patterns
+	inc CHANS_INACTIVE
+	lda CHANS_INACTIVE
+	cmp #$04
 	bne .dont_reset
 .song_reset
 	lda #$00
@@ -324,5 +390,5 @@ RASTER_ZERO:
 
 ; song data
 	org $13b0
-	;incbin "songdata.bin"
+;	incbin "songdata.bin"
 
